@@ -7,6 +7,7 @@ import {
   Users,
   CalendarDays,
   ListChecks,
+  FileText,
   LogOut,
   Settings,
   PanelLeft,
@@ -33,6 +34,7 @@ const navItems = [
   { href: '/patients', label: 'Pacientes', icon: Users },
   { href: '/appointments', label: 'Agendamentos', icon: CalendarDays },
   { href: '/waiting-list', label: 'Lista de Espera', icon: ListChecks },
+  { href: '/templates', label: 'Modelos', icon: FileText },
   // { href: '/settings', label: 'Configurações', icon: Settings }, // Future
 ];
 

@@ -4,6 +4,7 @@ import type {
   WaitingListItem,
   User,
   SessionNote,
+  Template,
 } from '@/lib/types';
 
 // 👤 Usuário mock
@@ -164,4 +165,20 @@ export const mockWaitingList: WaitingListItem[] = [
     addedDate: new Date(today.setDate(today.getDate() - 3)).toISOString(),
     notes: 'Encaminhamento urgente do Dr. Hamilton.',
   },
+];
+
+// 📑 Modelos de texto reutilizáveis
+export const mockTemplates: Template[] = [
+  {
+    id: 'tpl-001',
+    name: 'Nota de Sessão Padrão',
+    category: 'session-note',
+    content: 'Paciente apresentou progresso desde a última sessão...'
+  },
+  {
+    id: 'tpl-002',
+    name: 'Email de Lembrete',
+    category: 'email',
+    content: 'Olá {{nome}}, este é um lembrete do seu próximo agendamento...'
+  }
 ];
