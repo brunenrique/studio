@@ -89,6 +89,7 @@ export function AIInsightsSection({ patient, latestSessionNote }: AIInsightsSect
                 )}
                 Gerar Insights
             </Button>
+            </div>
         </div>
         {!canGenerateInsights && (
           <p className="text-sm text-muted-foreground mt-2">
