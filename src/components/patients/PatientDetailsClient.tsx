@@ -81,6 +81,34 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
     });
   };
 
+  const handleEditNote = async (
+    id: string,
+    noteId: string,
+    content: string,
+    date: string,
+  ) => {
+    if (!patient) return;
+
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    setPatient(prev => {
+      if (!prev) return null;
+      const updated = {
+        ...prev,
+        sessionNotes: prev.sessionNotes.map(note =>
+          note.id === noteId ? { ...note, notes: content, date } : note,
+        ),
+      };
+      updateMockPatient(updated);
+      return updated;
+    });
+
+    toast({
+      title: "Nota Atualizada",
+      description: "As alterações foram salvas com sucesso.",
+    });
+  };
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -165,6 +193,7 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
         patient={patient}
         onAddNote={handleAddNote}
         onDeleteNote={handleDeleteNote}
+        onEditNote={handleEditNote}
       />
 
       <AIInsightsSection
