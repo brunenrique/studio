@@ -1,55 +1,48 @@
+// 🔐 Papéis disponíveis no sistema
 export type UserRole = 'Admin Global' | 'Psicólogo' | 'Admin/Secretário';
 
+// 👤 Representação de um usuário (psicólogo ou administrativo)
 export interface User {
   id: string;
+  name: string;
   email: string;
   role: UserRole;
-  name: string;
 }
 
+// 📝 Nota de sessão (com campo opcional para IA)
 export interface SessionNote {
   id: string;
-  date: string; // ISO string
+  date: string; // ISO
   notes: string;
-  // For AI analysis, this could be more structured in a real app
-  patientHistorySummaryForAI?: string; 
+  patientHistorySummaryForAI?: string;
 }
 
+// 🧍 Paciente
 export interface Patient {
   id: string;
   name: string;
-  contact: string; // e.g., phone or email
-  dateOfBirth: string; // ISO string
-  // Sensitive fields like 'address' or 'detailedMedicalHistory' would need encryption.
-  // For scaffolding, we'll keep it simple.
+  contact: string;
+  dateOfBirth: string; // ISO
   sessionNotes: SessionNote[];
-  // Placeholder for where encrypted data might be stored or handled
-  // encryptedMedicalHistory?: string; 
 }
 
-export type AttendanceStatus = 'present' | 'absent' | 'rescheduled' | 'pending';
-
+// 📅 Agendamento de sessão
 export interface Appointment {
   id: string;
   patientId: string;
-  patientName?: string; // Denormalized for easier display
-  dateTime: string; // ISO string
+  patientName: string;
+  dateTime: string; // ISO
   durationMinutes: number;
-  status: AttendanceStatus;
-  notes?: string; // Brief notes about the appointment itself, not session notes
+  status: 'pending' | 'confirmed' | 'cancelled' | 'present' | 'missed';
+  notes?: string;
 }
 
+// ⏳ Lista de espera
 export interface WaitingListItem {
   id: string;
   patientName: string;
   contact: string;
-  requestedDate?: string; // ISO string or general preference
-  addedDate: string; // ISO string
+  addedDate: string; // ISO
+  requestedDate?: string;
   notes?: string;
-}
-
-export interface AIInsight {
-  id: string;
-  timestamp: string; // ISO string
-  insightText: string;
 }

@@ -1,22 +1,26 @@
-
 "use client";
 
-import type { Patient, SessionNote } from "@/lib/types"; // Import the types
-import { mockPatients } from "@/lib/mock-data"; // For finding the patient
+import type { Patient, SessionNote } from "@/lib/types";
+import { mockPatients } from "@/lib/mock-data"; // mockPatients agora está exportado corretamente
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, UserCircle, CalendarDays as CalendarIcon, Phone, Gift } from "lucide-react"; // Renamed CalendarDays to CalendarIcon
+import { ArrowLeft, UserCircle, CalendarDays as CalendarIcon, Phone, Gift } from "lucide-react";
 import Link from "next/link";
 import { SessionNotesSection } from "./SessionNotesSection";
 import { AIInsightsSection } from "./AIInsightsSection";
 import { format, parseISO, differenceInYears } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
-import Image from 'next/image';
+import Image from "next/image";
 
 interface PatientDetailsClientProps {
   patientId: string;
 }
+
+// ✅ Corrigido: tipando o parâmetro 'p'
+const getMockPatientById = (id: string): Patient | null => {
+  return mockPatients.find((p: Patient) => p.id === id) || null;
+};
 
 export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
   const [patient, setPatient] = useState<Patient | null>(null);
@@ -24,7 +28,6 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Simulate fetching decrypted patient data using the mock function
     const foundPatient = getMockPatientById(patientId);
     if (foundPatient) {
       setPatient(foundPatient);
@@ -41,24 +44,46 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
       notes: noteContent,
     };
 
-    // Simulate saving the note
     await new Promise(resolve => setTimeout(resolve, 500));
 
-    setPatient(prevPatient => {
-      if (!prevPatient) return null;
+    setPatient(prev => {
+      if (!prev) return null;
       return {
-        ...prevPatient,
-        sessionNotes: [...prevPatient.sessionNotes, newNote],
+        ...prev,
+        sessionNotes: [...prev.sessionNotes, newNote],
       };
     });
+
     toast({
       title: "Nota Adicionada",
       description: "A nova nota de sessão foi salva com sucesso.",
     });
   };
-  
+
+  // ✅ Corrigido: adicionada função para deletar nota
+  const handleDeleteNote = async (noteId: string) => {
+    if (!patient) return;
+
+    setPatient(prev => {
+      if (!prev) return null;
+      return {
+        ...prev,
+        sessionNotes: prev.sessionNotes.filter(note => note.id !== noteId),
+      };
+    });
+
+    toast({
+      title: "Nota Removida",
+      description: "A nota foi excluída com sucesso.",
+    });
+  };
+
   if (isLoading) {
-    return <div className="flex justify-center items-center h-64"><p>Carregando dados do paciente...</p></div>;
+    return (
+      <div className="flex justify-center items-center h-64">
+        <p>Carregando dados do paciente...</p>
+      </div>
+    );
   }
 
   if (!patient) {
@@ -83,16 +108,18 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
       <Card className="shadow-xl rounded-lg overflow-hidden">
         <div className="md:flex">
           <div className="md:w-1/3 bg-gradient-to-br from-primary/20 to-accent/20 p-6 flex flex-col items-center justify-center text-center">
-            <Image 
-              src={`https://placehold.co/150x150.png?text=${patient.name.charAt(0)}`} 
-              alt={patient.name} 
-              width={120} 
+            <Image
+              src={`https://placehold.co/150x150.png?text=${patient.name.charAt(0)}`}
+              alt={patient.name}
+              width={120}
               height={120}
               className="rounded-full border-4 border-background shadow-lg mb-4"
               data-ai-hint="profile picture"
             />
             <CardTitle className="text-2xl font-bold font-headline text-primary">{patient.name}</CardTitle>
-            <CardDescription className="text-foreground/80">ID do Paciente: {patient.id}</CardDescription>
+            <CardDescription className="text-foreground/80">
+              ID do Paciente: {patient.id}
+            </CardDescription>
           </div>
           <div className="md:w-2/3 p-6">
             <CardHeader className="p-0 mb-4">
@@ -108,13 +135,15 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
               <div className="flex items-center">
                 <Gift className="h-5 w-5 mr-3 text-primary" />
                 <div>
-                  <span className="font-semibold">Nascimento:</span> {format(parseISO(patient.dateOfBirth), "dd/MM/yyyy")}
+                  <span className="font-semibold">Nascimento:</span>{" "}
+                  {format(parseISO(patient.dateOfBirth), "dd/MM/yyyy")}
                 </div>
               </div>
               <div className="flex items-center">
                 <CalendarIcon className="h-5 w-5 mr-3 text-primary" />
                 <div>
-                  <span className="font-semibold">Idade:</span> {differenceInYears(new Date(), parseISO(patient.dateOfBirth))} anos
+                  <span className="font-semibold">Idade:</span>{" "}
+                  {differenceInYears(new Date(), parseISO(patient.dateOfBirth))} anos
                 </div>
               </div>
               <div className="flex items-center sm:col-span-2">
@@ -127,10 +156,22 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
           </div>
         </div>
       </Card>
-      
-      <SessionNotesSection patient={patient} onAddNote={handleAddNote} />
-      
-      <AIInsightsSection patient={patient} latestSessionNote={patient.sessionNotes.length > 0 ? patient.sessionNotes[patient.sessionNotes.length - 1] : undefined}/>
+
+      {/* ✅ Corrigido: passando também o onDeleteNote */}
+      <SessionNotesSection
+        patient={patient}
+        onAddNote={handleAddNote}
+        onDeleteNote={handleDeleteNote}
+      />
+
+      <AIInsightsSection
+        patient={patient}
+        latestSessionNote={
+          patient.sessionNotes.length > 0
+            ? patient.sessionNotes[patient.sessionNotes.length - 1]
+            : undefined
+        }
+      />
 
       <Card className="shadow-lg mt-6" data-ai-hint="compliance and reminders section">
         <CardHeader>
@@ -138,9 +179,17 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
         </CardHeader>
         <CardContent>
           <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
-            <li data-ai-hint="lgpd reminder">Assegure-se de ter o consentimento do paciente para o tratamento de dados (LGPD/GDPR).</li>
-            <li data-ai-hint="encryption reminder">A criptografia client-side para campos sensíveis é uma prioridade de segurança (não implementada neste protótipo).</li>
-            <li data-ai-hint="notification reminder">Notificações de sessão automáticas (24h e 30min antes) são funcionalidades planejadas.</li>
+            <li data-ai-hint="lgpd reminder">
+              Assegure-se de ter o consentimento do paciente para o tratamento de dados
+              (LGPD/GDPR).
+            </li>
+            <li data-ai-hint="encryption reminder">
+              A criptografia client-side para campos sensíveis é uma prioridade de segurança (não
+              implementada neste protótipo).
+            </li>
+            <li data-ai-hint="notification reminder">
+              Notificações de sessão automáticas (24h e 30min antes) são funcionalidades planejadas.
+            </li>
           </ul>
         </CardContent>
       </Card>
