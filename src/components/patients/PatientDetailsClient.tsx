@@ -1,7 +1,7 @@
 "use client";
 
 import type { Patient, SessionNote } from "@/lib/types";
-import { getMockPatientById } from "@/lib/mock-data";
+import { getMockPatientById, updateMockPatient } from "@/lib/mock-data";
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -31,12 +31,16 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
     setIsLoading(false);
   }, [patientId]);
 
-  const handleAddNote = async (id: string, noteContent: string) => {
+  const handleAddNote = async (
+    id: string,
+    noteContent: string,
+    noteDate: string
+  ) => {
     if (!patient) return;
 
     const newNote: SessionNote = {
       id: `sn-${Date.now()}`,
-      date: new Date().toISOString(),
+      date: noteDate,
       notes: noteContent,
     };
 
@@ -44,10 +48,12 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
 
     setPatient(prev => {
       if (!prev) return null;
-      return {
+      const updated = {
         ...prev,
         sessionNotes: [...prev.sessionNotes, newNote],
       };
+      updateMockPatient(updated);
+      return updated;
     });
 
     toast({
@@ -56,16 +62,17 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
     });
   };
 
-  // ✅ Corrigido: adicionada função para deletar nota
-  const handleDeleteNote = async (noteId: string) => {
+  const handleDeleteNote = async (id: string, noteId: string) => {
     if (!patient) return;
 
     setPatient(prev => {
       if (!prev) return null;
-      return {
+      const updated = {
         ...prev,
         sessionNotes: prev.sessionNotes.filter(note => note.id !== noteId),
       };
+      updateMockPatient(updated);
+      return updated;
     });
 
     toast({
