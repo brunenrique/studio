@@ -20,7 +20,7 @@ import {
   FileText,
   Lightbulb,
   PiggyBank,
-  BirthdayCake,
+  Cake,
   Settings2,
 } from 'lucide-react';
 import Image from 'next/image';
@@ -285,7 +285,7 @@ export default function DashboardPage() {
           <Card className="shadow-lg hover:shadow-xl transition-shadow md:col-span-2 lg:col-span-1">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Próximos Aniversários</CardTitle>
-              <BirthdayCake className="h-5 w-5 text-primary" />
+              <Cake className="h-5 w-5 text-primary" />
             </CardHeader>
             <CardContent className="space-y-1">
               {upcomingBirthdays.length === 0 && (
