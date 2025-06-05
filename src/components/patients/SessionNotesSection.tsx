@@ -4,6 +4,7 @@ import type { SessionNote, Patient } from "@/lib/types";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import {
   Card,
   CardContent,
@@ -18,8 +19,12 @@ import { Separator } from "@/components/ui/separator";
 
 interface SessionNotesSectionProps {
   patient: Patient;
-  onAddNote: (patientId: string, noteContent: string) => Promise<void>;
-  onDeleteNote: (patientId: string, noteId: string) => Promise<void>; // ✅ incluído corretamente
+  onAddNote: (
+    patientId: string,
+    noteContent: string,
+    noteDate: string
+  ) => Promise<void>;
+  onDeleteNote: (patientId: string, noteId: string) => Promise<void>;
 }
 
 export function SessionNotesSection({
@@ -28,6 +33,9 @@ export function SessionNotesSection({
   onDeleteNote, // ✅ recebido nas props
 }: SessionNotesSectionProps) {
   const [newNote, setNewNote] = useState("");
+  const [newNoteDate, setNewNoteDate] = useState(
+    () => new Date().toISOString().slice(0, 16)
+  );
   const [showAddNoteForm, setShowAddNoteForm] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -35,8 +43,9 @@ export function SessionNotesSection({
     if (newNote.trim() === "") return;
     setIsSaving(true);
     try {
-      await onAddNote(patient.id, newNote);
+      await onAddNote(patient.id, newNote, newNoteDate);
       setNewNote("");
+      setNewNoteDate(new Date().toISOString().slice(0, 16));
       setShowAddNoteForm(false);
     } catch (error) {
       console.error("Failed to save note:", error);
@@ -75,6 +84,12 @@ export function SessionNotesSection({
               onChange={(e) => setNewNote(e.target.value)}
               rows={5}
               className="mb-3 text-base"
+            />
+            <Input
+              type="datetime-local"
+              value={newNoteDate}
+              onChange={(e) => setNewNoteDate(e.target.value)}
+              className="mb-3"
             />
             <div className="flex justify-end gap-2">
               <Button
