@@ -22,7 +22,7 @@ import {
   isPast,
   isToday,
   addMinutes,
-} from "date-fns"; // ✅ incluído o addMinutes aqui
+} from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { AppointmentFormDialog } from "./AppointmentFormDialog";
 import { Calendar } from "@/components/ui/calendar";
@@ -339,7 +339,7 @@ export function AppointmentCalendarView({
           if (!open) setEditingAppointment(null);
         }}
       >
-        <button className="hidden"></button>
+        <button className="hidden" />
       </AppointmentFormDialog>
 
       <Card className="mt-6 shadow-md">
@@ -352,4 +352,11 @@ export function AppointmentCalendarView({
         <CardContent>
           <p className="text-sm text-muted-foreground">
             Lembretes automáticos por e-mail são enviados aos pacientes 24 horas e
-            30
+            30 minutos antes de cada sessão agendada.
+            (Funcionalidade ainda não implementada neste protótipo.)
+          </p>
+        </CardContent>
+      </Card>
+    </TooltipProvider>
+  );
+}

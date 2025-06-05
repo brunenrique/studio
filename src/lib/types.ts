@@ -1,6 +1,9 @@
 // 🔐 Papéis disponíveis no sistema
 export type UserRole = 'Admin Global' | 'Psicólogo' | 'Admin/Secretário';
 
+// 🩺 Tipos de status de comparecimento
+export type AttendanceStatus = 'pending' | 'present' | 'absent' | 'rescheduled';
+
 // 👤 Representação de um usuário (psicólogo ou administrativo)
 export interface User {
   id: string;
@@ -9,10 +12,10 @@ export interface User {
   role: UserRole;
 }
 
-// 📝 Nota de sessão (com campo opcional para IA)
+// 📝 Nota de sessão (com histórico opcional para IA)
 export interface SessionNote {
   id: string;
-  date: string; // ISO
+  date: string; // formato ISO
   notes: string;
   patientHistorySummaryForAI?: string;
 }
@@ -22,7 +25,7 @@ export interface Patient {
   id: string;
   name: string;
   contact: string;
-  dateOfBirth: string; // ISO
+  dateOfBirth: string; // formato ISO
   sessionNotes: SessionNote[];
 }
 
@@ -31,18 +34,18 @@ export interface Appointment {
   id: string;
   patientId: string;
   patientName: string;
-  dateTime: string; // ISO
+  dateTime: string; // formato ISO
   durationMinutes: number;
-  status: 'pending' | 'confirmed' | 'cancelled' | 'present' | 'missed';
+  status: AttendanceStatus;
   notes?: string;
 }
 
-// ⏳ Lista de espera
+// ⏳ Entrada da lista de espera
 export interface WaitingListItem {
   id: string;
   patientName: string;
   contact: string;
-  addedDate: string; // ISO
+  addedDate: string; // formato ISO
   requestedDate?: string;
   notes?: string;
 }
