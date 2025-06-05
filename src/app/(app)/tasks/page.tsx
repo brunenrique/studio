@@ -1,26 +1,22 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import type { Task } from '@/lib/types';
-import { mockTasks } from '@/lib/mock-data';
 import { TaskTable } from '@/components/tasks/TaskTable';
 import { TaskFormDialog } from '@/components/tasks/TaskFormDialog';
 import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
+import { useTasks } from '@/contexts/TasksContext';
 
 export default function TasksPage() {
-  const [tasks, setTasks] = useState<Task[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const { toast } = useToast();
-
-  useEffect(() => {
-    setTasks(mockTasks);
-  }, []);
+  const { tasks, addTask, toggleTask, deleteTask } = useTasks();
 
   const handleSave = (task: Task) => {
-    setTasks(prev => [...prev, task]);
+    addTask({ title: task.title, dueDate: task.dueDate });
     toast({
       title: "Tarefa Criada",
       description: `A tarefa "${task.title}" foi adicionada.`,
@@ -28,11 +24,11 @@ export default function TasksPage() {
   };
 
   const handleToggle = (id: string) => {
-    setTasks(prev => prev.map(t => (t.id === id ? { ...t, completed: !t.completed } : t)));
+    toggleTask(id);
   };
 
   const handleDelete = (id: string) => {
-    setTasks(prev => prev.filter(t => t.id !== id));
+    deleteTask(id);
   };
 
   return (
