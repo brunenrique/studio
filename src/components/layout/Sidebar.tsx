@@ -59,7 +59,7 @@ export function AppSidebar() {
   return (
     <Sidebar className="border-r bg-card" collapsible="icon">
       <SidebarHeader className="p-4">
-        <Link href="/dashboard" className="mb-4 block" legacyBehavior>
+        <Link href="/dashboard" className="mb-4 block">
           <Logo />
         </Link>
       </SidebarHeader>
@@ -67,7 +67,7 @@ export function AppSidebar() {
         <SidebarMenu>
           {navItems.map((item) => (
             <SidebarMenuItem key={item.href}>
-              <Link href={item.href} passHref legacyBehavior>
+              <Link href={item.href}>
                 <SidebarMenuButton
                   variant="default"
                   className={cn(
