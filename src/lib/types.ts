@@ -78,6 +78,15 @@ export interface FinanceRecord {
   description?: string;
 }
 
+// 💊 Medicamento de referência rápida
+export interface Medication {
+  id: string;
+  name: string;
+  class: string;
+  indications: string;
+  sideEffects: string;
+}
+
 // 📋 Metadados de um inventário/teste
 export interface TestMeta {
   id: string;

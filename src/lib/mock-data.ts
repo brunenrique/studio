@@ -7,6 +7,7 @@ import type {
   Template,
   KnowledgeBaseArticle,
   FinanceRecord,
+  Medication,
 } from '@/lib/types';
 
 // 👤 Usuário mock
@@ -243,5 +244,37 @@ export const mockKnowledgeBaseArticles: KnowledgeBaseArticle[] = [
     question: 'Os dados são criptografados?',
     answer:
       'Este protótipo usa criptografia apenas em campos selecionados. Veja a documentação para mais detalhes.'
+  }
+];
+
+// 💊 Lista de medicamentos comuns para referência rápida
+export const mockMedications: Medication[] = [
+  {
+    id: 'med-001',
+    name: 'Sertralina',
+    class: 'ISRS',
+    indications: 'Depressão, transtorno de ansiedade',
+    sideEffects: 'Náusea, insônia, boca seca'
+  },
+  {
+    id: 'med-002',
+    name: 'Fluoxetina',
+    class: 'ISRS',
+    indications: 'Depressão, transtorno obsessivo-compulsivo',
+    sideEffects: 'Agitação, dor de cabeça, insônia'
+  },
+  {
+    id: 'med-003',
+    name: 'Bupropiona',
+    class: 'Antidepressivo atípico',
+    indications: 'Depressão maior, cessação do tabagismo',
+    sideEffects: 'Boca seca, insônia, tremores'
+  },
+  {
+    id: 'med-004',
+    name: 'Clonazepam',
+    class: 'Benzodiazepínico',
+    indications: 'Transtorno de ansiedade, crises convulsivas',
+    sideEffects: 'Sedação, tontura, dependência'
   }
 ];
