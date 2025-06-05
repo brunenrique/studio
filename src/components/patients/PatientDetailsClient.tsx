@@ -5,10 +5,21 @@ import { getMockPatientById, updateMockPatient } from "@/lib/mock-data";
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, UserCircle, CalendarDays as CalendarIcon, Phone, Gift } from "lucide-react";
+import {
+  ArrowLeft,
+  UserCircle,
+  CalendarDays as CalendarIcon,
+  Phone,
+  Gift,
+  UploadCloud,
+  PlusCircle,
+  Trash2,
+} from "lucide-react";
 import Link from "next/link";
 import { SessionNotesSection } from "./SessionNotesSection";
 import { AIInsightsSection } from "./AIInsightsSection";
+import { DocumentUploadDialog } from "./DocumentUploadDialog";
+import { TreatmentPlanDialog } from "./TreatmentPlanDialog";
 import { format, parseISO, differenceInYears } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import Image from "next/image";
@@ -79,6 +90,81 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
       title: "Nota Removida",
       description: "A nota foi excluída com sucesso.",
     });
+  };
+
+  const handleUploadDocument = async (name: string) => {
+    if (!patient) return;
+    const newDoc = {
+      id: `doc-${Date.now()}`,
+      name,
+      url: `/uploads/${name}`,
+      uploadedAt: new Date().toISOString(),
+    };
+
+    await new Promise((r) => setTimeout(r, 500));
+
+    setPatient((prev) => {
+      if (!prev) return null;
+      const updated = {
+        ...prev,
+        documents: [...(prev.documents || []), newDoc],
+      };
+      updateMockPatient(updated);
+      return updated;
+    });
+
+    toast({ title: "Documento Adicionado", description: "Arquivo salvo com sucesso." });
+  };
+
+  const handleAddTreatmentPlan = async (title: string, description: string) => {
+    if (!patient) return;
+    const newPlan = {
+      id: `tp-${Date.now()}`,
+      title,
+      description,
+      createdAt: new Date().toISOString(),
+    };
+    await new Promise((r) => setTimeout(r, 500));
+
+    setPatient((prev) => {
+      if (!prev) return null;
+      const updated = {
+        ...prev,
+        treatmentPlans: [...(prev.treatmentPlans || []), newPlan],
+      };
+      updateMockPatient(updated);
+      return updated;
+    });
+
+    toast({ title: "Plano criado", description: "Novo plano de tratamento salvo." });
+  };
+
+  const handleDeleteDocument = async (docId: string) => {
+    if (!patient) return;
+    setPatient((prev) => {
+      if (!prev) return null;
+      const updated = {
+        ...prev,
+        documents: (prev.documents || []).filter((d) => d.id !== docId),
+      };
+      updateMockPatient(updated);
+      return updated;
+    });
+    toast({ title: "Documento Removido" });
+  };
+
+  const handleDeleteTreatmentPlan = async (planId: string) => {
+    if (!patient) return;
+    setPatient((prev) => {
+      if (!prev) return null;
+      const updated = {
+        ...prev,
+        treatmentPlans: (prev.treatmentPlans || []).filter((p) => p.id !== planId),
+      };
+      updateMockPatient(updated);
+      return updated;
+    });
+    toast({ title: "Plano removido" });
   };
 
   if (isLoading) {
@@ -166,6 +252,69 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
         onAddNote={handleAddNote}
         onDeleteNote={handleDeleteNote}
       />
+
+      <Card className="shadow-lg mt-6">
+        <CardHeader className="flex justify-between items-center">
+          <div>
+            <CardTitle className="text-xl font-headline">Documentos</CardTitle>
+            <CardDescription>Arquivos anexados ao paciente.</CardDescription>
+          </div>
+          <DocumentUploadDialog onUpload={handleUploadDocument}>
+            <Button size="sm" className="shadow-md">
+              <UploadCloud className="mr-2 h-4 w-4" /> Adicionar Documento
+            </Button>
+          </DocumentUploadDialog>
+        </CardHeader>
+        <CardContent>
+          {patient.documents && patient.documents.length > 0 ? (
+            <ul className="space-y-2">
+              {patient.documents.map((doc) => (
+                <li key={doc.id} className="flex justify-between items-center border rounded p-2">
+                  <span>{doc.name}</span>
+                  <Button variant="ghost" size="sm" onClick={() => handleDeleteDocument(doc.id)} className="p-1 h-auto">
+                    <Trash2 className="h-4 w-4 text-red-500" />
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-sm text-muted-foreground">Nenhum documento cadastrado.</p>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card className="shadow-lg mt-6">
+        <CardHeader className="flex justify-between items-center">
+          <div>
+            <CardTitle className="text-xl font-headline">Planos de Tratamento</CardTitle>
+            <CardDescription>Registros de planos associados.</CardDescription>
+          </div>
+          <TreatmentPlanDialog onSave={handleAddTreatmentPlan}>
+            <Button size="sm" className="shadow-md">
+              <PlusCircle className="mr-2 h-4 w-4" /> Novo Plano
+            </Button>
+          </TreatmentPlanDialog>
+        </CardHeader>
+        <CardContent>
+          {patient.treatmentPlans && patient.treatmentPlans.length > 0 ? (
+            <ul className="space-y-2">
+              {patient.treatmentPlans.map((plan) => (
+                <li key={plan.id} className="flex justify-between items-center border rounded p-2">
+                  <div>
+                    <p className="font-medium">{plan.title}</p>
+                    <p className="text-sm text-muted-foreground">{plan.description}</p>
+                  </div>
+                  <Button variant="ghost" size="sm" onClick={() => handleDeleteTreatmentPlan(plan.id)} className="p-1 h-auto">
+                    <Trash2 className="h-4 w-4 text-red-500" />
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-sm text-muted-foreground">Nenhum plano cadastrado.</p>
+          )}
+        </CardContent>
+      </Card>
 
       <AIInsightsSection
         patient={patient}

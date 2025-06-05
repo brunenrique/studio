@@ -20,6 +20,22 @@ export interface SessionNote {
   patientHistorySummaryForAI?: string;
 }
 
+// 📄 Documento associado a um paciente
+export interface Document {
+  id: string;
+  name: string;
+  url: string;
+  uploadedAt: string; // ISO 8601
+}
+
+// 📝 Plano de tratamento
+export interface TreatmentPlan {
+  id: string;
+  title: string;
+  description: string;
+  createdAt: string; // ISO 8601
+}
+
 // 🧍 Paciente
 export interface Patient {
   id: string;
@@ -27,6 +43,8 @@ export interface Patient {
   contact: string;
   dateOfBirth: string; // ISO 8601
   sessionNotes: SessionNote[];
+  documents?: Document[];
+  treatmentPlans?: TreatmentPlan[];
 }
 
 // 📅 Agendamento de sessão

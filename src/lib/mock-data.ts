@@ -60,6 +60,22 @@ export let mockPatients: Patient[] = [
     contact: 'alice@example.com',
     dateOfBirth: '1990-05-15',
     sessionNotes: initialSessionNotesP1,
+    documents: [
+      {
+        id: 'doc-001',
+        name: 'Consentimento.pdf',
+        url: '/uploads/consentimento.pdf',
+        uploadedAt: new Date(new Date().setDate(today.getDate() - 10)).toISOString(),
+      },
+    ],
+    treatmentPlans: [
+      {
+        id: 'tp-001',
+        title: 'Plano Inicial',
+        description: 'Foco em ansiedade e técnicas de respiração.',
+        createdAt: new Date(new Date().setDate(today.getDate() - 14)).toISOString(),
+      },
+    ],
   },
   {
     id: 'patient-002',
@@ -67,6 +83,8 @@ export let mockPatients: Patient[] = [
     contact: 'bob@example.com',
     dateOfBirth: '1985-11-20',
     sessionNotes: initialSessionNotesP2,
+    documents: [],
+    treatmentPlans: [],
   },
   {
     id: 'patient-003',
@@ -74,6 +92,8 @@ export let mockPatients: Patient[] = [
     contact: 'charlie@example.com',
     dateOfBirth: '2000-02-10',
     sessionNotes: [],
+    documents: [],
+    treatmentPlans: [],
   },
 ];
 
