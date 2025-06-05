@@ -7,6 +7,11 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Users, CalendarDays, ListChecks, FileText, Lightbulb } from 'lucide-react';
+import {
+  mockAppointments,
+  mockPatients,
+  mockWaitingList,
+} from '@/lib/mock-data';
 import Image from 'next/image';
 
 export default function DashboardPage() {
@@ -15,10 +20,17 @@ export default function DashboardPage() {
 
   if (!user) return null; // Or a loading state
 
-  // Dummy data for dashboard
-  const upcomingAppointmentsCount = 3;
-  const activePatientsCount = 5;
-  const waitingListCount = 2;
+  const now = new Date();
+  const nextWeek = new Date(now);
+  nextWeek.setDate(now.getDate() + 7);
+
+  const upcomingAppointmentsCount = mockAppointments.filter((a) => {
+    const date = new Date(a.dateTime);
+    return date >= now && date <= nextWeek;
+  }).length;
+
+  const activePatientsCount = mockPatients.length;
+  const waitingListCount = mockWaitingList.length;
 
   return (
     <div className="space-y-8">
