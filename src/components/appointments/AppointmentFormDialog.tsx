@@ -88,7 +88,7 @@ export function AppointmentFormDialog({
           status: "pending",
           notes: "",
         },
-  });
+});
 
   useEffect(() => {
     if (isOpen) {

@@ -6,7 +6,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { PlusCircle, Save, Loader2 } from "lucide-react";
+import { PlusCircle, Save, Loader2, Trash2 } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Separator } from "@/components/ui/separator";
@@ -14,6 +14,7 @@ import { Separator } from "@/components/ui/separator";
 interface SessionNotesSectionProps {
   patient: Patient;
   onAddNote: (patientId: string, noteContent: string) => Promise<void>; // Made async
+  onDeleteNote: (patientId: string, noteId: string) => Promise<void>;
 }
 
 export function SessionNotesSection({ patient, onAddNote }: SessionNotesSectionProps) {
@@ -85,9 +86,15 @@ export function SessionNotesSection({ patient, onAddNote }: SessionNotesSectionP
             <div key={note.id}>
               {index > 0 && <Separator className="my-4" />}
               <div className="p-4 border rounded-md bg-background shadow-sm">
-                <p className="text-sm font-semibold text-primary mb-1">
-                  Sessão de {format(parseISO(note.date), "dd 'de' MMMM 'de' yyyy, HH:mm", { locale: ptBR })}
-                </p>
+                <div className="flex justify-between items-start mb-1">
+                  <p className="text-sm font-semibold text-primary">
+                    Sessão de {format(parseISO(note.date), "dd 'de' MMMM 'de' yyyy, HH:mm", { locale: ptBR })}
+                  </p>
+                  {/* Add delete button */}
+                  <Button variant="ghost" size="sm" onClick={() => onDeleteNote(patient.id, note.id)} className="p-1 h-auto">
+                    <Trash2 className="h-4 w-4 text-red-500" />
+                  </Button>
+                </div>
                 <p className="text-sm whitespace-pre-wrap leading-relaxed">{note.notes}</p>
               </div>
             </div>

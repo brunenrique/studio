@@ -1,7 +1,9 @@
+export type UserRole = 'Admin Global' | 'Psicólogo' | 'Admin/Secretário';
+
 export interface User {
   id: string;
   email: string;
-  role: 'psychologist' | 'admin' | 'secretary'; // Simplified roles
+  role: UserRole;
   name: string;
 }
 

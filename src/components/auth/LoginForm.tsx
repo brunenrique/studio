@@ -22,13 +22,13 @@ import Link from "next/link";
 const formSchema = z.object({
   email: z.string().email({ message: "Por favor, insira um email válido." }),
   password: z.string().min(1, { message: "A senha é obrigatória." }), // Simplified for mock
-});
+}); 
 
 export function LoginForm() {
   const { login, isLoading } = useAuth();
 
   const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(formSchema), 
     defaultValues: {
       email: "",
       password: "",
@@ -36,7 +36,7 @@ export function LoginForm() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    await login(values.email, values.password);
+    await login(values.email, values.password); 
   }
 
   return (
@@ -79,14 +79,12 @@ export function LoginForm() {
             </Button>
           </form>
         </Form>
-        <p className="mt-6 text-center text-sm text-muted-foreground">
-          Não tem uma conta?{" "}
-          <Link href="/register" className="font-medium text-primary hover:underline">
-            Registre-se
-          </Link>
-           {" "} (Funcionalidade de registro não implementada neste protótipo)
-        </p>
       </CardContent>
-    </Card>
+      <p className="mt-6 text-center text-sm text-muted-foreground">
+        Não tem uma conta?{" "}
+        <Link href="/register" className="font-medium text-primary hover:underline">
+          Registre-se
+        </Link>{" "}
+      </p>
   );
 }

@@ -30,7 +30,7 @@ import { cn } from "@/lib/utils";
 import { format, parseISO } from "date-fns";
 import type { Patient } from "@/lib/types";
 import { useState } from "react";
-
+import React from 'react';
 const patientFormSchema = z.object({
   name: z.string().min(2, { message: "O nome deve ter pelo menos 2 caracteres." }),
   contact: z.string().min(5, { message: "Contato inválido." }), // Can be email or phone
