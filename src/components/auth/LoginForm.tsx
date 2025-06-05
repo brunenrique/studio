@@ -87,5 +87,6 @@ export function LoginForm() {
           Registre-se
         </Link>{" "}
       </p>
+    </Card>
   );
 }

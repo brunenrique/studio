@@ -133,15 +133,15 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
       
       <AIInsightsSection patient={patient} latestSessionNote={patient.sessionNotes.length > 0 ? patient.sessionNotes[patient.sessionNotes.length - 1] : undefined}/>
 
-      <Card className="shadow-lg mt-6">
+      <Card className="shadow-lg mt-6" data-ai-hint="compliance and reminders section">
         <CardHeader>
-          <CardTitle>Lembretes e Conformidade</CardTitle>
+          <CardTitle className="font-semibold text-lg">Lembretes e Conformidade</CardTitle>
         </CardHeader>
         <CardContent>
           <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
-            <li>Assegure-se de ter o consentimento do paciente para o tratamento de dados (LGPD/GDPR).</li>
-            <li>A criptografia client-side para campos sensíveis é uma prioridade de segurança (não implementada neste protótipo).</li>
-            <li>Notificações de sessão automáticas (24h e 30min antes) são funcionalidades planejadas.</li>
+            <li data-ai-hint="lgpd reminder">Assegure-se de ter o consentimento do paciente para o tratamento de dados (LGPD/GDPR).</li>
+            <li data-ai-hint="encryption reminder">A criptografia client-side para campos sensíveis é uma prioridade de segurança (não implementada neste protótipo).</li>
+            <li data-ai-hint="notification reminder">Notificações de sessão automáticas (24h e 30min antes) são funcionalidades planejadas.</li>
           </ul>
         </CardContent>
       </Card>
