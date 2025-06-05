@@ -50,5 +50,14 @@ export interface WaitingListItem {
   notes?: string;
 }
 
+// 💰 Registro financeiro simples para demonstrar resumo mensal
+export interface FinancialRecord {
+  id: string;
+  date: string; // ISO 8601
+  type: 'income' | 'expense';
+  amount: number;
+  description?: string;
+}
+
 // 🔄 Tipo utilitário: paciente parcial para formulários e updates
 export type PartialPatient = Partial<Patient>;

@@ -2,6 +2,7 @@ import type {
   Patient,
   Appointment,
   WaitingListItem,
+  FinancialRecord,
   User,
   SessionNote,
 } from '@/lib/types';
@@ -163,5 +164,30 @@ export const mockWaitingList: WaitingListItem[] = [
     contact: 'clark@example.com',
     addedDate: new Date(today.setDate(today.getDate() - 3)).toISOString(),
     notes: 'Encaminhamento urgente do Dr. Hamilton.',
+  },
+];
+
+// 💵 Registros financeiros mock para demonstração do dashboard
+export const mockFinancialRecords: FinancialRecord[] = [
+  {
+    id: 'fin-001',
+    date: today.toISOString(),
+    type: 'income',
+    amount: 200,
+    description: 'Sessão com Alice Wonderland',
+  },
+  {
+    id: 'fin-002',
+    date: today.toISOString(),
+    type: 'income',
+    amount: 250,
+    description: 'Sessão com Bob The Builder',
+  },
+  {
+    id: 'fin-003',
+    date: yesterday.toISOString(),
+    type: 'expense',
+    amount: 50,
+    description: 'Materiais de escritório',
   },
 ];
