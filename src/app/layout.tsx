@@ -1,13 +1,13 @@
-import type { Metadata } from 'next';
-import './globals.css';
-import { AuthProvider } from '@/contexts/AuthContext';
-import { NotificationProvider } from '@/contexts/NotificationContext';
-import { RecurringTasksProvider } from '@/contexts/RecurringTasksContext';
+import type { Metadata } from "next";
+import "./globals.css";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { NotificationProvider } from "@/contexts/NotificationContext";
+import { RecurringTasksProvider } from "@/contexts/RecurringTasksContext";
 import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
-  title: 'PsiGuard',
-  description: 'Secure platform for psychologists',
+  title: "PsiGuard",
+  description: "Secure platform for psychologists",
 };
 
 export default function RootLayout({
@@ -19,8 +19,15 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+        <link
+          href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap"
+          rel="stylesheet"
+        />
       </head>
       <body className="font-body antialiased">
         <AuthProvider>
