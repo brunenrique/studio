@@ -50,5 +50,18 @@ export interface WaitingListItem {
   notes?: string;
 }
 
+// 📑 Modelo reutilizável (anotação, email, plano de tratamento, etc.)
+export type TemplateCategory =
+  | 'session-note'
+  | 'email'
+  | 'treatment-plan';
+
+export interface Template {
+  id: string;
+  name: string;
+  category: TemplateCategory;
+  content: string;
+}
+
 // 🔄 Tipo utilitário: paciente parcial para formulários e updates
 export type PartialPatient = Partial<Patient>;
