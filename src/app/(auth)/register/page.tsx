@@ -13,11 +13,15 @@ import Link from "next/link";
 import { useRouter } from 'next/navigation';
 
 // Mock user registration function
-const mockRegisterUser = async (email, password, role) => {
+const mockRegisterUser = async (
+  email: string,
+  password: string,
+  role: string
+): Promise<{ success: boolean }> => {
   // In a real application, this would be an API call to your backend
   console.log("Attempting to register user:", { email, password, role });
   // Simulate a successful registration after a delay
-  return new Promise((resolve) => {
+  return new Promise<{ success: boolean }>((resolve) => {
     setTimeout(() => {
       console.log("Mock registration successful!");
       resolve({ success: true });
@@ -34,7 +38,7 @@ export default function RegisterPage() {
   const [success, setSuccess] = useState(false);
   const router = useRouter();
 
-  const handleRegister = async (e) => {
+  const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
     setSuccess(false);
