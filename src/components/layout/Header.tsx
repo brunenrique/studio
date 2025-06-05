@@ -75,7 +75,10 @@ export function AppHeader() {
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => router.push('/settings')}> {/* Placeholder */}
+              <DropdownMenuItem onClick={() => router.push('/knowledge-base')}>
+                Base de Conhecimento
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push('/settings')}>
                 Configurações
               </DropdownMenuItem>
               <DropdownMenuSeparator />

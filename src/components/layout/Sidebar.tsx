@@ -11,6 +11,7 @@ import {
   LogOut,
   Settings,
   PanelLeft,
+  BookOpenCheck,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
@@ -35,7 +36,8 @@ const navItems = [
   { href: '/appointments', label: 'Agendamentos', icon: CalendarDays },
   { href: '/waiting-list', label: 'Lista de Espera', icon: ListChecks },
   { href: '/templates', label: 'Modelos', icon: FileText },
-  // { href: '/settings', label: 'Configurações', icon: Settings }, // Future
+  { href: '/knowledge-base', label: 'Base de Conhecimento', icon: BookOpenCheck },
+  { href: '/settings', label: 'Configurações', icon: Settings },
 ];
 
 export function AppSidebar() {
