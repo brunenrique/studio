@@ -40,7 +40,6 @@ export function LoginForm() {
   }
 
   return (
-    <>
     <Card className="w-full max-w-md shadow-xl rounded-lg">
       <CardHeader>
         <CardTitle className="text-2xl font-headline">Bem-vindo de volta!</CardTitle>
@@ -81,12 +80,12 @@ export function LoginForm() {
           </form>
         </Form>
       </CardContent>
+      {/* Moved the paragraph tag inside the Card */}
       <p className="mt-6 text-center text-sm text-muted-foreground">
         Não tem uma conta?{" "}
         <Link href="/register" className="font-medium text-primary hover:underline">
           Registre-se
         </Link>{" "}
       </p>
-    </>
   );
 }
