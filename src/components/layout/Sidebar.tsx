@@ -13,6 +13,7 @@ import {
   PanelLeft,
   BookOpenCheck,
   HeartPulse,
+  LineChart,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
@@ -33,6 +34,7 @@ import {
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/analytics', label: 'Tendências', icon: LineChart },
   { href: '/patients', label: 'Pacientes', icon: Users },
   { href: '/appointments', label: 'Agendamentos', icon: CalendarDays },
   { href: '/waiting-list', label: 'Lista de Espera', icon: ListChecks },
