@@ -78,5 +78,32 @@ export interface FinanceRecord {
   description?: string;
 }
 
+// 📋 Metadados de um inventário/teste
+export interface TestMeta {
+  id: string;
+  name: string;
+  domain: string;
+  numQuestions: number;
+  instructions: string;
+  scoringAlgorithm: string;
+}
+
+// 📊 Aplicação de inventário para um paciente
+export interface Assessment {
+  id: string;
+  testId: string;
+  status: 'pending' | 'completed' | 'expired';
+  linkToken: string;
+  createdAt: string; // ISO 8601
+  completedAt?: string;
+}
+
+// ✅ Resultado da aplicação
+export interface AssessmentResult extends Assessment {
+  score: number;
+  subscores?: Record<string, number>;
+  rawAnswers?: Record<string, unknown>;
+}
+
 // 🔄 Tipo utilitário: paciente parcial para formulários e updates
 export type PartialPatient = Partial<Patient>;

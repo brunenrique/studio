@@ -107,7 +107,7 @@ export default function SettingsPage() {
               type="number"
               value={system.defaultSessionDuration}
               onChange={(e) =>
-                handleSystem('defaultSessionDuration')(Number(e.target.value))
+                handleSystem('defaultSessionDuration')(e.target.value)
               }
             />
           </div>
