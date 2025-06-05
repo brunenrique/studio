@@ -1,4 +1,7 @@
 {
+  "functions": {
+    "source": "functions"
+  },
   "emulators": {
     "apphosting": {
       "port": 5002,
