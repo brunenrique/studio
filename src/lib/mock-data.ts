@@ -4,6 +4,7 @@ import type {
   WaitingListItem,
   User,
   SessionNote,
+  Template,
 } from '@/lib/types';
 
 // 👤 Usuário mock
@@ -109,6 +110,18 @@ export const updateMockPatient = (updatedPatient: Patient): Patient => {
   return updatedPatient;
 };
 
+// 🔍 Busca paciente pelo ID
+export const getMockPatientById = (id: string): Patient | null => {
+  const patient = mockPatients.find((p) => p.id === id);
+  if (!patient) return null;
+  return {
+    ...patient,
+    name: decryptMock(patient.name),
+    contact: decryptMock(patient.contact),
+    dateOfBirth: decryptMock(patient.dateOfBirth),
+  };
+};
+
 // 📆 Agendamentos mock
 export const mockAppointments: Appointment[] = [
   {
@@ -164,4 +177,20 @@ export const mockWaitingList: WaitingListItem[] = [
     addedDate: new Date(today.setDate(today.getDate() - 3)).toISOString(),
     notes: 'Encaminhamento urgente do Dr. Hamilton.',
   },
+];
+
+// 📑 Modelos de texto reutilizáveis
+export const mockTemplates: Template[] = [
+  {
+    id: 'tpl-001',
+    name: 'Nota de Sessão Padrão',
+    category: 'session-note',
+    content: 'Paciente apresentou progresso desde a última sessão...'
+  },
+  {
+    id: 'tpl-002',
+    name: 'Email de Lembrete',
+    category: 'email',
+    content: 'Olá {{nome}}, este é um lembrete do seu próximo agendamento...'
+  }
 ];

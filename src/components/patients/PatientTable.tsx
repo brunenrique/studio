@@ -1,4 +1,3 @@
-
 "use client";
 
 import type { Patient } from "@/lib/types";
@@ -86,7 +85,11 @@ export function PatientTable({ patients, onUpdatePatient, onDeletePatient }: Pat
           )}
           {patients.map((patient) => (
             <TableRow key={patient.id} className="hover:bg-muted/50 transition-colors">
-              <TableCell className="font-medium">{patient.name}</TableCell>
+              <TableCell className="font-medium">
+                <Link href={`/patients/${patient.id}`} className="text-primary hover:underline">
+                  {patient.name}
+                </Link>
+              </TableCell>
               <TableCell>{patient.contact}</TableCell>
               <TableCell>{format(parseISO(patient.dateOfBirth), "dd/MM/yyyy")}</TableCell>
               <TableCell>{differenceInYears(new Date(), parseISO(patient.dateOfBirth))}</TableCell>

@@ -2,21 +2,35 @@
 "use client";
 
 import { useAuth } from '@/contexts/AuthContext';
+import { useSettings } from '@/contexts/SettingsContext';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Users, CalendarDays, ListChecks, FileText, Lightbulb } from 'lucide-react';
+import {
+  mockAppointments,
+  mockPatients,
+  mockWaitingList,
+} from '@/lib/mock-data';
 import Image from 'next/image';
 
 export default function DashboardPage() {
   const { user } = useAuth();
+  const { dashboard } = useSettings();
 
   if (!user) return null; // Or a loading state
 
-  // Dummy data for dashboard
-  const upcomingAppointmentsCount = 3;
-  const activePatientsCount = 5;
-  const waitingListCount = 2;
+  const now = new Date();
+  const nextWeek = new Date(now);
+  nextWeek.setDate(now.getDate() + 7);
+
+  const upcomingAppointmentsCount = mockAppointments.filter((a) => {
+    const date = new Date(a.dateTime);
+    return date >= now && date <= nextWeek;
+  }).length;
+
+  const activePatientsCount = mockPatients.length;
+  const waitingListCount = mockWaitingList.length;
 
   return (
     <div className="space-y-8">
@@ -36,6 +50,7 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {dashboard.showAppointments && (
         <Card className="shadow-lg hover:shadow-xl transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Próximos Agendamentos</CardTitle>
@@ -49,7 +64,9 @@ export default function DashboardPage() {
             </Button>
           </CardContent>
         </Card>
+        )}
 
+        {dashboard.showPatients && (
         <Card className="shadow-lg hover:shadow-xl transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Pacientes Ativos</CardTitle>
@@ -63,7 +80,9 @@ export default function DashboardPage() {
             </Button>
           </CardContent>
         </Card>
+        )}
 
+        {dashboard.showWaitingList && (
         <Card className="shadow-lg hover:shadow-xl transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Lista de Espera</CardTitle>
@@ -77,6 +96,7 @@ export default function DashboardPage() {
             </Button>
           </CardContent>
         </Card>
+        )}
       </div>
 
       <Card className="shadow-lg">

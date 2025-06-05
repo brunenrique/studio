@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import type { Patient } from '@/lib/types';
-import { mockPatients } from '@/lib/mock-data'; // ✅ corrigido aqui
 import { getMockPatientsList, updateMockPatient } from '@/lib/mock-data';
 import { PatientTable } from '@/components/patients/PatientTable';
 import { Button } from '@/components/ui/button';
@@ -17,9 +16,8 @@ export default function PatientsPage() {
   const { toast } = useToast();
 
   useEffect(() => {
+    // Carrega lista de pacientes de exemplo
     setPatients(getMockPatientsList());
-    // ✅ agora usando mockPatients direto
-    setPatients(mockPatients);
   }, []);
 
   const handleAddOrUpdatePatient = (patientData: Patient) => {
@@ -87,7 +85,7 @@ export default function PatientsPage() {
         </CardHeader>
         <CardContent>
           <PatientTable
-            patients={getMockPatientsList()}
+            patients={patients}
             onUpdatePatient={handleAddOrUpdatePatient}
             onDeletePatient={handleDeletePatient}
           />

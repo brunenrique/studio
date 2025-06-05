@@ -91,5 +91,60 @@ export function AIInsightsSection({
               <Lightbulb className="mr-2 h-6 w-6 text-primary" />
               Insights da IA
             </CardTitle>
-            <CardDescription>
-              Analise as notas da sessão e o histórico do paciente para obter
+            <CardDescription data-ai-hint="AI insights section description">
+              Analise as notas da sessão e o histórico do paciente para obter insights.
+            </CardDescription>
+          </div>
+
+          <Button
+            onClick={handleGetInsights}
+            disabled={isLoading || !canGenerateInsights}
+            className="shadow-md"
+          >
+            {isLoading ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Lightbulb className="mr-2 h-4 w-4" />
+            )}
+            Gerar Insights
+          </Button>
+        </div>
+        {!canGenerateInsights && (
+          <p className="text-sm text-muted-foreground mt-2">
+            Adicione pelo menos uma nota de sessão para gerar insights.
+          </p>
+        )}
+      </CardHeader>
+      <CardContent>
+        {isLoading && (
+          <div className="flex items-center justify-center p-4">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <p className="ml-2">Analisando dados...</p>
+          </div>
+        )}
+        {error && (
+          <div className="text-destructive p-4 border border-destructive/50 bg-destructive/10 rounded-md flex items-center">
+            <AlertTriangle className="h-5 w-5 mr-2" />
+            <p>{error}</p>
+          </div>
+        )}
+        {insights && (
+          <div>
+            <h4 className="font-semibold mb-2 text-lg">Resultado da Análise:</h4>
+            <Textarea
+              value={insights}
+              readOnly
+              rows={8}
+              className="bg-background/70 text-base leading-relaxed"
+              placeholder="Os insights gerados pela IA aparecerão aqui."
+              data-ai-hint="AI insights output textarea"
+            />
+            <p className="text-xs text-muted-foreground mt-2">
+              Lembrete: Os insights da IA são para auxílio e não substituem o julgamento clínico profissional.
+            </p>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
