@@ -52,3 +52,11 @@ export interface WaitingListItem {
 
 // 🔄 Tipo utilitário: paciente parcial para formulários e updates
 export type PartialPatient = Partial<Patient>;
+
+//  Tarefa recorrente usada para lembretes automáticos
+export interface RecurringTask {
+  id: string;
+  description: string;
+  intervalDays: number;
+  lastCompleted: string; // ISO 8601
+}

@@ -9,6 +9,8 @@
 - Session Notifications: Automated email reminders for upcoming sessions (24 hours and 30 minutes before).
 - Waiting List: Functionality to add patients to a waiting list and move them to available time slots.
 - AI-Driven Session Insights: After session notes have been written, analyze notes and historical session data, using a tool to surface contextualized warnings or concerns within the patient record.
+- Recurring Task Automation: Automatic reminders for repetitive tasks, e.g., reviewing records of chronic patients every six months.
+- Task Scheduling Area: Interface for professionals to create recurring reminders and manage their tasks.
 
 ## Style Guidelines:
 
