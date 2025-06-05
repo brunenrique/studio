@@ -79,6 +79,8 @@ export function PatientFormDialog({ patient, onSave, children, isOpen: controlle
       ...values,
       dateOfBirth: format(values.dateOfBirth, "yyyy-MM-dd"),
       sessionNotes: patient?.sessionNotes || [],
+      documents: patient?.documents || [],
+      treatmentPlan: patient?.treatmentPlan,
     };
     onSave(patientData);
     setIsLoading(false);

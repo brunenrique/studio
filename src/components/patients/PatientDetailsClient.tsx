@@ -5,10 +5,13 @@ import { getMockPatientById } from "@/lib/mock-data";
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, UserCircle, CalendarDays as CalendarIcon, Phone, Gift } from "lucide-react";
+import { ArrowLeft, UserCircle, CalendarDays as CalendarIcon, Phone, Gift, PlusCircle } from "lucide-react";
 import Link from "next/link";
 import { SessionNotesSection } from "./SessionNotesSection";
 import { AIInsightsSection } from "./AIInsightsSection";
+import { DocumentFormDialog } from "./DocumentFormDialog";
+import { DocumentTable } from "./DocumentTable";
+import { TreatmentPlanSection } from "./TreatmentPlanSection";
 import { format, parseISO, differenceInYears } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import Image from "next/image";
@@ -21,6 +24,7 @@ interface PatientDetailsClientProps {
 export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
   const [patient, setPatient] = useState<Patient | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDocFormOpen, setIsDocFormOpen] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -72,6 +76,26 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
       title: "Nota Removida",
       description: "A nota foi excluída com sucesso.",
     });
+  };
+
+  const handleAddDocument = (data: Omit<import("@/lib/types").Document, 'id'>) => {
+    if (!patient) return;
+    const newDoc = { id: `doc-${Date.now()}`, ...data };
+    setPatient(prev => prev && { ...prev, documents: [...prev.documents, newDoc] });
+    toast({
+      title: "Documento Adicionado",
+      description: `O documento ${data.name} foi salvo.`,
+    });
+  };
+
+  const handleDeleteDocument = (docId: string) => {
+    if (!patient) return;
+    setPatient(prev => prev && { ...prev, documents: prev.documents.filter(d => d.id !== docId) });
+  };
+
+  const handleSavePlan = (plan: import("@/lib/types").TreatmentPlan) => {
+    if (!patient) return;
+    setPatient(prev => prev && { ...prev, treatmentPlan: plan });
   };
 
   if (isLoading) {
@@ -168,6 +192,25 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
             : undefined
         }
       />
+
+      <Card className="shadow-lg rounded-lg">
+        <CardHeader className="flex justify-between items-center">
+          <div>
+            <CardTitle className="text-lg font-headline">Documentos</CardTitle>
+            <CardDescription>Arquivos relacionados ao paciente.</CardDescription>
+          </div>
+          <DocumentFormDialog onSave={handleAddDocument} isOpen={isDocFormOpen} onOpenChange={setIsDocFormOpen}>
+            <Button onClick={() => setIsDocFormOpen(true)} size="sm" className="shadow">
+              <PlusCircle className="mr-2 h-4 w-4" /> Novo Documento
+            </Button>
+          </DocumentFormDialog>
+        </CardHeader>
+        <CardContent>
+          <DocumentTable documents={patient.documents} onDelete={handleDeleteDocument} />
+        </CardContent>
+      </Card>
+
+      <TreatmentPlanSection plan={patient.treatmentPlan} onSave={handleSavePlan} />
 
       <Card className="shadow-lg mt-6" data-ai-hint="compliance and reminders section">
         <CardHeader>

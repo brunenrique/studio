@@ -27,6 +27,8 @@ export interface Patient {
   contact: string;
   dateOfBirth: string; // ISO 8601
   sessionNotes: SessionNote[];
+  documents: Document[];
+  treatmentPlan?: TreatmentPlan;
 }
 
 // 📅 Agendamento de sessão
@@ -68,6 +70,20 @@ export interface KnowledgeBaseArticle {
   id: string;
   question: string;
   answer: string;
+}
+
+// 📄 Documento anexado ao paciente
+export interface Document {
+  id: string;
+  name: string;
+  url: string;
+}
+
+// 📝 Plano de tratamento do paciente
+export interface TreatmentPlan {
+  id: string;
+  title: string;
+  content: string;
 }
 
 // ✅ Tarefa/To-Do do profissional

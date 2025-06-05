@@ -60,6 +60,15 @@ export let mockPatients: Patient[] = [
     contact: 'alice@example.com',
     dateOfBirth: '1990-05-15',
     sessionNotes: initialSessionNotesP1,
+    documents: [
+      { id: 'doc-001', name: 'Avaliação Inicial.pdf', url: '#' },
+      { id: 'doc-002', name: 'Termo de Consentimento.pdf', url: '#' },
+    ],
+    treatmentPlan: {
+      id: 'plan-001',
+      title: 'Plano de Tratamento',
+      content: 'Objetivos iniciais e intervenções sugeridas.',
+    },
   },
   {
     id: 'patient-002',
@@ -67,6 +76,12 @@ export let mockPatients: Patient[] = [
     contact: 'bob@example.com',
     dateOfBirth: '1985-11-20',
     sessionNotes: initialSessionNotesP2,
+    documents: [{ id: 'doc-003', name: 'Formulário de Anamnese.pdf', url: '#' }],
+    treatmentPlan: {
+      id: 'plan-002',
+      title: 'Estratégia Terapêutica',
+      content: 'Plano focado em terapia cognitivo-comportamental.',
+    },
   },
   {
     id: 'patient-003',
@@ -74,6 +89,8 @@ export let mockPatients: Patient[] = [
     contact: 'charlie@example.com',
     dateOfBirth: '2000-02-10',
     sessionNotes: [],
+    documents: [],
+    treatmentPlan: undefined,
   },
 ];
 
