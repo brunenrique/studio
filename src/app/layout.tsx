@@ -3,6 +3,7 @@ import './globals.css';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { NotificationProvider } from '@/contexts/NotificationContext';
 import { SettingsProvider } from '@/contexts/SettingsContext';
+import { TasksProvider } from '@/contexts/TasksContext';
 import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
@@ -26,8 +27,10 @@ export default function RootLayout({
         <AuthProvider>
           <SettingsProvider>
             <NotificationProvider>
-              {children}
-              <Toaster />
+              <TasksProvider>
+                {children}
+                <Toaster />
+              </TasksProvider>
             </NotificationProvider>
           </SettingsProvider>
         </AuthProvider>

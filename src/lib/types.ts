@@ -70,5 +70,13 @@ export interface KnowledgeBaseArticle {
   answer: string;
 }
 
+// ✅ Tarefa/To-Do do profissional
+export interface Task {
+  id: string;
+  title: string;
+  dueDate?: string; // ISO 8601
+  completed: boolean;
+}
+
 // 🔄 Tipo utilitário: paciente parcial para formulários e updates
 export type PartialPatient = Partial<Patient>;

@@ -6,6 +6,7 @@ import type {
   SessionNote,
   Template,
   KnowledgeBaseArticle,
+  Task,
 } from '@/lib/types';
 
 // 👤 Usuário mock
@@ -215,4 +216,24 @@ export const mockKnowledgeBaseArticles: KnowledgeBaseArticle[] = [
     answer:
       'Este protótipo usa criptografia apenas em campos selecionados. Veja a documentação para mais detalhes.'
   }
+];
+
+// ✅ Tarefas/To-Do iniciais
+export const mockTasks: Task[] = [
+  {
+    id: 'task-001',
+    title: 'Pesquisar sobre caso X',
+    dueDate: new Date(nextWeek).toISOString(),
+    completed: false,
+  },
+  {
+    id: 'task-002',
+    title: 'Preparar material para sessão Y',
+    completed: false,
+  },
+  {
+    id: 'task-003',
+    title: 'Responder e-mail de paciente Z',
+    completed: true,
+  },
 ];
