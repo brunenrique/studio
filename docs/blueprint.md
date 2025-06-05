@@ -10,6 +10,7 @@
 - Waiting List: Functionality to add patients to a waiting list and move them to available time slots.
 - AI-Driven Session Insights: After session notes have been written, analyze notes and historical session data, using a tool to surface contextualized warnings or concerns within the patient record.
 - Global System Settings: Configure default availability, session duration, blocked times and service integrations.
+- Service Management: Define types of consultations offered (e.g., initial session, couples therapy) with default duration and price.
 
 ## Style Guidelines:
 

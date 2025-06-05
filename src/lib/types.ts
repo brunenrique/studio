@@ -78,6 +78,14 @@ export interface FinanceRecord {
   description?: string;
 }
 
+// 🛎️ Tipo de serviço ofertado (ex: consulta inicial, terapia de casal)
+export interface ServiceType {
+  id: string;
+  name: string;
+  defaultDuration: number; // minutos
+  price?: number;
+}
+
 // 📋 Metadados de um inventário/teste
 export interface TestMeta {
   id: string;
