@@ -238,7 +238,7 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
               <div className="flex items-center sm:col-span-2">
                 <UserCircle className="h-5 w-5 mr-3 text-primary" />
                 <div>
-                  <span className="font-semibold">Status:</span> Ativo (placeholder)
+                  <span className="font-semibold">Status:</span> Ativo
                 </div>
               </div>
             </CardContent>
