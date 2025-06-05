@@ -6,12 +6,14 @@ import { useSettings } from '@/contexts/SettingsContext';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { Users, CalendarDays, ListChecks, FileText, Lightbulb } from 'lucide-react';
+import { Users, CalendarDays, ListChecks, FileText, Lightbulb, PiggyBank, Gift } from 'lucide-react';
 import {
   mockAppointments,
   mockPatients,
   mockWaitingList,
+  mockFinanceRecords,
 } from '@/lib/mock-data';
+import { startOfWeek, endOfWeek, isSameDay, differenceInCalendarDays } from 'date-fns';
 import Image from 'next/image';
 
 export default function DashboardPage() {
@@ -23,14 +25,36 @@ export default function DashboardPage() {
   const now = new Date();
   const nextWeek = new Date(now);
   nextWeek.setDate(now.getDate() + 7);
+  const weekStart = startOfWeek(now, { weekStartsOn: 1 });
+  const weekEnd = endOfWeek(now, { weekStartsOn: 1 });
 
-  const upcomingAppointmentsCount = mockAppointments.filter((a) => {
+  const todaysAppointmentsCount = mockAppointments.filter((a) =>
+    isSameDay(new Date(a.dateTime), now)
+  ).length;
+  const weeklyAppointmentsCount = mockAppointments.filter((a) => {
     const date = new Date(a.dateTime);
-    return date >= now && date <= nextWeek;
+    return date >= weekStart && date <= weekEnd;
   }).length;
 
   const activePatientsCount = mockPatients.length;
   const waitingListCount = mockWaitingList.length;
+
+  const monthlyRevenue = mockFinanceRecords
+    .filter((r) => {
+      const d = new Date(r.date);
+      return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+    })
+    .reduce((sum, r) => sum + r.amount, 0);
+
+  const upcomingBirthdays = mockPatients
+    .map((p) => {
+      const dob = new Date(p.dateOfBirth);
+      let bday = new Date(now.getFullYear(), dob.getMonth(), dob.getDate());
+      if (bday < now) bday = new Date(now.getFullYear() + 1, dob.getMonth(), dob.getDate());
+      return { name: p.name, date: bday };
+    })
+    .filter((b) => differenceInCalendarDays(b.date, now) <= 30)
+    .sort((a, b) => a.date.getTime() - b.date.getTime());
 
   return (
     <div className="space-y-8">
@@ -57,8 +81,10 @@ export default function DashboardPage() {
             <CalendarDays className="h-5 w-5 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{upcomingAppointmentsCount}</div>
-            <p className="text-xs text-muted-foreground">agendamentos para os próximos 7 dias</p>
+            <div className="text-2xl font-bold">{todaysAppointmentsCount}</div>
+            <p className="text-xs text-muted-foreground">agendamentos hoje</p>
+            <div className="text-2xl font-bold mt-2">{weeklyAppointmentsCount}</div>
+            <p className="text-xs text-muted-foreground">agendamentos nesta semana</p>
             <Button asChild variant="link" className="px-0 mt-2">
               <Link href="/appointments">Ver Agenda</Link>
             </Button>
@@ -94,6 +120,41 @@ export default function DashboardPage() {
             <Button asChild variant="link" className="px-0 mt-2">
               <Link href="/waiting-list">Ver Lista</Link>
             </Button>
+          </CardContent>
+        </Card>
+        )}
+
+        {dashboard.showFinances && (
+        <Card className="shadow-lg hover:shadow-xl transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Financeiro do Mês</CardTitle>
+            <PiggyBank className="h-5 w-5 text-primary" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">R$ {monthlyRevenue}</div>
+            <p className="text-xs text-muted-foreground">total recebido</p>
+          </CardContent>
+        </Card>
+        )}
+
+        {dashboard.showBirthdays && (
+        <Card className="shadow-lg hover:shadow-xl transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Próximos Aniversários</CardTitle>
+            <Gift className="h-5 w-5 text-primary" />
+          </CardHeader>
+          <CardContent>
+            {upcomingBirthdays.length === 0 ? (
+              <p className="text-sm text-muted-foreground">Nenhum nas próximas semanas</p>
+            ) : (
+              <ul className="text-sm space-y-1">
+                {upcomingBirthdays.map((b) => (
+                  <li key={b.name}>
+                    {b.name} - {b.date.toLocaleDateString()}
+                  </li>
+                ))}
+              </ul>
+            )}
           </CardContent>
         </Card>
         )}

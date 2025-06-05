@@ -70,5 +70,13 @@ export interface KnowledgeBaseArticle {
   answer: string;
 }
 
+// 💰 Registro financeiro simples
+export interface FinanceRecord {
+  id: string;
+  date: string; // ISO 8601
+  amount: number;
+  description?: string;
+}
+
 // 🔄 Tipo utilitário: paciente parcial para formulários e updates
 export type PartialPatient = Partial<Patient>;

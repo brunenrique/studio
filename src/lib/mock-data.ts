@@ -6,6 +6,7 @@ import type {
   SessionNote,
   Template,
   KnowledgeBaseArticle,
+  FinanceRecord,
 } from '@/lib/types';
 
 // 👤 Usuário mock
@@ -177,6 +178,34 @@ export const mockWaitingList: WaitingListItem[] = [
     contact: 'clark@example.com',
     addedDate: new Date(today.setDate(today.getDate() - 3)).toISOString(),
     notes: 'Encaminhamento urgente do Dr. Hamilton.',
+  },
+];
+
+// 💵 Registros financeiros mock
+export const mockFinanceRecords: FinanceRecord[] = [
+  {
+    id: 'fin-001',
+    date: new Date(today.getFullYear(), today.getMonth(), 1).toISOString(),
+    amount: 200,
+    description: 'Sessão de terapia',
+  },
+  {
+    id: 'fin-002',
+    date: new Date(today.getFullYear(), today.getMonth(), 5).toISOString(),
+    amount: 180,
+    description: 'Sessão de acompanhamento',
+  },
+  {
+    id: 'fin-003',
+    date: new Date(today.getFullYear(), today.getMonth(), 12).toISOString(),
+    amount: 220,
+    description: 'Sessão individual',
+  },
+  {
+    id: 'fin-004',
+    date: new Date(today.getFullYear(), today.getMonth() - 1, 25).toISOString(),
+    amount: 200,
+    description: 'Sessão do mês anterior',
   },
 ];
 
