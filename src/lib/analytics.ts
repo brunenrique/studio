@@ -1,5 +1,11 @@
 import { Appointment, Patient } from './types';
-import { startOfWeek, format } from 'date-fns';
+import {
+  startOfWeek,
+  format,
+  parseISO,
+  addDays,
+  differenceInMinutes,
+} from 'date-fns';
 
 export function getWeeklySessionCounts(appointments: Appointment[]): { week: string; count: number }[] {
   const counts: Record<string, number> = {};
@@ -43,4 +49,51 @@ export function getProblemTypeCounts(patients: Patient[]): Record<string, number
   }
 
   return counts;
+}
+
+export interface OccupancyData {
+  scheduledMinutes: number;
+  freeMinutes: number;
+  scheduledPercent: number;
+  freePercent: number;
+}
+
+export function getScheduleOccupancy(
+  appointments: Appointment[],
+  start: Date,
+  end: Date,
+  workHoursStart = '09:00',
+  workHoursEnd = '17:00'
+): OccupancyData {
+  const [sh, sm] = workHoursStart.split(':').map(Number);
+  const [eh, em] = workHoursEnd.split(':').map(Number);
+  const dailyMinutes = differenceInMinutes(
+    new Date(0, 0, 0, eh, em),
+    new Date(0, 0, 0, sh, sm)
+  );
+
+  let totalAvailable = 0;
+  for (let d = new Date(start); d <= end; d = addDays(d, 1)) {
+    totalAvailable += dailyMinutes;
+  }
+
+  const scheduled = appointments
+    .filter((a) => {
+      const dt = parseISO(a.dateTime);
+      return dt >= start && dt <= end;
+    })
+    .reduce((sum, a) => sum + a.durationMinutes, 0);
+
+  const free = Math.max(totalAvailable - scheduled, 0);
+  const scheduledPercent = totalAvailable
+    ? (scheduled / totalAvailable) * 100
+    : 0;
+  const freePercent = 100 - scheduledPercent;
+
+  return {
+    scheduledMinutes: scheduled,
+    freeMinutes: free,
+    scheduledPercent,
+    freePercent,
+  };
 }
