@@ -8,7 +8,7 @@ import { Loader2, UploadCloud } from "lucide-react";
 
 export interface DocumentUploadDialogProps {
   onUpload: (name: string) => Promise<void>;
-  children: React.ReactNode; // trigger
+  children: React.ReactNode;
 }
 
 export function DocumentUploadDialog({ onUpload, children }: DocumentUploadDialogProps) {
