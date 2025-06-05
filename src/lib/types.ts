@@ -52,3 +52,13 @@ export interface WaitingListItem {
 
 // 🔄 Tipo utilitário: paciente parcial para formulários e updates
 export type PartialPatient = Partial<Patient>;
+
+// ⚙️ Configurações globais do sistema
+export interface SystemSettings {
+  clinicName: string;
+  clinicContact: string;
+  startHour: string; // HH:MM
+  endHour: string;   // HH:MM
+  defaultSessionDuration: number;
+  externalIntegration?: string;
+}

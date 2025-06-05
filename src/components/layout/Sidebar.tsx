@@ -33,7 +33,7 @@ const navItems = [
   { href: '/patients', label: 'Pacientes', icon: Users },
   { href: '/appointments', label: 'Agendamentos', icon: CalendarDays },
   { href: '/waiting-list', label: 'Lista de Espera', icon: ListChecks },
-  // { href: '/settings', label: 'Configurações', icon: Settings }, // Future
+  { href: '/settings', label: 'Configurações', icon: Settings },
 ];
 
 export function AppSidebar() {
