@@ -165,17 +165,17 @@ export default function DashboardPage() {
         </CardHeader>
         <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Button asChild variant="outline" className="justify-start h-12 text-left">
-            <Link href="/patients/new" className="flex items-center gap-2" legacyBehavior>
+            <Link href="/patients/new" className="flex items-center gap-2">
               <Users className="h-4 w-4" /> Novo Paciente
             </Link>
           </Button>
           <Button asChild variant="outline" className="justify-start h-12 text-left">
-            <Link href="/appointments" className="flex items-center gap-2" legacyBehavior> {/* Points to calendar, dialog will open from there */}
+            <Link href="/appointments" className="flex items-center gap-2"> {/* Points to calendar, dialog will open from there */}
                <CalendarDays className="h-4 w-4" /> Novo Agendamento
             </Link>
           </Button>
            <Button asChild variant="outline" className="justify-start h-12 text-left col-span-full sm:col-span-1">
-            <Link href="/patients" className="flex items-center gap-2" legacyBehavior> {/* Placeholder link */}
+            <Link href="/patients" className="flex items-center gap-2"> {/* Placeholder link */}
                <Lightbulb className="h-4 w-4" /> Insights de IA (via Prontuário)
             </Link>
           </Button>

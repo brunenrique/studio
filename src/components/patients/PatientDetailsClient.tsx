@@ -118,7 +118,7 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
     <div className="space-y-6">
       <div className="flex items-center justify-between mb-6">
         <Button asChild variant="outline" className="shadow-sm">
-          <Link href="/patients" legacyBehavior>
+          <Link href="/patients">
             <ArrowLeft className="mr-2 h-4 w-4" /> Voltar para Pacientes
           </Link>
         </Button>
