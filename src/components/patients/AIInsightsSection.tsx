@@ -71,25 +71,23 @@ export function AIInsightsSection({ patient, latestSessionNote }: AIInsightsSect
     <Card className="shadow-lg rounded-lg mt-6 bg-primary/5 border-primary/20">
       <CardHeader>
         <div className="flex justify-between items-center">
-            <div>
-            <div>
-                <CardTitle className="text-xl font-headline flex items-center">
-                <Lightbulb className="mr-2 h-6 w-6 text-primary" /> Insights da IA
-                </CardTitle>
-                <CardDescription data-ai-hint="AI insights section description">
-                Analise as notas da sessão e o histórico do paciente para obter insights.
-                </CardDescription> {/* <-- Adicione esta linha */}
-            </div>
+          <div>
+            <CardTitle className="text-xl font-headline flex items-center">
+              <Lightbulb className="mr-2 h-6 w-6 text-primary" /> Insights da IA
+            </CardTitle>
+            <CardDescription data-ai-hint="AI insights section description">
+              Analise as notas da sessão e o histórico do paciente para obter insights.
+            </CardDescription>
+          </div>
 
-            <Button onClick={handleGetInsights} disabled={isLoading || !canGenerateInsights} className="shadow-md">
-                {isLoading ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : (
-                <Lightbulb className="mr-2 h-4 w-4" />
-                )}
-                Gerar Insights
-            </Button>
-            </div>
+          <Button onClick={handleGetInsights} disabled={isLoading || !canGenerateInsights} className="shadow-md">
+            {isLoading ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Lightbulb className="mr-2 h-4 w-4" />
+            )}
+              Gerar Insights
+          </Button>
         </div>
         {!canGenerateInsights && (
           <p className="text-sm text-muted-foreground mt-2">
