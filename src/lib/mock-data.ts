@@ -109,6 +109,18 @@ export const updateMockPatient = (updatedPatient: Patient): Patient => {
   return updatedPatient;
 };
 
+// 🔍 Busca paciente pelo ID
+export const getMockPatientById = (id: string): Patient | null => {
+  const patient = mockPatients.find((p) => p.id === id);
+  if (!patient) return null;
+  return {
+    ...patient,
+    name: decryptMock(patient.name),
+    contact: decryptMock(patient.contact),
+    dateOfBirth: decryptMock(patient.dateOfBirth),
+  };
+};
+
 // 📆 Agendamentos mock
 export const mockAppointments: Appointment[] = [
   {

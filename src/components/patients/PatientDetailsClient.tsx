@@ -1,7 +1,7 @@
 "use client";
 
 import type { Patient, SessionNote } from "@/lib/types";
-import { mockPatients } from "@/lib/mock-data"; // mockPatients agora está exportado corretamente
+import { getMockPatientById } from "@/lib/mock-data";
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,10 +17,6 @@ interface PatientDetailsClientProps {
   patientId: string;
 }
 
-// ✅ Corrigido: tipando o parâmetro 'p'
-const getMockPatientById = (id: string): Patient | null => {
-  return mockPatients.find((p: Patient) => p.id === id) || null;
-};
 
 export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
   const [patient, setPatient] = useState<Patient | null>(null);
