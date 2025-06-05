@@ -118,7 +118,7 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
     <div className="space-y-6">
       <div className="flex items-center justify-between mb-6">
         <Button asChild variant="outline" className="shadow-sm">
-          <Link href="/patients">
+          <Link href="/patients" legacyBehavior>
             <ArrowLeft className="mr-2 h-4 w-4" /> Voltar para Pacientes
           </Link>
         </Button>
@@ -126,7 +126,6 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
           <Button variant="default">Editar</Button>
         </PatientFormDialog>
       </div>
-
       <Card className="shadow-xl rounded-lg overflow-hidden">
         <div className="md:flex">
           <div className="md:w-1/3 bg-gradient-to-br from-primary/20 to-accent/20 p-6 flex flex-col items-center justify-center text-center">
@@ -178,14 +177,12 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
           </div>
         </div>
       </Card>
-
       {/* ✅ Corrigido: passando também o onDeleteNote */}
       <SessionNotesSection
         patient={patient}
         onAddNote={handleAddNote}
         onDeleteNote={handleDeleteNote}
       />
-
       <AIInsightsSection
         patient={patient}
         latestSessionNote={
@@ -194,7 +191,6 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
             : undefined
         }
       />
-
       <Accordion type="single" collapsible className="mt-6">
         <AccordionItem value="assessments">
           <AccordionTrigger>Mensuração & Avaliação</AccordionTrigger>
@@ -224,7 +220,6 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
           </AccordionContent>
         </AccordionItem>
       </Accordion>
-
       <Card className="shadow-lg mt-6" data-ai-hint="compliance and reminders section">
         <CardHeader>
           <CardTitle className="font-semibold text-lg">Lembretes e Conformidade</CardTitle>

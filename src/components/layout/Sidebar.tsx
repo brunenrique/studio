@@ -59,7 +59,7 @@ export function AppSidebar() {
   return (
     <Sidebar className="border-r bg-card" collapsible="icon">
       <SidebarHeader className="p-4">
-        <Link href="/dashboard" className="mb-4 block">
+        <Link href="/dashboard" className="mb-4 block" legacyBehavior>
           <Logo />
         </Link>
       </SidebarHeader>

@@ -72,7 +72,6 @@ export default function DashboardPage() {
             data-ai-hint="clinic illustration"
         />
       </div>
-
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {dashboard.showAppointments && (
         <Card className="shadow-lg hover:shadow-xl transition-shadow">
@@ -159,7 +158,6 @@ export default function DashboardPage() {
         </Card>
         )}
       </div>
-
       <Card className="shadow-lg">
         <CardHeader>
           <CardTitle className="flex items-center"><FileText className="mr-2 h-5 w-5 text-primary" />Funcionalidades Principais</CardTitle>
@@ -167,23 +165,22 @@ export default function DashboardPage() {
         </CardHeader>
         <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Button asChild variant="outline" className="justify-start h-12 text-left">
-            <Link href="/patients/new" className="flex items-center gap-2">
+            <Link href="/patients/new" className="flex items-center gap-2" legacyBehavior>
               <Users className="h-4 w-4" /> Novo Paciente
             </Link>
           </Button>
           <Button asChild variant="outline" className="justify-start h-12 text-left">
-            <Link href="/appointments" className="flex items-center gap-2"> {/* Points to calendar, dialog will open from there */}
+            <Link href="/appointments" className="flex items-center gap-2" legacyBehavior> {/* Points to calendar, dialog will open from there */}
                <CalendarDays className="h-4 w-4" /> Novo Agendamento
             </Link>
           </Button>
            <Button asChild variant="outline" className="justify-start h-12 text-left col-span-full sm:col-span-1">
-            <Link href="/patients" className="flex items-center gap-2"> {/* Placeholder link */}
+            <Link href="/patients" className="flex items-center gap-2" legacyBehavior> {/* Placeholder link */}
                <Lightbulb className="h-4 w-4" /> Insights de IA (via Prontuário)
             </Link>
           </Button>
         </CardContent>
       </Card>
-      
       <Card className="shadow-lg bg-primary/5 border-primary/20">
         <CardHeader>
           <CardTitle className="flex items-center"><Lightbulb className="mr-2 h-5 w-5 text-primary" />Lembrete de Segurança</CardTitle>
@@ -196,7 +193,6 @@ export default function DashboardPage() {
           </p>
         </CardContent>
       </Card>
-
     </div>
   );
 }

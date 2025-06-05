@@ -86,7 +86,10 @@ export function PatientTable({ patients, onUpdatePatient, onDeletePatient }: Pat
           {patients.map((patient) => (
             <TableRow key={patient.id} className="hover:bg-muted/50 transition-colors">
               <TableCell className="font-medium">
-                <Link href={`/patients/${patient.id}`} className="text-primary hover:underline">
+                <Link
+                  href={`/patients/${patient.id}`}
+                  className="text-primary hover:underline"
+                  legacyBehavior>
                   {patient.name}
                 </Link>
               </TableCell>
@@ -95,7 +98,7 @@ export function PatientTable({ patients, onUpdatePatient, onDeletePatient }: Pat
               <TableCell>{differenceInYears(new Date(), parseISO(patient.dateOfBirth))}</TableCell>
               <TableCell className="text-right">
                 <Button variant="ghost" size="icon" asChild className="mr-2 text-primary hover:text-primary/80">
-                  <Link href={`/patients/${patient.id}`}>
+                  <Link href={`/patients/${patient.id}`} legacyBehavior>
                     <Eye className="h-4 w-4" />
                     <span className="sr-only">Ver Detalhes</span>
                   </Link>
