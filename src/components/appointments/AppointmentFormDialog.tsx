@@ -126,7 +126,7 @@ export function AppointmentFormDialog({
     const appointmentData: Appointment = {
       id: appointment?.id || `appt-${Date.now()}`,
       patientId: values.patientId,
-      patientName: patients.find(p => p.id === values.patientId)?.name,
+      patientName: patients.find(p => p.id === values.patientId)?.name ?? "",
       dateTime: combinedDateTime.toISOString(),
       durationMinutes: values.durationMinutes,
       status: values.status as AttendanceStatus,

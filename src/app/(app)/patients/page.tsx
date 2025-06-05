@@ -1,9 +1,9 @@
-
 "use client";
 
 import { useState, useEffect } from 'react';
 import type { Patient } from '@/lib/types';
-import { getMockPatientsList } from '@/lib/mock-data';
+import { mockPatients } from '@/lib/mock-data'; // ✅ corrigido aqui
+import { getMockPatientsList, updateMockPatient } from '@/lib/mock-data';
 import { PatientTable } from '@/components/patients/PatientTable';
 import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
@@ -17,33 +17,45 @@ export default function PatientsPage() {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Simulate fetching data
     setPatients(getMockPatientsList());
+    // ✅ agora usando mockPatients direto
+    setPatients(mockPatients);
   }, []);
 
   const handleAddOrUpdatePatient = (patientData: Patient) => {
     setPatients(prevPatients => {
       const existingIndex = prevPatients.findIndex(p => p.id === patientData.id);
       if (existingIndex > -1) {
-        // Update existing patient
+        // Atualiza paciente existente
         const updatedPatients = [...prevPatients];
         updatedPatients[existingIndex] = patientData;
         return updatedPatients;
       } else {
-        // Add new patient
+        // Adiciona novo paciente
         return [...prevPatients, patientData];
       }
     });
+
     toast({
-      title: patientData.id.startsWith("patient-") && patients.find(p=>p.id === patientData.id) ? "Paciente Atualizado" : "Paciente Adicionado",
+      title: patientData.id.startsWith("patient-") && patients.find(p => p.id === patientData.id)
+        ? "Paciente Atualizado"
+        : "Paciente Adicionado",
       description: `Os dados de ${patientData.name} foram salvos.`,
     });
-    setIsFormOpen(false); // Close dialog after saving
+
+    setIsFormOpen(false);
+  };
+
+  const handleUpdatePatient = (updatedPatient: Patient) => {
+    // Simula o salvamento com criptografia
+    updateMockPatient(updatedPatient);
+    // Atualiza a lista localmente buscando novamente os dados mock (agora com o paciente atualizado)
+    setPatients(getMockPatientsList());
   };
 
   const handleDeletePatient = (patientId: string) => {
     setPatients(prevPatients => prevPatients.filter(p => p.id !== patientId));
-    // Toast is handled in PatientTable for this action
+    // O toast de exclusão é tratado dentro do PatientTable
   };
 
   return (
@@ -51,13 +63,15 @@ export default function PatientsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold font-headline">Gerenciamento de Pacientes</h1>
-          <p className="text-muted-foreground">Visualize, adicione, edite ou remova pacientes.</p>
+          <p className="text-muted-foreground">
+            Visualize, adicione, edite ou remova pacientes.
+          </p>
         </div>
-        <PatientFormDialog 
-            patient={null} 
-            onSave={handleAddOrUpdatePatient}
-            isOpen={isFormOpen}
-            onOpenChange={setIsFormOpen}
+        <PatientFormDialog
+          patient={null}
+          onSave={handleAddOrUpdatePatient}
+          isOpen={isFormOpen}
+          onOpenChange={setIsFormOpen}
         >
           <Button onClick={() => setIsFormOpen(true)} className="shadow-md">
             <PlusCircle className="mr-2 h-5 w-5" />
@@ -72,10 +86,10 @@ export default function PatientsPage() {
           <CardDescription>Total de {patients.length} pacientes cadastrados.</CardDescription>
         </CardHeader>
         <CardContent>
-          <PatientTable 
-            patients={patients} 
-            onUpdatePatient={handleAddOrUpdatePatient} 
-            onDeletePatient={handleDeletePatient} 
+          <PatientTable
+            patients={getMockPatientsList()}
+            onUpdatePatient={handleAddOrUpdatePatient}
+            onDeletePatient={handleDeletePatient}
           />
         </CardContent>
       </Card>

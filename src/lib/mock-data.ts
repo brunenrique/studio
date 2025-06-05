@@ -1,12 +1,20 @@
-import type { Patient, Appointment, WaitingListItem, User, SessionNote } from './types';
+import type {
+  Patient,
+  Appointment,
+  WaitingListItem,
+  User,
+  SessionNote,
+} from '@/lib/types';
 
+// 👤 Usuário mock
 export const mockUser: User = {
   id: 'user-psychologist-01',
   email: 'doctor.jane@psiguard.com',
-  role: 'psychologist',
+  role: 'Psicólogo',
   name: 'Dr. Jane Doe',
 };
 
+// 📅 Datas auxiliares
 const today = new Date();
 const tomorrow = new Date(today);
 tomorrow.setDate(today.getDate() + 1);
@@ -15,18 +23,34 @@ yesterday.setDate(today.getDate() - 1);
 const nextWeek = new Date(today);
 nextWeek.setDate(today.getDate() + 7);
 
-
+// 📝 Notas mock – paciente 1
 const initialSessionNotesP1: SessionNote[] = [
-  { id: 'sn001', date: new Date(new Date().setDate(today.getDate() - 14)).toISOString(), notes: 'Patient reported feeling anxious about work. Discussed coping mechanisms.', patientHistorySummaryForAI: 'Initial session.' },
-  { id: 'sn002', date: new Date(new Date().setDate(today.getDate() - 7)).toISOString(), notes: 'Follow-up on anxiety. Patient tried deep breathing exercises. Some improvement noted.', patientHistorySummaryForAI: 'Patient reported feeling anxious about work. Discussed coping mechanisms.' },
+  {
+    id: 'sn001',
+    date: new Date(new Date().setDate(today.getDate() - 14)).toISOString(),
+    notes: 'Paciente relatou ansiedade relacionada ao trabalho. Discutimos mecanismos de enfrentamento.',
+    patientHistorySummaryForAI: 'Sessão inicial.',
+  },
+  {
+    id: 'sn002',
+    date: new Date(new Date().setDate(today.getDate() - 7)).toISOString(),
+    notes: 'Acompanhamento da ansiedade. Paciente testou exercícios de respiração profunda. Relatou alguma melhora.',
+    patientHistorySummaryForAI: 'Paciente relatou ansiedade relacionada ao trabalho. Discutimos mecanismos de enfrentamento.',
+  },
 ];
 
+// 📝 Notas mock – paciente 2
 const initialSessionNotesP2: SessionNote[] = [
-  { id: 'sn003', date: new Date(new Date().setDate(today.getDate() - 10)).toISOString(), notes: 'Patient is struggling with recent life changes. Explored emotional impact.', patientHistorySummaryForAI: 'New patient referred for adjustment disorder.'},
+  {
+    id: 'sn003',
+    date: new Date(new Date().setDate(today.getDate() - 10)).toISOString(),
+    notes: 'Paciente está enfrentando dificuldades com mudanças recentes na vida. Exploramos o impacto emocional.',
+    patientHistorySummaryForAI: 'Novo paciente encaminhado com suspeita de transtorno de ajustamento.',
+  },
 ];
 
-
-const mockPatients: Patient[] = [
+// 👩‍⚕️ Pacientes mock
+export let mockPatients: Patient[] = [
   {
     id: 'patient-001',
     name: 'Alice Wonderland',
@@ -50,91 +74,94 @@ const mockPatients: Patient[] = [
   },
 ];
 
-// Mock encryption and decryption functions
-const ENCRYPTION_PREFIX = "ENCRYPTED:";
+// --- Funções de criptografia mock ---
+const encryptMock = (data: string): string =>
+  data ? data.split('').reverse().join('') + '_encrypted' : '';
 
-function encryptMock(data: string): string {
-  if (data.startsWith(ENCRYPTION_PREFIX)) {
-    return data; // Already encrypted (mock)
+const decryptMock = (data: string): string =>
+  data.endsWith('_encrypted') ? data.slice(0, -10).split('').reverse().join('') : data;
+
+// 🔓 Retorna lista descriptografada
+export const getMockPatientsList = (): Patient[] =>
+  mockPatients.map((patient) => ({
+    ...patient,
+    name: decryptMock(patient.name),
+    contact: decryptMock(patient.contact),
+    dateOfBirth: decryptMock(patient.dateOfBirth),
+  }));
+
+// 🔒 Atualiza um paciente mock
+export const updateMockPatient = (updatedPatient: Patient): Patient => {
+  const index = mockPatients.findIndex((p) => p.id === updatedPatient.id);
+  if (index === -1) {
+    console.error(`Paciente com ID ${updatedPatient.id} não encontrado.`);
+    return updatedPatient;
   }
-  return `${ENCRYPTION_PREFIX}${data}`;
-}
 
-function decryptMock(data: string): string {
-  if (data.startsWith(ENCRYPTION_PREFIX)) {
-    return data.substring(ENCRYPTION_PREFIX.length);
-  }
-  return data; // Not encrypted (mock)
-}
+  const encryptedPatient: Patient = {
+    ...updatedPatient,
+    name: encryptMock(updatedPatient.name),
+    contact: encryptMock(updatedPatient.contact),
+    dateOfBirth: encryptMock(updatedPatient.dateOfBirth),
+  };
 
-export function getMockPatientById(id: string): Patient | undefined {
-  const patient = mockPatients.find(p => p.id === id);
-  if (!patient) return undefined;
-  // Return a deep copy with decrypted fields
-  return { ...patient, name: decryptMock(patient.name), dateOfBirth: decryptMock(patient.dateOfBirth), contact: decryptMock(patient.contact) };
-}
+  mockPatients[index] = encryptedPatient;
+  return updatedPatient;
+};
+
+// 📆 Agendamentos mock
 export const mockAppointments: Appointment[] = [
   {
     id: 'appt-001',
     patientId: 'patient-001',
     patientName: 'Alice Wonderland',
-    dateTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 10, 0, 0).toISOString(),
+    dateTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 10, 0).toISOString(),
     durationMinutes: 50,
     status: 'pending',
-    notes: 'Regular session',
+    notes: 'Sessão regular',
   },
   {
     id: 'appt-002',
     patientId: 'patient-002',
     patientName: 'Bob The Builder',
-    dateTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 14, 0, 0).toISOString(),
+    dateTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 14, 0).toISOString(),
     durationMinutes: 50,
     status: 'present',
-    notes: 'Follow-up',
+    notes: 'Sessão de acompanhamento',
   },
   {
     id: 'appt-003',
     patientId: 'patient-003',
     patientName: 'Charlie Brown',
-    dateTime: new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate(), 11, 30, 0).toISOString(),
+    dateTime: new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate(), 11, 30).toISOString(),
     durationMinutes: 50,
     status: 'pending',
   },
-   {
+  {
     id: 'appt-004',
     patientId: 'patient-001',
     patientName: 'Alice Wonderland',
-    dateTime: new Date(nextWeek.getFullYear(), nextWeek.getMonth(), nextWeek.getDate(), 9, 0, 0).toISOString(),
+    dateTime: new Date(nextWeek.getFullYear(), nextWeek.getMonth(), nextWeek.getDate(), 9, 0).toISOString(),
     durationMinutes: 50,
     status: 'pending',
   },
 ];
 
+// ⏳ Lista de espera mock
 export const mockWaitingList: WaitingListItem[] = [
   {
     id: 'wait-001',
     patientName: 'Diana Prince',
     contact: 'diana@example.com',
-    requestedDate: 'Any weekday afternoon',
+    requestedDate: 'Qualquer tarde de dia útil',
     addedDate: yesterday.toISOString(),
-    notes: 'Prefers female therapist if possible (N/A for single psychologist setup)',
+    notes: 'Prefere terapeuta mulher, se possível (não aplicável no setup atual).',
   },
   {
     id: 'wait-002',
     patientName: 'Clark Kent',
     contact: 'clark@example.com',
-    addedDate: new Date(new Date().setDate(today.getDate() - 3)).toISOString(),
-    notes: 'Urgent, referred by Dr. Hamilton',
+    addedDate: new Date(today.setDate(today.getDate() - 3)).toISOString(),
+    notes: 'Encaminhamento urgente do Dr. Hamilton.',
   },
 ];
-
-// Function to get the list of mock patients with decrypted sensitive fields
-export function getMockPatientsList(): Patient[] {
- return mockPatients.map(patient => ({
- ...patient,
-    name: decryptMock(patient.name),
-    dateOfBirth: decryptMock(patient.dateOfBirth),
-    contact: decryptMock(patient.contact),
- }));
-}
-

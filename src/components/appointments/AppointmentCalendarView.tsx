@@ -1,15 +1,31 @@
-
 "use client";
 
 import type { Appointment, Patient, AttendanceStatus } from "@/lib/types";
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar as CalendarIcon, CheckCircle, XCircle, Edit3, Trash2, Clock, User, AlertCircle, Info } from "lucide-react"; // Renamed Calendar to CalendarIcon
-import { format, parseISO, isSameDay, isPast, isToday, isFuture } from "date-fns";
+import {
+  Calendar as CalendarIcon,
+  CheckCircle,
+  XCircle,
+  Edit3,
+  Trash2,
+  Clock,
+  User,
+  AlertCircle,
+  Info,
+} from "lucide-react";
+import {
+  format,
+  parseISO,
+  isSameDay,
+  isPast,
+  isToday,
+  addMinutes,
+} from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { AppointmentFormDialog } from "./AppointmentFormDialog";
-import { Calendar } from "@/components/ui/calendar"; // ShadCN Calendar
+import { Calendar } from "@/components/ui/calendar";
 import {
   Select,
   SelectContent,
@@ -30,7 +46,13 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 
 interface AppointmentCalendarViewProps {
   appointments: Appointment[];
@@ -39,7 +61,12 @@ interface AppointmentCalendarViewProps {
   onDeleteAppointment: (appointmentId: string) => void;
 }
 
-export function AppointmentCalendarView({ appointments, patients, onUpdateAppointment, onDeleteAppointment }: AppointmentCalendarViewProps) {
+export function AppointmentCalendarView({
+  appointments,
+  patients,
+  onUpdateAppointment,
+  onDeleteAppointment,
+}: AppointmentCalendarViewProps) {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [editingAppointment, setEditingAppointment] = useState<Appointment | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -58,9 +85,9 @@ export function AppointmentCalendarView({ appointments, patients, onUpdateAppoin
       variant: "destructive",
     });
   };
-  
+
   const handleStatusChange = (appointmentId: string, status: AttendanceStatus) => {
-    const appointment = appointments.find(a => a.id === appointmentId);
+    const appointment = appointments.find((a) => a.id === appointmentId);
     if (appointment) {
       onUpdateAppointment({ ...appointment, status });
       toast({
@@ -71,23 +98,32 @@ export function AppointmentCalendarView({ appointments, patients, onUpdateAppoin
   };
 
   const filteredAppointments = selectedDate
-    ? appointments.filter(app => isSameDay(parseISO(app.dateTime), selectedDate)).sort((a,b) => parseISO(a.dateTime).getTime() - parseISO(b.dateTime).getTime())
-    : appointments.sort((a,b) => parseISO(a.dateTime).getTime() - parseISO(b.dateTime).getTime()); // Show all if no date selected, though UI forces date selection
+    ? appointments
+        .filter((app) => isSameDay(parseISO(app.dateTime), selectedDate))
+        .sort((a, b) => parseISO(a.dateTime).getTime() - parseISO(b.dateTime).getTime())
+    : appointments.sort(
+        (a, b) => parseISO(a.dateTime).getTime() - parseISO(b.dateTime).getTime()
+      );
 
-  const statusMap: Record<AttendanceStatus, { label: string; icon: React.ElementType; color: string }> = {
+  const statusMap: Record<
+    AttendanceStatus,
+    { label: string; icon: React.ElementType; color: string }
+  > = {
     pending: { label: "Pendente", icon: Clock, color: "text-yellow-500" },
     present: { label: "Presente", icon: CheckCircle, color: "text-green-500" },
     absent: { label: "Ausente", icon: XCircle, color: "text-red-500" },
     rescheduled: { label: "Remarcado", icon: CalendarIcon, color: "text-blue-500" },
   };
 
-  const getAppointmentBadgeVariant = (dateTime: string, status: AttendanceStatus): "default" | "secondary" | "destructive" | "outline" => {
-    if (status === 'present') return 'default'; // Primary color for present
-    if (status === 'absent') return 'destructive';
-    if (isPast(parseISO(dateTime)) && status === 'pending') return 'secondary'; // Muted for past pending
-    return 'outline';
+  const getAppointmentBadgeVariant = (
+    dateTime: string,
+    status: AttendanceStatus
+  ): "default" | "secondary" | "destructive" | "outline" => {
+    if (status === "present") return "default";
+    if (status === "absent") return "destructive";
+    if (isPast(parseISO(dateTime)) && status === "pending") return "secondary";
+    return "outline";
   };
-
 
   return (
     <TooltipProvider>
@@ -105,8 +141,15 @@ export function AppointmentCalendarView({ appointments, patients, onUpdateAppoin
               onSelect={setSelectedDate}
               className="rounded-md border shadow-sm"
               locale={ptBR}
-              modifiers={{ booked: appointments.map(a => parseISO(a.dateTime)) }}
-              modifiersStyles={{ booked: { fontWeight: 'bold', color: 'var(--primary)' } }}
+              modifiers={{
+                booked: appointments.map((a) => parseISO(a.dateTime)),
+              }}
+              modifiersStyles={{
+                booked: {
+                  fontWeight: "bold",
+                  color: "var(--primary)",
+                },
+              }}
             />
           </CardContent>
         </Card>
@@ -116,9 +159,14 @@ export function AppointmentCalendarView({ appointments, patients, onUpdateAppoin
             <div className="flex justify-between items-center">
               <div>
                 <CardTitle className="font-headline flex items-center">
-                  <Clock className="mr-2 h-5 w-5" /> Agendamentos para {selectedDate ? format(selectedDate, "dd/MM/yyyy") : "Todas as Datas"}
+                  <Clock className="mr-2 h-5 w-5" /> Agendamentos para{" "}
+                  {selectedDate
+                    ? format(selectedDate, "dd/MM/yyyy")
+                    : "Todas as Datas"}
                 </CardTitle>
-                <CardDescription>Visualize e gerencie os agendamentos do dia.</CardDescription>
+                <CardDescription>
+                  Visualize e gerencie os agendamentos do dia.
+                </CardDescription>
               </div>
             </div>
           </CardHeader>
@@ -130,100 +178,156 @@ export function AppointmentCalendarView({ appointments, patients, onUpdateAppoin
               </div>
             ) : (
               <ul className="space-y-4">
-                {filteredAppointments.map(app => {
+                {filteredAppointments.map((app) => {
                   const statusInfo = statusMap[app.status];
                   const appDateTime = parseISO(app.dateTime);
                   const isAppointmentPast = isPast(appDateTime) && !isToday(appDateTime);
-                  
-                  return (
-                  <li key={app.id} className={cn("p-4 border rounded-lg shadow-sm hover:shadow-md transition-all", isAppointmentPast ? "bg-muted/50 opacity-80" : "bg-card")}>
-                    <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-2">
-                      <div>
-                        <h3 className="font-semibold text-lg text-primary flex items-center">
-                          <User className="mr-2 h-5 w-5" /> {app.patientName || "Paciente não encontrado"}
-                        </h3>
-                        <p className="text-sm text-muted-foreground">
-                          {format(appDateTime, "HH:mm")} - {format(addMinutes(appDateTime, app.durationMinutes), "HH:mm")} ({app.durationMinutes} min)
-                        </p>
-                      </div>
-                      <Badge variant={getAppointmentBadgeVariant(app.dateTime, app.status)} className="mt-2 sm:mt-0 self-start sm:self-center">
-                        <statusInfo.icon className={cn("mr-1.5 h-3.5 w-3.5", statusInfo.color)} />
-                        {statusInfo.label}
-                      </Badge>
-                    </div>
-                    {app.notes && <p className="text-xs text-muted-foreground italic mt-1 mb-3">Nota: {app.notes}</p>}
-                    
-                    <div className="flex flex-wrap gap-2 items-center mt-3 pt-3 border-t">
-                      <Select
-                        value={app.status}
-                        onValueChange={(newStatus) => handleStatusChange(app.id, newStatus as AttendanceStatus)}
-                        disabled={isAppointmentPast && app.status !== 'pending'}
-                      >
-                        <SelectTrigger className="w-full sm:w-[150px] text-xs h-9">
-                          <SelectValue placeholder="Alterar Status" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {Object.entries(statusMap).map(([key, val]) => (
-                            <SelectItem key={key} value={key} className="text-xs">
-                              <div className="flex items-center">
-                                <val.icon className={cn("mr-2 h-4 w-4", val.color)} />
-                                {val.label}
-                              </div>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      
-                      <div className="flex-grow sm:flex-grow-0 flex gap-2">
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button variant="outline" size="icon" onClick={() => handleEdit(app)} className="h-9 w-9">
-                              <Edit3 className="h-4 w-4" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent><p>Editar Agendamento</p></TooltipContent>
-                        </Tooltip>
 
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button variant="destructive" size="icon" className="h-9 w-9">
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </AlertDialogTrigger>
-                           <AlertDialogContent>
+                  return (
+                    <li
+                      key={app.id}
+                      className={cn(
+                        "p-4 border rounded-lg shadow-sm hover:shadow-md transition-all",
+                        isAppointmentPast ? "bg-muted/50 opacity-80" : "bg-card"
+                      )}
+                    >
+                      <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-2">
+                        <div>
+                          <h3 className="font-semibold text-lg text-primary flex items-center">
+                            <User className="mr-2 h-5 w-5" />{" "}
+                            {app.patientName || "Paciente não encontrado"}
+                          </h3>
+                          <p className="text-sm text-muted-foreground">
+                            {format(appDateTime, "HH:mm")} -{" "}
+                            {format(
+                              addMinutes(appDateTime, app.durationMinutes),
+                              "HH:mm"
+                            )}{" "}
+                            ({app.durationMinutes} min)
+                          </p>
+                        </div>
+                        <Badge
+                          variant={getAppointmentBadgeVariant(
+                            app.dateTime,
+                            app.status
+                          )}
+                          className="mt-2 sm:mt-0 self-start sm:self-center"
+                        >
+                          <statusInfo.icon
+                            className={cn("mr-1.5 h-3.5 w-3.5", statusInfo.color)}
+                          />
+                          {statusInfo.label}
+                        </Badge>
+                      </div>
+
+                      {app.notes && (
+                        <p className="text-xs text-muted-foreground italic mt-1 mb-3">
+                          Nota: {app.notes}
+                        </p>
+                      )}
+
+                      <div className="flex flex-wrap gap-2 items-center mt-3 pt-3 border-t">
+                        <Select
+                          value={app.status}
+                          onValueChange={(newStatus) =>
+                            handleStatusChange(
+                              app.id,
+                              newStatus as AttendanceStatus
+                            )
+                          }
+                          disabled={isAppointmentPast && app.status !== "pending"}
+                        >
+                          <SelectTrigger className="w-full sm:w-[150px] text-xs h-9">
+                            <SelectValue placeholder="Alterar Status" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Object.entries(statusMap).map(([key, val]) => (
+                              <SelectItem key={key} value={key} className="text-xs">
+                                <div className="flex items-center">
+                                  <val.icon
+                                    className={cn("mr-2 h-4 w-4", val.color)}
+                                  />
+                                  {val.label}
+                                </div>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+
+                        <div className="flex-grow sm:flex-grow-0 flex gap-2">
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="outline"
+                                size="icon"
+                                onClick={() => handleEdit(app)}
+                                className="h-9 w-9"
+                              >
+                                <Edit3 className="h-4 w-4" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Editar Agendamento</p>
+                            </TooltipContent>
+                          </Tooltip>
+
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                variant="destructive"
+                                size="icon"
+                                className="h-9 w-9"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
                               <AlertDialogHeader>
                                 <AlertDialogTitle>Confirmar Exclusão</AlertDialogTitle>
                                 <AlertDialogDescription>
-                                  Tem certeza que deseja excluir este agendamento para {app.patientName} em {format(appDateTime, "dd/MM/yyyy 'às' HH:mm")}?
+                                  Tem certeza que deseja excluir este agendamento
+                                  para {app.patientName} em{" "}
+                                  {format(appDateTime, "dd/MM/yyyy 'às' HH:mm")}?
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>
                                 <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                                <AlertDialogAction onClick={() => handleDelete(app.id)} className="bg-destructive hover:bg-destructive/90">Excluir</AlertDialogAction>
+                                <AlertDialogAction
+                                  onClick={() => handleDelete(app.id)}
+                                  className="bg-destructive hover:bg-destructive/90"
+                                >
+                                  Excluir
+                                </AlertDialogAction>
                               </AlertDialogFooter>
                             </AlertDialogContent>
-                        </AlertDialog>
+                          </AlertDialog>
+                        </div>
                       </div>
-                    </div>
-                    {isAppointmentPast && app.status === 'pending' && (
-                      <p className="text-xs text-orange-600 mt-2 flex items-center">
-                        <AlertCircle className="h-3 w-3 mr-1"/> Este agendamento passado está pendente. Atualize o status.
-                      </p>
-                    )}
-                  </li>
-                )})}
+
+                      {isAppointmentPast && app.status === "pending" && (
+                        <p className="text-xs text-orange-600 mt-2 flex items-center">
+                          <AlertCircle className="h-3 w-3 mr-1" /> Este agendamento
+                          passado está pendente. Atualize o status.
+                        </p>
+                      )}
+                    </li>
+                  );
+                })}
               </ul>
             )}
           </CardContent>
         </Card>
       </div>
+
       <AppointmentFormDialog
         appointment={editingAppointment}
         patients={patients}
         onSave={(data) => {
           onUpdateAppointment(data);
           toast({
-            title: editingAppointment ? "Agendamento Atualizado" : "Agendamento Criado",
+            title: editingAppointment
+              ? "Agendamento Atualizado"
+              : "Agendamento Criado",
             description: `Agendamento para ${data.patientName} salvo.`,
           });
           setIsFormOpen(false);
@@ -235,19 +339,22 @@ export function AppointmentCalendarView({ appointments, patients, onUpdateAppoin
           if (!open) setEditingAppointment(null);
         }}
       >
-         {/* This trigger is not used when editing, dialog controlled by state */}
-        <button className="hidden"></button>
+        <button className="hidden" />
       </AppointmentFormDialog>
 
       <Card className="mt-6 shadow-md">
         <CardHeader>
-            <CardTitle className="font-headline flex items-center"><Info className="mr-2 h-5 w-5 text-primary" />Lembretes de Sessão</CardTitle>
+          <CardTitle className="font-headline flex items-center">
+            <Info className="mr-2 h-5 w-5 text-primary" />
+            Lembretes de Sessão
+          </CardTitle>
         </CardHeader>
         <CardContent>
-            <p className="text-sm text-muted-foreground">
-                Lembretes automáticos por e-mail são enviados aos pacientes 24 horas e 30 minutos antes de cada sessão agendada.
-                (Esta é uma funcionalidade planejada e não está implementada ativamente neste protótipo.)
-            </p>
+          <p className="text-sm text-muted-foreground">
+            Lembretes automáticos por e-mail são enviados aos pacientes 24 horas e
+            30 minutos antes de cada sessão agendada.
+            (Funcionalidade ainda não implementada neste protótipo.)
+          </p>
         </CardContent>
       </Card>
     </TooltipProvider>
