@@ -16,6 +16,7 @@ import { PlusCircle, Save, Loader2, Trash2, FilePenLine } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Separator } from "@/components/ui/separator";
+import { useToast } from "@/hooks/use-toast";
 
 interface SessionNotesSectionProps {
   patient: Patient;
@@ -49,6 +50,7 @@ export function SessionNotesSection({
   const [editNote, setEditNote] = useState("");
   const [editNoteDate, setEditNoteDate] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
+  const { toast } = useToast();
 
   const handleSaveNote = async () => {
     if (newNote.trim() === "") return;
@@ -58,9 +60,17 @@ export function SessionNotesSection({
       setNewNote("");
       setNewNoteDate(new Date().toISOString().slice(0, 16));
       setShowAddNoteForm(false);
+      toast({
+        title: "Nota Adicionada",
+        description: "A anotação foi salva com sucesso.",
+      });
     } catch (error) {
       console.error("Failed to save note:", error);
-      // TO-DO: exibir feedback pro usuário
+      toast({
+        title: "Erro ao Salvar Nota",
+        description: "Não foi possível salvar a anotação.",
+        variant: "destructive",
+      });
     } finally {
       setIsSaving(false);
     }
@@ -78,8 +88,17 @@ export function SessionNotesSection({
     try {
       await onEditNote(patient.id, editingId, editNote, editNoteDate);
       setEditingId(null);
+      toast({
+        title: "Nota Atualizada",
+        description: "As alterações foram salvas com sucesso.",
+      });
     } catch (error) {
       console.error("Failed to update note:", error);
+      toast({
+        title: "Erro ao Atualizar Nota",
+        description: "Não foi possível atualizar a anotação.",
+        variant: "destructive",
+      });
     } finally {
       setIsUpdating(false);
     }
