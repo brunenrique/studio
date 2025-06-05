@@ -1,0 +1,14 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /testsLibrary/{testId} {
+      allow read: if request.auth != null && request.auth.token.role == 'Psicólogo';
+    }
+    match /patients/{patientId}/assessments/{assessmentId} {
+      allow create, read, update: if request.auth != null && request.auth.token.role == 'Psicólogo';
+      allow update: if request.auth == null &&
+                    request.time < (resource.data.createdAt + duration.value(7, 'd')) &&
+                    request.resource.data.linkToken == resource.data.linkToken;
+    }
+  }
+}

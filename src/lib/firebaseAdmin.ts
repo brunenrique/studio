@@ -1,0 +1,25 @@
+import { getApps, initializeApp, cert, App } from 'firebase-admin/app';
+import { getFirestore } from 'firebase-admin/firestore';
+import { getAuth } from 'firebase-admin/auth';
+import jwt from 'jsonwebtoken';
+
+let app: App;
+if (!getApps().length) {
+  const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT || '{}');
+  app = initializeApp({ credential: cert(serviceAccount) });
+} else {
+  app = getApps()[0];
+}
+
+export const adminDb = getFirestore(app);
+export const adminAuth = getAuth(app);
+
+const TOKEN_SECRET = process.env.ASSESSMENT_TOKEN_SECRET || 'secret';
+
+export function signAssessmentToken(payload: { assessmentId: string; patientId: string }): string {
+  return jwt.sign(payload, TOKEN_SECRET, { expiresIn: '7d' });
+}
+
+export function verifyAssessmentToken(token: string): { assessmentId: string; patientId: string } {
+  return jwt.verify(token, TOKEN_SECRET) as { assessmentId: string; patientId: string };
+}

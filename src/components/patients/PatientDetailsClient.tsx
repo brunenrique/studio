@@ -12,6 +12,9 @@ import { AIInsightsSection } from "./AIInsightsSection";
 import { PatientFormDialog } from "./PatientFormDialog";
 import { format, parseISO, differenceInYears } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
+import { usePatientAssessments } from "@/hooks/usePatientAssessments";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import Image from "next/image";
 
 interface PatientDetailsClientProps {
@@ -23,6 +26,7 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
   const [patient, setPatient] = useState<Patient | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
+  const { data: assessments, loading: loadingAssessments } = usePatientAssessments(patientId);
 
   useEffect(() => {
     const foundPatient = getMockPatientById(patientId);
@@ -190,6 +194,36 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
             : undefined
         }
       />
+
+      <Accordion type="single" collapsible className="mt-6">
+        <AccordionItem value="assessments">
+          <AccordionTrigger>Mensuração & Avaliação</AccordionTrigger>
+          <AccordionContent>
+            {loadingAssessments ? (
+              <p>Carregando avaliações...</p>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Data</TableHead>
+                    <TableHead>Instrumento</TableHead>
+                    <TableHead>Score</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {assessments.map(a => (
+                    <TableRow key={a.id}>
+                      <TableCell>{new Date(a.createdAt).toLocaleDateString()}</TableCell>
+                      <TableCell>{a.testId}</TableCell>
+                      <TableCell>{a.score ?? '-'}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
 
       <Card className="shadow-lg mt-6" data-ai-hint="compliance and reminders section">
         <CardHeader>
