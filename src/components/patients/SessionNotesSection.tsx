@@ -30,7 +30,7 @@ interface SessionNotesSectionProps {
 export function SessionNotesSection({
   patient,
   onAddNote,
-  onDeleteNote, // ✅ recebido nas props
+  onDeleteNote,
 }: SessionNotesSectionProps) {
   const [newNote, setNewNote] = useState("");
   const [newNoteDate, setNewNoteDate] = useState(
@@ -49,7 +49,6 @@ export function SessionNotesSection({
       setShowAddNoteForm(false);
     } catch (error) {
       console.error("Failed to save note:", error);
-      // TO-DO: exibir feedback pro usuário
     } finally {
       setIsSaving(false);
     }

@@ -246,7 +246,6 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
         </div>
       </Card>
 
-      {/* ✅ Corrigido: passando também o onDeleteNote */}
       <SessionNotesSection
         patient={patient}
         onAddNote={handleAddNote}
