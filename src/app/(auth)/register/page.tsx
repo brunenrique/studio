@@ -11,9 +11,14 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
+import type { UserRole } from '@/lib/types';
 
 // Mock user registration function
-const mockRegisterUser = async (email, password, role) => {
+const mockRegisterUser = async (
+  email: string,
+  password: string,
+  role: UserRole
+): Promise<{ success: boolean }> => {
   // In a real application, this would be an API call to your backend
   console.log("Attempting to register user:", { email, password, role });
   // Simulate a successful registration after a delay
@@ -28,13 +33,13 @@ const mockRegisterUser = async (email, password, role) => {
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('psicologo'); // Default role
+  const [role, setRole] = useState<UserRole>('Psicólogo'); // Default role
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const router = useRouter();
 
-  const handleRegister = async (e) => {
+  const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
     setSuccess(false);
@@ -84,12 +89,12 @@ export default function RegisterPage() {
           </div>
           <div className="grid gap-2">
             <Label htmlFor="role">Tipo de Usuário</Label>
-            <Select value={role} onValueChange={setRole}>
+            <Select value={role} onValueChange={(value) => setRole(value as UserRole)}>
               <SelectTrigger id="role">
                 <SelectValue placeholder="Selecione o tipo de usuário" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="psicologo">Psicólogo</SelectItem>
+                <SelectItem value="Psicólogo">Psicólogo</SelectItem>
                 {/* Add other roles as needed in the future */}
                 {/* <SelectItem value="admin_global">Admin Global</SelectItem> */}
                 {/* <SelectItem value="admin_secretario">Admin/Secretário</SelectItem> */}

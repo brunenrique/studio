@@ -2,7 +2,7 @@
 "use client";
 
 import type { Patient, SessionNote } from "@/lib/types"; // Import the types
-import { mockPatients } from "@/lib/mock-data"; // For finding the patient
+import { getMockPatientById } from "@/lib/mock-data"; // For finding the patient
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -54,6 +54,22 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
     toast({
       title: "Nota Adicionada",
       description: "A nova nota de sessão foi salva com sucesso.",
+    });
+  };
+
+  const handleDeleteNote = async (id: string, noteId: string) => {
+    if (!patient) return;
+    await new Promise(resolve => setTimeout(resolve, 300));
+    setPatient(prev => {
+      if (!prev) return null;
+      return {
+        ...prev,
+        sessionNotes: prev.sessionNotes.filter(n => n.id !== noteId),
+      };
+    });
+    toast({
+      title: "Nota Removida",
+      description: "A nota de sessão foi excluída.",
     });
   };
   
@@ -128,7 +144,11 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
         </div>
       </Card>
       
-      <SessionNotesSection patient={patient} onAddNote={handleAddNote} />
+      <SessionNotesSection
+        patient={patient}
+        onAddNote={handleAddNote}
+        onDeleteNote={handleDeleteNote}
+      />
       
       <AIInsightsSection patient={patient} latestSessionNote={patient.sessionNotes.length > 0 ? patient.sessionNotes[patient.sessionNotes.length - 1] : undefined}/>
 

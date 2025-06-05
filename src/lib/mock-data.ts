@@ -3,7 +3,7 @@ import type { Patient, Appointment, WaitingListItem, User, SessionNote } from '.
 export const mockUser: User = {
   id: 'user-psychologist-01',
   email: 'doctor.jane@psiguard.com',
-  role: 'psychologist',
+  role: 'Psicólogo',
   name: 'Dr. Jane Doe',
 };
 
@@ -26,7 +26,7 @@ const initialSessionNotesP2: SessionNote[] = [
 ];
 
 
-const mockPatients: Patient[] = [
+export const mockPatients: Patient[] = [
   {
     id: 'patient-001',
     name: 'Alice Wonderland',

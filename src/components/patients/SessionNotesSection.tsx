@@ -17,7 +17,7 @@ interface SessionNotesSectionProps {
   onDeleteNote: (patientId: string, noteId: string) => Promise<void>;
 }
 
-export function SessionNotesSection({ patient, onAddNote }: SessionNotesSectionProps) {
+export function SessionNotesSection({ patient, onAddNote, onDeleteNote }: SessionNotesSectionProps) {
   const [newNote, setNewNote] = useState("");
   const [showAddNoteForm, setShowAddNoteForm] = useState(false);
   const [isSaving, setIsSaving] = useState(false);

@@ -59,7 +59,7 @@ export function AppSidebar() {
             <SidebarMenuItem key={item.href}>
               <Link href={item.href} passHref legacyBehavior>
                 <SidebarMenuButton
-                  variant="ghost"
+                  variant="outline"
                   className={cn(
                     "w-full justify-start text-base h-12",
                     pathname === item.href || (pathname.startsWith(item.href) && item.href !== '/dashboard')

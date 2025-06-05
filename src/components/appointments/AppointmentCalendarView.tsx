@@ -6,7 +6,7 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar as CalendarIcon, CheckCircle, XCircle, Edit3, Trash2, Clock, User, AlertCircle, Info } from "lucide-react"; // Renamed Calendar to CalendarIcon
-import { format, parseISO, isSameDay, isPast, isToday, isFuture } from "date-fns";
+import { format, parseISO, isSameDay, isPast, isToday, isFuture, addMinutes } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { AppointmentFormDialog } from "./AppointmentFormDialog";
 import { Calendar } from "@/components/ui/calendar"; // ShadCN Calendar
@@ -31,6 +31,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 
 interface AppointmentCalendarViewProps {
   appointments: Appointment[];
