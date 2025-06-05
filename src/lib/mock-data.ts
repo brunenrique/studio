@@ -7,6 +7,7 @@ import type {
   Template,
   KnowledgeBaseArticle,
   FinanceRecord,
+  ServiceType,
 } from '@/lib/types';
 
 // 👤 Usuário mock
@@ -206,6 +207,28 @@ export const mockFinanceRecords: FinanceRecord[] = [
     date: new Date(today.getFullYear(), today.getMonth() - 1, 25).toISOString(),
     amount: 200,
     description: 'Sessão do mês anterior',
+  },
+];
+
+// 💼 Tipos de serviço oferecidos
+export const mockServiceTypes: ServiceType[] = [
+  {
+    id: 'svc-001',
+    name: 'Consulta Inicial',
+    defaultDuration: 50,
+    price: 200,
+  },
+  {
+    id: 'svc-002',
+    name: 'Terapia de Casal',
+    defaultDuration: 90,
+    price: 300,
+  },
+  {
+    id: 'svc-003',
+    name: 'Sessão de Acompanhamento',
+    defaultDuration: 50,
+    price: 180,
   },
 ];
 
