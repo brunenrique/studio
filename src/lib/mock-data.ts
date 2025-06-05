@@ -5,6 +5,7 @@ import type {
   User,
   SessionNote,
   Template,
+  KnowledgeBaseArticle,
 } from '@/lib/types';
 
 // 👤 Usuário mock
@@ -192,5 +193,26 @@ export const mockTemplates: Template[] = [
     name: 'Email de Lembrete',
     category: 'email',
     content: 'Olá {{nome}}, este é um lembrete do seu próximo agendamento...'
+  }
+];
+
+// 📚 Artigos da base de conhecimento
+export const mockKnowledgeBaseArticles: KnowledgeBaseArticle[] = [
+  {
+    id: 'kb-001',
+    question: 'Como adicionar um paciente?',
+    answer: 'Vá para a página de pacientes e clique em "Adicionar Paciente".'
+  },
+  {
+    id: 'kb-002',
+    question: 'Posso personalizar as métricas do dashboard?',
+    answer:
+      'Sim, utilize a página de configurações para escolher quais métricas deseja ver.'
+  },
+  {
+    id: 'kb-003',
+    question: 'Os dados são criptografados?',
+    answer:
+      'Este protótipo usa criptografia apenas em campos selecionados. Veja a documentação para mais detalhes.'
   }
 ];
