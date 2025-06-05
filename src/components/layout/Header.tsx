@@ -75,6 +75,9 @@ export function AppHeader() {
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => router.push('/medications')}>
+                Medicamentos
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={() => router.push('/knowledge-base')}>
                 Base de Conhecimento
               </DropdownMenuItem>
