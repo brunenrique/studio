@@ -40,6 +40,7 @@ export function LoginForm() {
   }
 
   return (
+    <>
     <Card className="w-full max-w-md shadow-xl rounded-lg">
       <CardHeader>
         <CardTitle className="text-2xl font-headline">Bem-vindo de volta!</CardTitle>
@@ -86,5 +87,6 @@ export function LoginForm() {
           Registre-se
         </Link>{" "}
       </p>
+    </>
   );
 }
