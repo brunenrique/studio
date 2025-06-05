@@ -29,6 +29,12 @@ export const TasksProvider = ({ children }: { children: ReactNode }) => {
     if (data.dueDate) {
       const dateStr = new Date(data.dueDate).toLocaleString();
       addNotification(`Lembrete de tarefa: ${data.title} para ${dateStr}`);
+      const delay = new Date(data.dueDate).getTime() - Date.now();
+      if (delay > 0) {
+        setTimeout(() => {
+          addNotification(`Tarefa pendente: ${data.title}`);
+        }, delay);
+      }
     } else {
       addNotification(`Nova tarefa: ${data.title}`);
     }
