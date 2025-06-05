@@ -15,11 +15,11 @@ export default function TasksPage() {
   const { toast } = useToast();
   const { tasks, addTask, toggleTask, deleteTask } = useTasks();
 
-  const handleSave = (task: Task) => {
-    addTask({ title: task.title, dueDate: task.dueDate });
+  const handleSave = (data: Omit<Task, 'id' | 'completed'>) => {
+    addTask(data);
     toast({
       title: "Tarefa Criada",
-      description: `A tarefa "${task.title}" foi adicionada.`,
+      description: `A tarefa "${data.title}" foi adicionada.`,
     });
   };
 

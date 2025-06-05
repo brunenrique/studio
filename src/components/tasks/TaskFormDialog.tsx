@@ -34,7 +34,7 @@ const taskFormSchema = z.object({
 type TaskFormValues = z.infer<typeof taskFormSchema>;
 
 interface TaskFormDialogProps {
-  onSave: (task: Task) => void;
+  onSave: (data: Omit<Task, 'id' | 'completed'>) => void;
   children: React.ReactNode;
   isOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -58,13 +58,10 @@ export function TaskFormDialog({ onSave, children, isOpen: controlledIsOpen, onO
   async function onSubmit(values: TaskFormValues) {
     setIsLoading(true);
     await new Promise(resolve => setTimeout(resolve, 500));
-    const task: Task = {
-      id: `task-${Date.now()}`,
+    onSave({
       title: values.title,
       dueDate: values.dueDate ? new Date(values.dueDate).toISOString() : undefined,
-      completed: false,
-    };
-    onSave(task);
+    });
     setIsLoading(false);
     onOpenChange(false);
     form.reset();
