@@ -50,5 +50,14 @@ export interface WaitingListItem {
   notes?: string;
 }
 
+// 📚 Item da base de conhecimento interna
+export interface KnowledgeBaseItem {
+  id: string;
+  title: string;
+  description: string;
+  link?: string; // Pode ser um link do Google Drive ou referência externa
+  createdDate: string; // ISO 8601
+}
+
 // 🔄 Tipo utilitário: paciente parcial para formulários e updates
 export type PartialPatient = Partial<Patient>;
