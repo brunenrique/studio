@@ -4,6 +4,7 @@ import type {
   WaitingListItem,
   User,
   SessionNote,
+  SystemSettings,
 } from '@/lib/types';
 
 // 👤 Usuário mock
@@ -165,3 +166,13 @@ export const mockWaitingList: WaitingListItem[] = [
     notes: 'Encaminhamento urgente do Dr. Hamilton.',
   },
 ];
+
+// ⚙️ Configurações padrão do sistema
+export const mockSystemSettings: SystemSettings = {
+  clinicName: 'Clínica Exemplo',
+  clinicContact: 'contato@exemplo.com',
+  startHour: '09:00',
+  endHour: '17:00',
+  defaultSessionDuration: 50,
+  externalIntegration: '',
+};
