@@ -26,7 +26,7 @@ export default function HomePage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4 text-center">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-background p-8 text-center">
       <Logo />
       <h1 className="mt-6 text-3xl font-headline font-bold text-primary">Bem-vindo ao PsiGuard</h1>
       <p className="mt-4 max-w-xl text-foreground">
