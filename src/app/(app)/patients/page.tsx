@@ -47,7 +47,7 @@ export default function PatientsPage() {
   const handleUpdatePatient = (updatedPatient: Patient) => {
     // Simula o salvamento com criptografia
     updateMockPatient(updatedPatient);
-    // Atualiza a lista localmente buscando novamente os dados mock (agora com o paciente atualizado)
+    // Atualiza a lista localmente buscando novamente os dados mock com o paciente atualizado
     setPatients(getMockPatientsList());
   };
 

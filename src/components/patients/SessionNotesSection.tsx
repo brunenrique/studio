@@ -19,13 +19,13 @@ import { Separator } from "@/components/ui/separator";
 interface SessionNotesSectionProps {
   patient: Patient;
   onAddNote: (patientId: string, noteContent: string) => Promise<void>;
-  onDeleteNote: (patientId: string, noteId: string) => Promise<void>; // ✅ incluído corretamente
+  onDeleteNote: (patientId: string, noteId: string) => Promise<void>;
 }
 
 export function SessionNotesSection({
   patient,
   onAddNote,
-  onDeleteNote, // ✅ recebido nas props
+  onDeleteNote,
 }: SessionNotesSectionProps) {
   const [newNote, setNewNote] = useState("");
   const [showAddNoteForm, setShowAddNoteForm] = useState(false);

@@ -1,7 +1,7 @@
 "use client";
 
 import type { Patient, SessionNote } from "@/lib/types";
-import { mockPatients } from "@/lib/mock-data"; // mockPatients agora está exportado corretamente
+import { mockPatients } from "@/lib/mock-data";
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,6 @@ interface PatientDetailsClientProps {
   patientId: string;
 }
 
-// ✅ Corrigido: tipando o parâmetro 'p'
 const getMockPatientById = (id: string): Patient | null => {
   return mockPatients.find((p: Patient) => p.id === id) || null;
 };
@@ -60,7 +59,6 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
     });
   };
 
-  // ✅ Corrigido: adicionada função para deletar nota
   const handleDeleteNote = async (noteId: string) => {
     if (!patient) return;
 
@@ -157,7 +155,6 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
         </div>
       </Card>
 
-      {/* ✅ Corrigido: passando também o onDeleteNote */}
       <SessionNotesSection
         patient={patient}
         onAddNote={handleAddNote}

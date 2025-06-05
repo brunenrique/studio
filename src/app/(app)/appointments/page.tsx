@@ -81,8 +81,8 @@ export default function AppointmentsPage() {
           <AppointmentCalendarView
             appointments={appointments}
             patients={patients}
-            onUpdateAppointment={handleAddOrUpdateAppointment} // ✅ corrigido aqui
-            onDeleteAppointment={handleDeleteAppointment}     // ✅ e aqui
+            onUpdateAppointment={handleAddOrUpdateAppointment}
+            onDeleteAppointment={handleDeleteAppointment}
           />
         </CardContent>
       </Card>
