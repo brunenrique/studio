@@ -7,6 +7,7 @@ import { AppSidebar } from './Sidebar'; // Import the new sidebar
 import { NotificationBell } from './NotificationBell';
 import { useAuth } from '@/contexts/AuthContext';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -54,6 +55,7 @@ export function AppHeader() {
       </div>
 
       <NotificationBell />
+      <ThemeToggle />
 
       {user && (
          <DropdownMenu>
