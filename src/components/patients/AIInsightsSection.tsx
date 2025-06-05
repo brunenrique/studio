@@ -1,19 +1,18 @@
-
 "use client";
 
 import { useState } from "react";
+import { Card, CardHeader, CardContent, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Lightbulb, Loader2, AlertTriangle } from "lucide-react";
 import type { SessionInsightsInput, SessionInsightsOutput } from "@/ai/flows/session-insights";
-import { getSessionInsights } from "@/ai/flows/session-insights"; // Ensure this path is correct
+import { getSessionInsights } from "@/ai/flows/session-insights";
 import type { Patient, SessionNote } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
 
 interface AIInsightsSectionProps {
   patient: Patient;
-  latestSessionNote?: SessionNote; // Optional, if we want to analyze the most recent one specifically
+  latestSessionNote?: SessionNote;
 }
 
 export function AIInsightsSection({ patient, latestSessionNote }: AIInsightsSectionProps) {
@@ -27,19 +26,15 @@ export function AIInsightsSection({ patient, latestSessionNote }: AIInsightsSect
     setError(null);
     setInsights(null);
 
-    // Prepare input for AI
-    // For patient history, concatenate all previous notes or use a summary if available.
-    // For simplicity, let's use the latest note if provided, or the most recent from patient.sessionNotes.
-    
     const currentSessionNotes = latestSessionNote?.notes || 
-                                (patient.sessionNotes.length > 0 ? patient.sessionNotes[patient.sessionNotes.length - 1].notes : "Nenhuma nota de sessão recente disponível.");
+      (patient.sessionNotes.length > 0 ? patient.sessionNotes[patient.sessionNotes.length - 1].notes : "Nenhuma nota de sessão recente disponível.");
 
     const patientHistory = patient.sessionNotes
-        .filter(note => note.id !== latestSessionNote?.id) // Exclude the current note if it's passed separately
-        .slice(0, 5) // Limit history for brevity in this example
-        .map(note => `Data: ${new Date(note.date).toLocaleDateString()}\nNotas: ${note.notes}`)
-        .join("\n\n---\n\n");
-        
+      .filter(note => note.id !== latestSessionNote?.id)
+      .slice(0, 5)
+      .map(note => `Data: ${new Date(note.date).toLocaleDateString()}\nNotas: ${note.notes}`)
+      .join("\n\n---\n\n");
+
     const aiInput: SessionInsightsInput = {
       sessionNotes: currentSessionNotes,
       patientHistory: patientHistory || "Nenhum histórico de sessões anteriores disponível.",
@@ -71,24 +66,27 @@ export function AIInsightsSection({ patient, latestSessionNote }: AIInsightsSect
     <Card className="shadow-lg rounded-lg mt-6 bg-primary/5 border-primary/20">
       <CardHeader>
         <div className="flex justify-between items-center">
-            <div>
-            <div>
-                <CardTitle className="text-xl font-headline flex items-center">
-                <Lightbulb className="mr-2 h-6 w-6 text-primary" /> Insights da IA
-                </CardTitle>
-                <CardDescription data-ai-hint="AI insights section description">
-                Analise as notas da sessão e o histórico do paciente para obter insights.
-                </CardDescription> {/* <-- Adicione esta linha */}
-            </div>
+          <div>
+            <CardTitle className="text-xl font-headline flex items-center">
+              <Lightbulb className="mr-2 h-6 w-6 text-primary" /> Insights da IA
+            </CardTitle>
+            <CardDescription data-ai-hint="AI insights section description">
+              Analise as notas da sessão e o histórico do paciente para obter insights.
+            </CardDescription>
+          </div>
 
-            <Button onClick={handleGetInsights} disabled={isLoading || !canGenerateInsights} className="shadow-md">
-                {isLoading ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : (
-                <Lightbulb className="mr-2 h-4 w-4" />
-                )}
-                Gerar Insights
-            </Button>
+          <Button
+            onClick={handleGetInsights}
+            disabled={isLoading || !canGenerateInsights}
+            className="shadow-md"
+          >
+            {isLoading ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Lightbulb className="mr-2 h-4 w-4" />
+            )}
+            Gerar Insights
+          </Button>
         </div>
         {!canGenerateInsights && (
           <p className="text-sm text-muted-foreground mt-2">
@@ -118,7 +116,8 @@ export function AIInsightsSection({ patient, latestSessionNote }: AIInsightsSect
               rows={8}
               className="bg-background/70 text-base leading-relaxed"
               placeholder="Os insights gerados pela IA aparecerão aqui."
- data-ai-hint="AI insights output textarea"/>
+              data-ai-hint="AI insights output textarea"
+            />
             <p className="text-xs text-muted-foreground mt-2">
               Lembrete: Os insights da IA são para auxílio e não substituem o julgamento clínico profissional.
             </p>
