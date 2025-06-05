@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import type { Patient } from '@/lib/types';
 import { mockPatients } from '@/lib/mock-data'; // ✅ corrigido aqui
+import { getMockPatientsList, updateMockPatient } from '@/lib/mock-data';
 import { PatientTable } from '@/components/patients/PatientTable';
 import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
@@ -16,6 +17,7 @@ export default function PatientsPage() {
   const { toast } = useToast();
 
   useEffect(() => {
+    setPatients(getMockPatientsList());
     // ✅ agora usando mockPatients direto
     setPatients(mockPatients);
   }, []);
@@ -42,6 +44,13 @@ export default function PatientsPage() {
     });
 
     setIsFormOpen(false);
+  };
+
+  const handleUpdatePatient = (updatedPatient: Patient) => {
+    // Simula o salvamento com criptografia
+    updateMockPatient(updatedPatient);
+    // Atualiza a lista localmente buscando novamente os dados mock (agora com o paciente atualizado)
+    setPatients(getMockPatientsList());
   };
 
   const handleDeletePatient = (patientId: string) => {
@@ -78,7 +87,7 @@ export default function PatientsPage() {
         </CardHeader>
         <CardContent>
           <PatientTable
-            patients={patients}
+            patients={getMockPatientsList()}
             onUpdatePatient={handleAddOrUpdatePatient}
             onDeletePatient={handleDeletePatient}
           />
