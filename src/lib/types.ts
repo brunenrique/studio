@@ -63,5 +63,12 @@ export interface Template {
   content: string;
 }
 
+// 📚 Artigo da base de conhecimento
+export interface KnowledgeBaseArticle {
+  id: string;
+  question: string;
+  answer: string;
+}
+
 // 🔄 Tipo utilitário: paciente parcial para formulários e updates
 export type PartialPatient = Partial<Patient>;
