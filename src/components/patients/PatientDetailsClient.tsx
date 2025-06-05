@@ -20,6 +20,7 @@ import { SessionNotesSection } from "./SessionNotesSection";
 import { AIInsightsSection } from "./AIInsightsSection";
 import { DocumentUploadDialog } from "./DocumentUploadDialog";
 import { TreatmentPlanDialog } from "./TreatmentPlanDialog";
+import { PatientFormDialog } from "./PatientFormDialog";
 import { format, parseISO, differenceInYears } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import Image from "next/image";
@@ -89,6 +90,15 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
     toast({
       title: "Nota Removida",
       description: "A nota foi excluída com sucesso.",
+    });
+  };
+
+  const handleSavePatient = (updatedPatient: Patient) => {
+    setPatient(updatedPatient);
+    updateMockPatient(updatedPatient);
+    toast({
+      title: "Paciente Atualizado",
+      description: "Os dados do paciente foram salvos com sucesso.",
     });
   };
 
@@ -188,11 +198,16 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
 
   return (
     <div className="space-y-6">
-      <Button asChild variant="outline" className="mb-6 shadow-sm">
-        <Link href="/patients">
-          <ArrowLeft className="mr-2 h-4 w-4" /> Voltar para Pacientes
-        </Link>
-      </Button>
+      <div className="flex items-center justify-between mb-6">
+        <Button asChild variant="outline" className="shadow-sm">
+          <Link href="/patients">
+            <ArrowLeft className="mr-2 h-4 w-4" /> Voltar para Pacientes
+          </Link>
+        </Button>
+        <PatientFormDialog patient={patient} onSave={handleSavePatient}>
+          <Button variant="default">Editar</Button>
+        </PatientFormDialog>
+      </div>
 
       <Card className="shadow-xl rounded-lg overflow-hidden">
         <div className="md:flex">
