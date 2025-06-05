@@ -2,6 +2,7 @@
 "use client";
 
 import { useAuth } from '@/contexts/AuthContext';
+import { useSettings } from '@/contexts/SettingsContext';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -10,6 +11,7 @@ import Image from 'next/image';
 
 export default function DashboardPage() {
   const { user } = useAuth();
+  const { dashboard } = useSettings();
 
   if (!user) return null; // Or a loading state
 
@@ -36,6 +38,7 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {dashboard.showAppointments && (
         <Card className="shadow-lg hover:shadow-xl transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Próximos Agendamentos</CardTitle>
@@ -49,7 +52,9 @@ export default function DashboardPage() {
             </Button>
           </CardContent>
         </Card>
+        )}
 
+        {dashboard.showPatients && (
         <Card className="shadow-lg hover:shadow-xl transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Pacientes Ativos</CardTitle>
@@ -63,7 +68,9 @@ export default function DashboardPage() {
             </Button>
           </CardContent>
         </Card>
+        )}
 
+        {dashboard.showWaitingList && (
         <Card className="shadow-lg hover:shadow-xl transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Lista de Espera</CardTitle>
@@ -77,6 +84,7 @@ export default function DashboardPage() {
             </Button>
           </CardContent>
         </Card>
+        )}
       </div>
 
       <Card className="shadow-lg">
