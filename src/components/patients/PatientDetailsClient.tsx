@@ -2,7 +2,7 @@
 "use client";
 
 import type { Patient, SessionNote } from "@/lib/types"; // Import the types
-import { mockPatients } from "@/lib/mock-data"; // For finding the patient
+import { getMockPatientById } from "@/lib/mock-data"; // For finding the patient
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
