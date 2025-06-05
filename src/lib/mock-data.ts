@@ -2,6 +2,7 @@ import type {
   Patient,
   Appointment,
   WaitingListItem,
+  KnowledgeBaseItem,
   User,
   SessionNote,
 } from '@/lib/types';
@@ -163,5 +164,22 @@ export const mockWaitingList: WaitingListItem[] = [
     contact: 'clark@example.com',
     addedDate: new Date(today.setDate(today.getDate() - 3)).toISOString(),
     notes: 'Encaminhamento urgente do Dr. Hamilton.',
+  },
+];
+
+// 📚 Base de conhecimento mock
+export const mockKnowledgeBase: KnowledgeBaseItem[] = [
+  {
+    id: 'kb-001',
+    title: 'Abordagens Terapêuticas Cognitivas',
+    description: 'Resumo das principais técnicas de TCC.',
+    link: 'https://drive.google.com/example-tcc',
+    createdDate: new Date(today).toISOString(),
+  },
+  {
+    id: 'kb-002',
+    title: 'Leituras sobre Mindfulness',
+    description: 'Links úteis e artigos recomendados.',
+    createdDate: new Date(today).toISOString(),
   },
 ];
