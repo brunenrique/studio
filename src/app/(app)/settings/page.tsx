@@ -32,6 +32,14 @@ export default function SettingsPage() {
             <Checkbox checked={dashboard.showWaitingList} onCheckedChange={handleChange('showWaitingList')} />
             Mostrar lista de espera
           </label>
+          <label className="flex items-center gap-2">
+            <Checkbox checked={dashboard.showFinances} onCheckedChange={handleChange('showFinances')} />
+            Mostrar resumo financeiro
+          </label>
+          <label className="flex items-center gap-2">
+            <Checkbox checked={dashboard.showBirthdays} onCheckedChange={handleChange('showBirthdays')} />
+            Mostrar aniversários próximos
+          </label>
         </CardContent>
       </Card>
     </div>

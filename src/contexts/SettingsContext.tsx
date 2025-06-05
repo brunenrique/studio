@@ -6,6 +6,8 @@ export interface DashboardSettings {
   showAppointments: boolean;
   showPatients: boolean;
   showWaitingList: boolean;
+  showFinances: boolean;
+  showBirthdays: boolean;
 }
 
 interface SettingsContextType {
@@ -17,6 +19,8 @@ const defaultDashboard: DashboardSettings = {
   showAppointments: true,
   showPatients: true,
   showWaitingList: true,
+  showFinances: true,
+  showBirthdays: true,
 };
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
