@@ -1,11 +1,30 @@
 "use client";
 
 import type { Patient, SessionNote } from "@/lib/types";
-import { mockPatients } from "@/lib/mock-data"; // mockPatients agora está exportado corretamente
+import { mockPatients, mockAppointments } from "@/lib/mock-data"; // mockPatients agora está exportado corretamente
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, UserCircle, CalendarDays as CalendarIcon, Phone, Gift } from "lucide-react";
+import {
+  ArrowLeft,
+  UserCircle,
+  CalendarDays as CalendarIcon,
+  Phone,
+  Gift,
+  Mail,
+  PhoneCall,
+  UploadCloud,
+  FilePlus,
+  Goal,
+  LineChart,
+  DollarSign,
+} from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import Link from "next/link";
 import { SessionNotesSection } from "./SessionNotesSection";
 import { AIInsightsSection } from "./AIInsightsSection";
@@ -78,6 +97,13 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
     });
   };
 
+  const patientAppointments = mockAppointments
+    .filter((appt) => appt.patientId === patient?.id)
+    .sort(
+      (a, b) =>
+        parseISO(b.dateTime).getTime() - parseISO(a.dateTime).getTime(),
+    );
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -149,13 +175,182 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
               <div className="flex items-center sm:col-span-2">
                 <UserCircle className="h-5 w-5 mr-3 text-primary" />
                 <div>
-                  <span className="font-semibold">Status:</span> Ativo (placeholder)
+                  <span className="font-semibold">Status:</span>{" "}
+                  {patient.status || "indefinido"}
                 </div>
               </div>
             </CardContent>
           </div>
         </div>
       </Card>
+
+      <Accordion type="multiple" className="mt-6 space-y-2">
+        <AccordionItem value="demographics">
+          <AccordionTrigger>Informações Demográficas</AccordionTrigger>
+          <AccordionContent>
+            <ul className="text-sm grid gap-1">
+              {patient.gender && (
+                <li>
+                  <span className="font-semibold">Gênero:</span> {patient.gender}
+                </li>
+              )}
+              {patient.profession && (
+                <li>
+                  <span className="font-semibold">Profissão:</span> {patient.profession}
+                </li>
+              )}
+              {patient.address && (
+                <li>
+                  <span className="font-semibold">Endereço:</span> {patient.address}
+                </li>
+              )}
+              {patient.secondaryContact && (
+                <li>
+                  <span className="font-semibold">Contato Secundário:</span> {patient.secondaryContact}
+                </li>
+              )}
+              {patient.email && (
+                <li>
+                  <span className="font-semibold">Email:</span> {patient.email}
+                </li>
+              )}
+              {patient.emergencyContact && (
+                <li>
+                  <span className="font-semibold">Contato de Emergência:</span> {patient.emergencyContact}
+                </li>
+              )}
+            </ul>
+          </AccordionContent>
+        </AccordionItem>
+
+        <AccordionItem value="clinical">
+          <AccordionTrigger>Histórico Clínico e Anamnese</AccordionTrigger>
+          <AccordionContent>
+            <ul className="text-sm grid gap-1">
+              {patient.allergies && (
+                <li>
+                  <span className="font-semibold">Alergias:</span> {patient.allergies}
+                </li>
+              )}
+              {patient.medications && (
+                <li>
+                  <span className="font-semibold">Medicações:</span> {patient.medications}
+                </li>
+              )}
+              {patient.familyHistory && (
+                <li>
+                  <span className="font-semibold">Histórico Familiar:</span> {patient.familyHistory}
+                </li>
+              )}
+              {patient.chiefComplaint && (
+                <li>
+                  <span className="font-semibold">Queixa Principal:</span> {patient.chiefComplaint}
+                </li>
+              )}
+              {patient.habits && (
+                <li>
+                  <span className="font-semibold">Hábitos:</span> {patient.habits}
+                </li>
+              )}
+            </ul>
+          </AccordionContent>
+        </AccordionItem>
+
+        <AccordionItem value="appointments">
+          <AccordionTrigger>Histórico de Consultas</AccordionTrigger>
+          <AccordionContent>
+            {patientAppointments.length === 0 ? (
+              <p className="text-sm text-muted-foreground">Nenhuma consulta registrada.</p>
+            ) : (
+              <ul className="text-sm space-y-1">
+                {patientAppointments.map((appt) => (
+                  <li key={appt.id}>
+                    {format(parseISO(appt.dateTime), "dd/MM/yyyy HH:mm")} - {appt.notes || "Sessão"}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </AccordionContent>
+        </AccordionItem>
+
+        <AccordionItem value="documents">
+          <AccordionTrigger>Documentos Anexados</AccordionTrigger>
+          <AccordionContent>
+            <Button variant="outline" size="sm" className="mb-2">
+              <UploadCloud className="mr-2 h-4 w-4" /> Enviar Arquivo
+            </Button>
+            <p className="text-sm text-muted-foreground">Upload de arquivos não implementado neste protótipo.</p>
+          </AccordionContent>
+        </AccordionItem>
+
+        <AccordionItem value="treatment">
+          <AccordionTrigger>Planos de Tratamento e Metas</AccordionTrigger>
+          <AccordionContent>
+            <p className="text-sm whitespace-pre-line">
+              {patient.treatmentPlan || "Sem plano registrado."}
+            </p>
+          </AccordionContent>
+        </AccordionItem>
+
+        <AccordionItem value="evolution">
+          <AccordionTrigger>Registro de Evolução</AccordionTrigger>
+          <AccordionContent>
+            <p className="text-sm whitespace-pre-line">
+              {patient.evolution || "Sem registro."}
+            </p>
+          </AccordionContent>
+        </AccordionItem>
+
+        <AccordionItem value="finance">
+          <AccordionTrigger>Informações Financeiras</AccordionTrigger>
+          <AccordionContent>
+            <p className="text-sm mb-2">
+              <span className="font-semibold">Saldo Devedor:</span> R$ {patient.balanceDue?.toFixed(2) || "0,00"}
+            </p>
+            <Button variant="outline" size="sm" className="mb-2">
+              <DollarSign className="mr-2 h-4 w-4" /> Registrar Pagamento
+            </Button>
+            {patient.payments && patient.payments.length > 0 && (
+              <ul className="text-sm space-y-1">
+                {patient.payments.map((p) => (
+                  <li key={p.id}>
+                    {format(parseISO(p.date), "dd/MM/yyyy")} - R$ {p.amount.toFixed(2)} {p.method ? `(${p.method})` : ""}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </AccordionContent>
+        </AccordionItem>
+
+        <AccordionItem value="contact">
+          <AccordionTrigger>Comunicação Rápida</AccordionTrigger>
+          <AccordionContent>
+            <div className="flex flex-wrap gap-2">
+              {patient.email && (
+                <Button asChild variant="outline" size="sm">
+                  <a href={`mailto:${patient.email}`}>
+                    <Mail className="mr-2 h-4 w-4" /> E-mail
+                  </a>
+                </Button>
+              )}
+              <Button asChild variant="outline" size="sm">
+                <a href={`tel:${patient.contact}`}>
+                  <PhoneCall className="mr-2 h-4 w-4" /> Ligar
+                </a>
+              </Button>
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+
+        <AccordionItem value="next">
+          <AccordionTrigger>Agendar Próxima Consulta</AccordionTrigger>
+          <AccordionContent>
+            <Button asChild size="sm">
+              <Link href={`/appointments/new?patientId=${patient.id}`}>Agendar</Link>
+            </Button>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
 
       {/* ✅ Corrigido: passando também o onDeleteNote */}
       <SessionNotesSection

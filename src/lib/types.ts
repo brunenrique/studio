@@ -20,6 +20,14 @@ export interface SessionNote {
   patientHistorySummaryForAI?: string;
 }
 
+// 💳 Pagamento relacionado a um paciente
+export interface Payment {
+  id: string;
+  date: string; // ISO 8601
+  amount: number;
+  method?: string;
+}
+
 // 🧍 Paciente
 export interface Patient {
   id: string;
@@ -27,6 +35,22 @@ export interface Patient {
   contact: string;
   dateOfBirth: string; // ISO 8601
   sessionNotes: SessionNote[];
+  gender?: string;
+  profession?: string;
+  address?: string;
+  secondaryContact?: string;
+  email?: string;
+  emergencyContact?: string;
+  allergies?: string;
+  medications?: string;
+  familyHistory?: string;
+  chiefComplaint?: string;
+  habits?: string;
+  status?: string;
+  treatmentPlan?: string;
+  evolution?: string;
+  balanceDue?: number;
+  payments?: Payment[];
 }
 
 // 📅 Agendamento de sessão
