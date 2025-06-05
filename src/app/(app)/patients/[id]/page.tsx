@@ -1,7 +1,13 @@
 
 import { PatientDetailsClient } from '@/components/patients/PatientDetailsClient';
 
-export default function PatientDetailPage({ params }: any) {
+interface PatientDetailPageProps {
+  params: {
+    id: string;
+  };
+}
+
+export default function PatientDetailPage({ params }: PatientDetailPageProps) {
   return <PatientDetailsClient patientId={params.id} />;
 }
 
