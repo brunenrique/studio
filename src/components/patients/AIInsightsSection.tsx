@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Textarea } from "@/components/ui/textarea";
 import { Lightbulb, Loader2, AlertTriangle } from "lucide-react";
 import type { SessionInsightsInput, SessionInsightsOutput } from "@/ai/flows/session-insights";
-import { getSessionInsights } from "@/ai/flows/session-insights"; // Ensure this path is correct
+import { getSessionInsights } from "@/ai/flows/session-insights";
 import type { Patient, SessionNote } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
 
