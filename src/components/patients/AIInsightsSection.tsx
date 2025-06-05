@@ -75,9 +75,8 @@ export function AIInsightsSection({ patient, latestSessionNote }: AIInsightsSect
                 <CardTitle className="text-xl font-headline flex items-center">
                 <Lightbulb className="mr-2 h-6 w-6 text-primary" /> Insights da IA
                 </CardTitle>
-                <CardDescription>
+                <CardDescription data-ai-hint="AI insights section description">
                 Analise as notas da sessão e o histórico do paciente para obter insights.
-                </Antiga_Sessao_Nota>
             </div>
             <Button onClick={handleGetInsights} disabled={isLoading || !canGenerateInsights} className="shadow-md">
                 {isLoading ? (
@@ -116,7 +115,7 @@ export function AIInsightsSection({ patient, latestSessionNote }: AIInsightsSect
               rows={8}
               className="bg-background/70 text-base leading-relaxed"
               placeholder="Os insights gerados pela IA aparecerão aqui."
-            />
+ data-ai-hint="AI insights output textarea"/>
             <p className="text-xs text-muted-foreground mt-2">
               Lembrete: Os insights da IA são para auxílio e não substituem o julgamento clínico profissional.
             </p>

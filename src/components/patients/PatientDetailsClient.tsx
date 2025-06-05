@@ -1,7 +1,7 @@
 
 "use client";
 
-import type { Patient, SessionNote } from "@/lib/types";
+import type { Patient, SessionNote } from "@/lib/types"; // Import the types
 import { mockPatients } from "@/lib/mock-data"; // For finding the patient
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,11 +24,10 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Simulate fetching patient data
-    const foundPatient = mockPatients.find(p => p.id === patientId);
+    // Simulate fetching decrypted patient data using the mock function
+    const foundPatient = getMockPatientById(patientId);
     if (foundPatient) {
-      // Create a deep copy to avoid modifying mockPatients directly
-      setPatient(JSON.parse(JSON.stringify(foundPatient)));
+      setPatient(foundPatient);
     }
     setIsLoading(false);
   }, [patientId]);

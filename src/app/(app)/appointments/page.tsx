@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import type { Appointment, Patient } from '@/lib/types';
-import { mockAppointments, mockPatients } from '@/lib/mock-data';
+import { mockAppointments, getMockPatientsList } from '@/lib/mock-data';
 import { AppointmentCalendarView } from '@/components/appointments/AppointmentCalendarView';
 import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
@@ -22,9 +22,9 @@ export default function AppointmentsPage() {
     // Simulate fetching data
     setAppointments(mockAppointments.map(app => ({
       ...app,
-      patientName: mockPatients.find(p => p.id === app.patientId)?.name || "Desconhecido"
+      patientName: getMockPatientsList().find(p => p.id === app.patientId)?.name || "Desconhecido"
     })));
-    setPatients(mockPatients);
+    setPatients(getMockPatientsList());
   }, []);
 
   const handleAddOrUpdateAppointment = (appointmentData: Appointment) => {

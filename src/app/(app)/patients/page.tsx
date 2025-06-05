@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import type { Patient } from '@/lib/types';
-import { mockPatients } from '@/lib/mock-data';
+import { getMockPatientsList } from '@/lib/mock-data';
 import { PatientTable } from '@/components/patients/PatientTable';
 import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
@@ -18,7 +18,7 @@ export default function PatientsPage() {
 
   useEffect(() => {
     // Simulate fetching data
-    setPatients(mockPatients);
+    setPatients(getMockPatientsList());
   }, []);
 
   const handleAddOrUpdatePatient = (patientData: Patient) => {

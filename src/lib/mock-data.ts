@@ -26,7 +26,7 @@ const initialSessionNotesP2: SessionNote[] = [
 ];
 
 
-export const mockPatients: Patient[] = [
+const mockPatients: Patient[] = [
   {
     id: 'patient-001',
     name: 'Alice Wonderland',
@@ -50,6 +50,29 @@ export const mockPatients: Patient[] = [
   },
 ];
 
+// Mock encryption and decryption functions
+const ENCRYPTION_PREFIX = "ENCRYPTED:";
+
+function encryptMock(data: string): string {
+  if (data.startsWith(ENCRYPTION_PREFIX)) {
+    return data; // Already encrypted (mock)
+  }
+  return `${ENCRYPTION_PREFIX}${data}`;
+}
+
+function decryptMock(data: string): string {
+  if (data.startsWith(ENCRYPTION_PREFIX)) {
+    return data.substring(ENCRYPTION_PREFIX.length);
+  }
+  return data; // Not encrypted (mock)
+}
+
+export function getMockPatientById(id: string): Patient | undefined {
+  const patient = mockPatients.find(p => p.id === id);
+  if (!patient) return undefined;
+  // Return a deep copy with decrypted fields
+  return { ...patient, name: decryptMock(patient.name), dateOfBirth: decryptMock(patient.dateOfBirth), contact: decryptMock(patient.contact) };
+}
 export const mockAppointments: Appointment[] = [
   {
     id: 'appt-001',
@@ -104,3 +127,14 @@ export const mockWaitingList: WaitingListItem[] = [
     notes: 'Urgent, referred by Dr. Hamilton',
   },
 ];
+
+// Function to get the list of mock patients with decrypted sensitive fields
+export function getMockPatientsList(): Patient[] {
+ return mockPatients.map(patient => ({
+ ...patient,
+    name: decryptMock(patient.name),
+    dateOfBirth: decryptMock(patient.dateOfBirth),
+    contact: decryptMock(patient.contact),
+ }));
+}
+
