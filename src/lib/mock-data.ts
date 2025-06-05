@@ -7,6 +7,7 @@ import type {
   Template,
   KnowledgeBaseArticle,
   FinanceRecord,
+  Medication,
 } from '@/lib/types';
 
 // 👤 Usuário mock
@@ -243,5 +244,71 @@ export const mockKnowledgeBaseArticles: KnowledgeBaseArticle[] = [
     question: 'Os dados são criptografados?',
     answer:
       'Este protótipo usa criptografia apenas em campos selecionados. Veja a documentação para mais detalhes.'
+  }
+];
+
+// 💊 Lista de medicamentos comuns para referência rápida
+export const mockMedications: Medication[] = [
+  {
+    id: 'med-001',
+    name: 'Sertralina',
+    class: 'ISRS',
+    indications:
+      'Depressão maior, transtorno de ansiedade generalizada e outros transtornos de humor',
+    sideEffects: 'Náusea, insônia, diminuição da libido, boca seca'
+  },
+  {
+    id: 'med-002',
+    name: 'Fluoxetina',
+    class: 'ISRS',
+    indications:
+      'Depressão, transtorno obsessivo-compulsivo e bulimia nervosa',
+    sideEffects:
+      'Agitação, dor de cabeça, distúrbios gastrointestinais, insônia'
+  },
+  {
+    id: 'med-003',
+    name: 'Bupropiona',
+    class: 'Antidepressivo atípico',
+    indications: 'Episódios depressivos e auxílio na cessação do tabagismo',
+    sideEffects:
+      'Boca seca, insônia, tremores, risco de convulsões em altas doses'
+  },
+  {
+    id: 'med-004',
+    name: 'Clonazepam',
+    class: 'Benzodiazepínico',
+    indications: 'Crises de ansiedade aguda e epilepsia',
+    sideEffects:
+      'Sedação, tontura, risco de dependência e comprometimento cognitivo'
+  },
+  {
+    id: 'med-005',
+    name: 'Diazepam',
+    class: 'Benzodiazepínico',
+    indications: 'Ansiedade, espasmos musculares e sintomas de abstinência alcoólica',
+    sideEffects: 'Sedação, confusão mental, potencial de dependência'
+  },
+  {
+    id: 'med-006',
+    name: 'Risperidona',
+    class: 'Antipsicótico atípico',
+    indications: 'Esquizofrenia, transtorno bipolar e irritabilidade no autismo',
+    sideEffects: 'Ganho de peso, sonolência, rigidez muscular'
+  },
+  {
+    id: 'med-007',
+    name: 'Olanzapina',
+    class: 'Antipsicótico atípico',
+    indications: 'Esquizofrenia e episódios maníacos do transtorno bipolar',
+    sideEffects: 'Sedação, ganho de peso, alterações metabólicas'
+  },
+  {
+    id: 'med-008',
+    name: 'Carbonato de Lítio',
+    class: 'Estabilizador de humor',
+    indications:
+      'Tratamento e prevenção de episódios maníacos e depressivos no transtorno bipolar',
+    sideEffects: 'Tremores, sede excessiva, problemas de tireoide'
   }
 ];

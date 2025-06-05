@@ -14,6 +14,7 @@ import {
   BookOpenCheck,
   HeartPulse,
   LineChart,
+  Pill,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
@@ -40,6 +41,7 @@ const navItems = [
   { href: '/waiting-list', label: 'Lista de Espera', icon: ListChecks },
   { href: '/templates', label: 'Modelos', icon: FileText },
   { href: '/self-care', label: 'Saúde Mental', icon: HeartPulse },
+  { href: '/medications', label: 'Medicamentos', icon: Pill },
   { href: '/knowledge-base', label: 'Base de Conhecimento', icon: BookOpenCheck },
   { href: '/settings', label: 'Configurações', icon: Settings },
 ];
