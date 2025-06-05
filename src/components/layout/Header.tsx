@@ -4,6 +4,7 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Menu } from 'lucide-react';
 import { AppSidebar } from './Sidebar'; // Import the new sidebar
+import { NotificationBell } from './NotificationBell';
 import { useAuth } from '@/contexts/AuthContext';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -51,7 +52,9 @@ export function AppHeader() {
           </SheetContent>
         </Sheet>
       </div>
-      
+
+      <NotificationBell />
+
       {user && (
          <DropdownMenu>
             <DropdownMenuTrigger asChild>
