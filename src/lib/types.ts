@@ -10,6 +10,7 @@ export interface User {
   name: string;
   email: string;
   role: UserRole;
+  profileImage?: string;
 }
 
 // 📝 Nota de sessão (com histórico opcional usado para IA)

@@ -22,6 +22,7 @@ export const mockUser: User = {
   email: 'doctor.jane@psiguard.com',
   role: 'Psicólogo',
   name: 'Dr. Jane Doe',
+  profileImage: 'https://placehold.co/100x100?text=JD',
 };
 
 // 📅 Datas auxiliares
