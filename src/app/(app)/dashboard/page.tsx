@@ -15,6 +15,7 @@ import {
 } from '@/lib/mock-data';
 import { startOfWeek, endOfWeek, isSameDay, differenceInCalendarDays } from 'date-fns';
 import Image from 'next/image';
+import AppLayout from '../layout';
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -57,18 +58,38 @@ export default function DashboardPage() {
     .sort((a, b) => a.date.getTime() - b.date.getTime());
 
   return (
-    <div className="space-y-8">
-      <div className="bg-card p-6 rounded-lg shadow-md flex flex-col md:flex-row items-center justify-between relative">
-        <div>
-          <h1 className="text-3xl font-bold font-headline text-primary">Bem-vindo(a), {user.name}!</h1>
-          <p className="text-muted-foreground mt-1">Aqui está um resumo da sua atividade recente.</p>
+import Image from "next/image";
+import { useAuth } from "@/contexts/AuthContext";
+import AppLayout from "@/components/layouts/AppLayout";
+
+export default function DashboardPage() {
+  const { user } = useAuth();
+
+  return (
+    <AppLayout>
+      <div className="space-y-8">
+        <div className="bg-card p-6 rounded-lg shadow-md flex flex-col md:flex-row items-center justify-between relative">
+          <div>
+            <h1 className="text-3xl font-bold font-headline text-primary">
+              Bem-vindo(a), {user.name}!
+            </h1>
+            <p className="text-muted-foreground mt-1">
+              Aqui está um resumo da sua atividade recente.
+            </p>
+          </div>
+          <Image
+            src={user.profileImage || "https://placehold.co/100x100?text=Foto"}
+            alt={`Foto de perfil de ${user.name}`}
+            width={100}
+            height={100}
+            className="w-24 h-24 rounded-full object-cover mt-4 md:mt-0"
+          />
         </div>
-        <Image
-          src={user.profileImage || 'https://placehold.co/100x100?text=Foto'}
-          alt={`Foto de perfil de ${user.name}`}
-          width={100}
-          height={100}
-          className="w-24 h-24 rounded-full object-cover mt-4 md:mt-0"
+      </div>
+    </AppLayout>
+  );
+}
+
         />
       </div>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -193,5 +214,6 @@ export default function DashboardPage() {
         </CardContent>
       </Card>
     </div>
+    </AppLayout>
   );
 }
