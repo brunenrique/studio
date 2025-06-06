@@ -27,7 +27,7 @@ const sections = [
     title: 'Ferramentas',
     items: [
       { href: '/templates', label: 'Modelos', icon: FileText },
-      { href: '/medications', label: 'Medicamentos', icon: Pill },
+      { href: '/medications', label: 'Guia Rápido', icon: Pill },
       { href: '/self-care', label: 'Saúde Mental', icon: HeartPulse },
       { href: '/knowledge-base', label: 'Base de Conhecimento', icon: BookOpenCheck },
       { href: '/analytics', label: 'Tendências', icon: LineChart },
