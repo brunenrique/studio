@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import CustomImage from '@/components/CustomImage';
+import CustomImage from '@/components/ui/custom-image';
 import { useAuth } from '@/contexts/AuthContext';
 import { useBannerImage } from '@/hooks/useBannerImage';
 
