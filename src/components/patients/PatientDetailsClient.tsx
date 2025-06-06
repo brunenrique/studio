@@ -1,195 +1,121 @@
 "use client";
+import type { PatientFullData } from '@/lib/types';
+import { usePatientFullData } from '@/hooks/usePatientFullData';
+import { format } from 'date-fns';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 
-import type { Patient, SessionNote } from "@/lib/types";
-import { mockPatients } from "@/lib/mock-data"; // mockPatients agora está exportado corretamente
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft, UserCircle, CalendarDays as CalendarIcon, Phone, Gift } from "lucide-react";
-import Link from "next/link";
-import { SessionNotesSection } from "./SessionNotesSection";
-import { AIInsightsSection } from "./AIInsightsSection";
-import { format, parseISO, differenceInYears } from "date-fns";
-import { useToast } from "@/hooks/use-toast";
-import Image from "next/image";
-
-interface PatientDetailsClientProps {
-  patientId: string;
+interface Props {
+  data: PatientFullData;
 }
 
-// ✅ Corrigido: tipando o parâmetro 'p'
-const getMockPatientById = (id: string): Patient | null => {
-  return mockPatients.find((p: Patient) => p.id === id) || null;
-};
-
-export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
-  const [patient, setPatient] = useState<Patient | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const { toast } = useToast();
-
-  useEffect(() => {
-    const foundPatient = getMockPatientById(patientId);
-    if (foundPatient) {
-      setPatient(foundPatient);
-    }
-    setIsLoading(false);
-  }, [patientId]);
-
-  const handleAddNote = async (id: string, noteContent: string) => {
-    if (!patient) return;
-
-    const newNote: SessionNote = {
-      id: `sn-${Date.now()}`,
-      date: new Date().toISOString(),
-      notes: noteContent,
-    };
-
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    setPatient(prev => {
-      if (!prev) return null;
-      return {
-        ...prev,
-        sessionNotes: [...prev.sessionNotes, newNote],
-      };
-    });
-
-    toast({
-      title: "Nota Adicionada",
-      description: "A nova nota de sessão foi salva com sucesso.",
-    });
-  };
-
-  // ✅ Corrigido: adicionada função para deletar nota
-  const handleDeleteNote = async (noteId: string) => {
-    if (!patient) return;
-
-    setPatient(prev => {
-      if (!prev) return null;
-      return {
-        ...prev,
-        sessionNotes: prev.sessionNotes.filter(note => note.id !== noteId),
-      };
-    });
-
-    toast({
-      title: "Nota Removida",
-      description: "A nota foi excluída com sucesso.",
-    });
-  };
-
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <p>Carregando dados do paciente...</p>
-      </div>
-    );
-  }
-
-  if (!patient) {
-    return (
-      <div className="text-center py-10">
-        <h2 className="text-2xl font-semibold mb-4">Paciente não encontrado</h2>
-        <Button asChild>
-          <Link href="/patients">Voltar para Lista de Pacientes</Link>
-        </Button>
-      </div>
-    );
-  }
+export function PatientDetailsClient({ data }: Props) {
+  const realtime = usePatientFullData(data.patient.id);
+  const { patient, sessions, notes, payments, documents, treatmentPlans } = realtime ?? data;
+  const lastNote = [...notes].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
 
   return (
     <div className="space-y-6">
-      <Button asChild variant="outline" className="mb-6 shadow-sm">
-        <Link href="/patients">
-          <ArrowLeft className="mr-2 h-4 w-4" /> Voltar para Pacientes
-        </Link>
-      </Button>
-
-      <Card className="shadow-xl rounded-lg overflow-hidden">
-        <div className="md:flex">
-          <div className="md:w-1/3 bg-gradient-to-br from-primary/20 to-accent/20 p-6 flex flex-col items-center justify-center text-center">
-            <Image
-              src={`https://placehold.co/150x150.png?text=${patient.name.charAt(0)}`}
-              alt={patient.name}
-              width={120}
-              height={120}
-              className="rounded-full border-4 border-background shadow-lg mb-4"
-              data-ai-hint="profile picture"
-            />
-            <CardTitle className="text-2xl font-bold font-headline text-primary">{patient.name}</CardTitle>
-            <CardDescription className="text-foreground/80">
-              ID do Paciente: {patient.id}
-            </CardDescription>
-          </div>
-          <div className="md:w-2/3 p-6">
-            <CardHeader className="p-0 mb-4">
-              <CardTitle className="text-xl font-semibold">Detalhes do Paciente</CardTitle>
-            </CardHeader>
-            <CardContent className="p-0 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 text-sm">
-              <div className="flex items-center">
-                <Phone className="h-5 w-5 mr-3 text-primary" />
-                <div>
-                  <span className="font-semibold">Contato:</span> {patient.contact}
-                </div>
-              </div>
-              <div className="flex items-center">
-                <Gift className="h-5 w-5 mr-3 text-primary" />
-                <div>
-                  <span className="font-semibold">Nascimento:</span>{" "}
-                  {format(parseISO(patient.dateOfBirth), "dd/MM/yyyy")}
-                </div>
-              </div>
-              <div className="flex items-center">
-                <CalendarIcon className="h-5 w-5 mr-3 text-primary" />
-                <div>
-                  <span className="font-semibold">Idade:</span>{" "}
-                  {differenceInYears(new Date(), parseISO(patient.dateOfBirth))} anos
-                </div>
-              </div>
-              <div className="flex items-center sm:col-span-2">
-                <UserCircle className="h-5 w-5 mr-3 text-primary" />
-                <div>
-                  <span className="font-semibold">Status:</span> Ativo (placeholder)
-                </div>
-              </div>
-            </CardContent>
-          </div>
-        </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>{patient.name}</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-1 text-sm">
+          <p>Contato: {patient.contact}</p>
+          <p>Nascimento: {format(new Date(patient.dateOfBirth), 'dd/MM/yyyy')}</p>
+          {patient.gender && <p>Gênero: {patient.gender}</p>}
+        </CardContent>
       </Card>
 
-      {/* ✅ Corrigido: passando também o onDeleteNote */}
-      <SessionNotesSection
-        patient={patient}
-        onAddNote={handleAddNote}
-        onDeleteNote={handleDeleteNote}
-      />
-
-      <AIInsightsSection
-        patient={patient}
-        latestSessionNote={
-          patient.sessionNotes.length > 0
-            ? patient.sessionNotes[patient.sessionNotes.length - 1]
-            : undefined
-        }
-      />
-
-      <Card className="shadow-lg mt-6" data-ai-hint="compliance and reminders section">
+      <Card>
         <CardHeader>
-          <CardTitle className="font-semibold text-lg">Lembretes e Conformidade</CardTitle>
+          <CardTitle>Sessões</CardTitle>
         </CardHeader>
         <CardContent>
-          <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
-            <li data-ai-hint="lgpd reminder">
-              Assegure-se de ter o consentimento do paciente para o tratamento de dados
-              (LGPD/GDPR).
-            </li>
-            <li data-ai-hint="encryption reminder">
-              A criptografia client-side para campos sensíveis é uma prioridade de segurança (não
-              implementada neste protótipo).
-            </li>
-            <li data-ai-hint="notification reminder">
-              Notificações de sessão automáticas (24h e 30min antes) são funcionalidades planejadas.
-            </li>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Data</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Nota</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {sessions.map((s) => (
+                <TableRow key={s.id}>
+                  <TableCell>{format(new Date(s.date), 'dd/MM/yyyy HH:mm')}</TableCell>
+                  <TableCell>{s.status}</TableCell>
+                  <TableCell>{s.noteId && <a href={`#note-${s.noteId}`} className="underline text-primary">ver</a>}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+
+      {lastNote && (
+        <Card id={`note-${lastNote.id}`}>
+          <CardHeader>
+            <CardTitle>Nota da Última Sessão</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="whitespace-pre-line text-sm">{lastNote.content}</p>
+          </CardContent>
+        </Card>
+      )}
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Documentos</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {documents.length === 0 && <p className="text-sm">Nenhum documento.</p>}
+          <ul className="text-sm space-y-1">
+            {documents.map((doc) => (
+              <li key={doc.id}>
+                <a href={doc.url} download className="underline text-primary">
+                  {doc.name}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Finanças</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-1 text-sm">
+          <p>Total Pago: R$ {payments.reduce((sum, p) => sum + p.amount, 0).toFixed(2)}</p>
+          <p>Saldo Devedor: R$ {patient.balanceDue?.toFixed(2) ?? '0.00'}</p>
+          {payments.length > 0 && (
+            <ul className="list-disc ml-4">
+              {payments.slice(0, 3).map((p) => (
+                <li key={p.id}>{format(new Date(p.date), 'dd/MM/yyyy')} - R$ {p.amount.toFixed(2)}</li>
+              ))}
+            </ul>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Plano de Tratamento</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {treatmentPlans.length === 0 && <p className="text-sm">Nenhum plano registrado.</p>}
+          <ul className="list-disc ml-4 text-sm space-y-1">
+            {treatmentPlans.map((tp) => (
+              <li key={tp.id}>{tp.goal}</li>
+            ))}
           </ul>
         </CardContent>
       </Card>

@@ -16,12 +16,12 @@ import type {
   SessionInsightsOutput,
 } from "@/ai/flows/session-insights";
 import { getSessionInsights } from "@/ai/flows/session-insights";
-import type { Patient, SessionNote } from "@/lib/types";
+import type { Patient, Note } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
 
 interface AIInsightsSectionProps {
   patient: Patient;
-  latestSessionNote?: SessionNote;
+  latestSessionNote?: Note;
 }
 
 export function AIInsightsSection({
@@ -39,17 +39,17 @@ export function AIInsightsSection({
     setInsights(null);
 
     const currentSessionNotes =
-      latestSessionNote?.notes ||
-      (patient.sessionNotes.length > 0
-        ? patient.sessionNotes[patient.sessionNotes.length - 1].notes
+      latestSessionNote?.content ||
+      (patient.sessionNotes && patient.sessionNotes.length > 0
+        ? patient.sessionNotes[patient.sessionNotes.length - 1].content
         : "Nenhuma nota de sessão recente disponível.");
 
-    const patientHistory = patient.sessionNotes
+    const patientHistory = (patient.sessionNotes ?? [])
       .filter((note) => note.id !== latestSessionNote?.id)
       .slice(0, 5)
       .map(
         (note) =>
-          `Data: ${new Date(note.date).toLocaleDateString()}\nNotas: ${note.notes}`,
+          `Data: ${new Date(note.date).toLocaleDateString()}\nNotas: ${note.content}`,
       )
       .join("\n\n---\n\n");
 

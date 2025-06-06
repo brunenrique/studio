@@ -1,6 +1,6 @@
 "use client";
 
-import type { SessionNote, Patient } from "@/lib/types";
+import type { Note, Patient } from "@/lib/types";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -99,17 +99,17 @@ export function SessionNotesSection({
           </div>
         )}
 
-        {patient.sessionNotes.length === 0 && !showAddNoteForm && (
+        {patient.sessionNotes?.length === 0 && !showAddNoteForm && (
           <p className="text-muted-foreground">
             Nenhuma nota de sessão registrada para este paciente.
           </p>
         )}
 
         <div className="space-y-6">
-          {patient.sessionNotes
-            .sort((a, b) => parseISO(b.date).getTime() - parseISO(a.date).getTime())
-            .map((note, index) => (
-              <div key={note.id}>
+          {patient.sessionNotes?.sort((a, b) =>
+            parseISO(b.date).getTime() - parseISO(a.date).getTime(),
+          ).map((note, index) => (
+            <div key={note.id}>
                 {index > 0 && <Separator className="my-4" />}
                 <div className="p-4 border rounded-md bg-background shadow-sm">
                   <div className="flex justify-between items-start mb-1">
@@ -125,7 +125,7 @@ export function SessionNotesSection({
                       <Trash2 className="h-4 w-4 text-red-500" />
                     </Button>
                   </div>
-                  <p className="text-sm whitespace-pre-wrap leading-relaxed">{note.notes}</p>
+                  <p className="text-sm whitespace-pre-wrap leading-relaxed">{note.content}</p>
                 </div>
               </div>
             ))}
