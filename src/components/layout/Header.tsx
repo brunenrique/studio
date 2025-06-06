@@ -15,6 +15,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useSmartMenu } from '@/lib/use-smart-menu/useSmartMenu';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 export function AppHeader() {
@@ -35,6 +38,18 @@ export function AppHeader() {
     return name.substring(0, 2).toUpperCase();
   };
 
+  const menu = useSmartMenu({ id: 'profile', restoreFocus: false });
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (menu.open) {
+      const el = menu.ref.current?.querySelector<HTMLElement>('button, a');
+      el?.focus();
+    } else {
+      buttonRef.current?.focus();
+    }
+  }, [menu.open]);
+
 
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b bg-background/80 backdrop-blur-sm px-4 md:px-6">
@@ -48,39 +63,84 @@ export function AppHeader() {
         <ThemeToggle />
 
         {user && (
-          <DropdownMenu>
+          <DropdownMenu open={menu.open} onOpenChange={menu.setOpen}>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+              <Button
+                ref={buttonRef}
+                onClick={menu.toggle}
+                variant="ghost"
+                className="relative h-10 w-10 rounded-full"
+                title="Menu do perfil"
+                data-menu-button
+              >
                 <Avatar className="h-10 w-10">
-                  <AvatarImage src={`https://placehold.co/100x100.png?text=${getInitials(user.name)}`} alt={user.name} data-ai-hint="user avatar" />
+                  <AvatarImage
+                    src={`https://placehold.co/100x100.png?text=${getInitials(user.name)}`}
+                    alt={user.name}
+                    data-ai-hint="user avatar"
+                  />
                   <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel className="font-normal">
-                <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">{user.name}</p>
-                  <p className="text-xs leading-none text-muted-foreground">
-                    {user.email}
-                  </p>
-                </div>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => router.push('/medications')}>
-                Medicamentos
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => router.push('/knowledge-base')}>
-                Base de Conhecimento
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => router.push('/settings')}>
-                Configurações
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleLogout}>
-                Sair
-              </DropdownMenuItem>
-            </DropdownMenuContent>
+            <AnimatePresence>
+              {menu.open && (
+                <DropdownMenuContent align="end" className="w-56" asChild forceMount>
+                  <motion.div
+                    ref={menu.ref}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: menu.animation.duration / 1000, ease: menu.animation.easing }}
+                  >
+                    <div className="px-2 py-1.5 text-sm font-normal">
+                      <div className="flex flex-col space-y-1">
+                        <p className="text-sm font-medium leading-none">{user.name}</p>
+                        <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                      </div>
+                    </div>
+                    <div className="-mx-1 my-1 h-px bg-muted" />
+                    <button
+                      onClick={() => {
+                        router.push('/medications');
+                        menu.setOpen(false);
+                      }}
+                      className="relative flex w-full cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent focus:bg-accent focus:text-accent-foreground"
+                    >
+                      Medicamentos
+                    </button>
+                    <button
+                      onClick={() => {
+                        router.push('/knowledge-base');
+                        menu.setOpen(false);
+                      }}
+                      className="relative flex w-full cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent focus:bg-accent focus:text-accent-foreground"
+                    >
+                      Base de Conhecimento
+                    </button>
+                    <button
+                      onClick={() => {
+                        router.push('/settings');
+                        menu.setOpen(false);
+                      }}
+                      className="relative flex w-full cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent focus:bg-accent focus:text-accent-foreground"
+                    >
+                      Configurações
+                    </button>
+                    <div className="-mx-1 my-1 h-px bg-muted" />
+                    <button
+                      onClick={() => {
+                        handleLogout();
+                        menu.setOpen(false);
+                      }}
+                      className="relative flex w-full cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent focus:bg-accent focus:text-accent-foreground"
+                    >
+                      Sair
+                    </button>
+                  </motion.div>
+                </DropdownMenuContent>
+              )}
+            </AnimatePresence>
           </DropdownMenu>
         )}
       </div>
