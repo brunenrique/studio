@@ -1,8 +1,11 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
-import CryptoJS from 'crypto-js'; // Assuming you have crypto-js installed
+import CryptoJS from 'crypto-js';
 
-const SECRET_KEY = process.env.NEXT_PUBLIC_CRYPTO_SECRET_KEY || 'your-secret-key-fallback'; // Use a strong, environment-specific key
+const SECRET_KEY = process.env.CRYPTO_SECRET_KEY;
+if (!SECRET_KEY) {
+  throw new Error('CRYPTO_SECRET_KEY environment variable is required');
+}
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))

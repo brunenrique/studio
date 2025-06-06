@@ -9,16 +9,29 @@ if (!file) {
 }
 
 const content = fs.readFileSync(file);
-const records = parse(content, { columns: true });
+interface CsvRecord {
+  name: string;
+  domain: string;
+  numQuestions: string;
+  instructions?: string;
+  scoringAlgorithm?: string;
+}
+
+const records = parse(content, { columns: true, skip_empty_lines: true }) as CsvRecord[];
 
 async function run() {
   for (const r of records) {
+    if (!r.name || !r.domain || isNaN(Number(r.numQuestions))) {
+      console.warn('Skipping invalid row', r);
+      continue;
+    }
+
     await adminDb.collection('testsLibrary').add({
-      name: r.name,
-      domain: r.domain,
+      name: r.name.trim(),
+      domain: r.domain.trim(),
       numQuestions: Number(r.numQuestions),
-      instructions: r.instructions,
-      scoringAlgorithm: r.scoringAlgorithm,
+      instructions: r.instructions?.trim() || '',
+      scoringAlgorithm: r.scoringAlgorithm?.trim() || '',
     });
   }
 }
