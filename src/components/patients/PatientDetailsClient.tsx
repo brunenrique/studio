@@ -15,7 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 import { usePatientAssessments } from "@/hooks/usePatientAssessments";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import CustomImage from "@/components/ui/custom-image";
+import Image from "next/image";
 
 interface PatientDetailsClientProps {
   patientId: string;
@@ -155,7 +155,7 @@ const handleSavePatient = (updatedPatient: Patient) => {
       <Card className="shadow-xl rounded-lg overflow-hidden">
         <div className="md:flex">
           <div className="md:w-1/3 bg-gradient-to-br from-primary/20 to-accent/20 p-6 flex flex-col items-center justify-center text-center">
-            <CustomImage
+            <Image
               src={`https://placehold.co/150x150.png?text=${patient.name.charAt(0)}`}
               alt={patient.name}
               width={120}

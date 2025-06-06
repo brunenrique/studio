@@ -1,6 +1,6 @@
 "use client";
 
-import CustomImage from '@/components/ui/custom-image';
+import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
 import { useBannerImage } from '@/hooks/useBannerImage';
 
@@ -23,7 +23,7 @@ export default function WelcomeCard() {
         <p className="text-muted-foreground mt-1">Aqui está um resumo da sua atividade recente.</p>
       </div>
       {banner && (
-        <CustomImage
+        <Image
           src={banner}
           alt="Banner"
           width={300}
