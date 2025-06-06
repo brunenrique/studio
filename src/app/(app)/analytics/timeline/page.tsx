@@ -1,4 +1,5 @@
 "use client";
+
 import dynamic from 'next/dynamic';
 import { mockAppointments, mockPatients } from '@/lib/mock-data';
 import type { TimelineEvent } from '@/lib/types';

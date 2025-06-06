@@ -1,3 +1,5 @@
+
+import { format, addDays } from "date-fns";
 import type {
   Patient,
   Appointment,
@@ -8,6 +10,7 @@ import type {
   KnowledgeBaseArticle,
   FinanceRecord,
   Medication,
+  SymptomHeatmapEntry,
 } from '@/lib/types';
 
 // 👤 Usuário mock
@@ -349,4 +352,12 @@ export const mockMedications: Medication[] = [
     indications: 'Transtorno bipolar, esquizofrenia',
     sideEffects: 'Sonolência, ganho de peso'
   }
+];
+
+export const mockSymptomEntries: SymptomHeatmapEntry[] = [
+  { id: 'sym-001', patientId: 'patient-001', date: format(addDays(new Date(), -5), 'yyyy-MM-dd'), symptom: 'Ansiedade', severity: 3 },
+  { id: 'sym-002', patientId: 'patient-001', date: format(addDays(new Date(), -4), 'yyyy-MM-dd'), symptom: 'Ansiedade', severity: 2 },
+  { id: 'sym-003', patientId: 'patient-001', date: format(addDays(new Date(), -3), 'yyyy-MM-dd'), symptom: 'Ansiedade', severity: 4 },
+  { id: 'sym-004', patientId: 'patient-001', date: format(addDays(new Date(), -2), 'yyyy-MM-dd'), symptom: 'Ansiedade', severity: 5 },
+  { id: 'sym-005', patientId: 'patient-001', date: format(addDays(new Date(), -1), 'yyyy-MM-dd'), symptom: 'Ansiedade', severity: 1 },
 ];
