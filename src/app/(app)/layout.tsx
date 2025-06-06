@@ -3,8 +3,9 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import AppSidebar from '@/components/layout/Sidebar';
+import Sidebar from '@/components/layout/Sidebar';
 import { AppHeader } from '@/components/layout/Header';
+import { SidebarProvider } from '@/components/ui/sidebar';
 
 
 export default function AppLayout({
@@ -32,13 +33,15 @@ export default function AppLayout({
 
   return (
     <div className="flex min-h-screen w-full">
-      <AppSidebar />
+      <Sidebar />
       <div className="flex flex-1 flex-col">
         <AppHeader />
         <main className="flex-1 overflow-y-auto bg-background p-8 md:p-12">
           {children}
         </main>
       </div>
+      <SidebarProvider defaultOpen={true}>
+        {/* Assuming RightSidebar content will be handled within the main content or a different component */}
+      </SidebarProvider>
     </div>
   );
-}
