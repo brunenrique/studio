@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import CustomImage from '@/components/ui/custom-image';
 import { useAuth } from '@/contexts/AuthContext';
