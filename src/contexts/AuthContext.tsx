@@ -6,12 +6,19 @@ import { mockUser } from '@/lib/mock-data';
 import { useRouter } from 'next/navigation';
 import type { ReactNode } from 'react';
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { auth } from '@/lib/firebaseClient';
+import {
+  GoogleAuthProvider,
+  signInWithPopup,
+  onAuthStateChanged,
+} from 'firebase/auth';
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, pass: string) => Promise<void>; // Simplified login
+  loginWithGoogle: () => Promise<void>;
   logout: () => void;
   // register: (email: string, pass: string, name: string) => Promise<void>; // Placeholder
 }
@@ -24,12 +31,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
 
   useEffect(() => {
-    // Simulate checking auth status on load
-    const storedUser = localStorage.getItem('psiguard_user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-    setIsLoading(false);
+    const unsubscribe = onAuthStateChanged(auth, (fbUser) => {
+      if (fbUser) {
+        const mappedUser: User = {
+          id: fbUser.uid,
+          name: fbUser.displayName || '',
+          email: fbUser.email || '',
+          role: 'Psicólogo',
+        };
+        setUser(mappedUser);
+        localStorage.setItem('psiguard_user', JSON.stringify(mappedUser));
+      } else {
+        const storedUser = localStorage.getItem('psiguard_user');
+        if (storedUser) {
+          setUser(JSON.parse(storedUser));
+        } else {
+          setUser(null);
+        }
+      }
+      setIsLoading(false);
+    });
+    return () => unsubscribe();
   }, []);
 
   const login = async (email: string, pass: string) => {
@@ -52,6 +74,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(false);
   };
 
+  const loginWithGoogle = async () => {
+    setIsLoading(true);
+    try {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      const fbUser = result.user;
+      const mappedUser: User = {
+        id: fbUser.uid,
+        name: fbUser.displayName || '',
+        email: fbUser.email || '',
+        role: 'Psicólogo',
+      };
+      setUser(mappedUser);
+      localStorage.setItem('psiguard_user', JSON.stringify(mappedUser));
+      router.push('/dashboard');
+    } catch (err) {
+      console.error('Google login failed', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const logout = () => {
     setUser(null);
     localStorage.removeItem('psiguard_user');
@@ -59,7 +103,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, isLoading, login, logout }}>
+    <AuthContext.Provider value={{ user, isAuthenticated: !!user, isLoading, login, loginWithGoogle, logout }}>
       {children}
     </AuthContext.Provider>
   );
