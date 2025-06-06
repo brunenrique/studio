@@ -5,8 +5,11 @@ import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { Logo } from '@/components/Logo';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent } from '@/components/ui/sheet';
-import { Menu, LayoutDashboard, Users, CalendarDays, ListChecks, FileText, Pill, HeartPulse, BookOpenCheck, LineChart, Settings, LogOut } from 'lucide-react';
+import { Sheet, SheetContent, SheetOverlay, SheetPortal } from '@/components/ui/sheet';
+import {
+  Menu, LayoutDashboard, Users, CalendarDays, ListChecks, FileText, Pill,
+  HeartPulse, BookOpenCheck, LineChart, Settings, LogOut,
+} from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 
@@ -41,8 +44,9 @@ const sections = [
 function SidebarContent({ className, onNavigate }: { className?: string; onNavigate?: () => void }) {
   const pathname = usePathname();
   const { logout, user } = useAuth();
+
   return (
-    <div className={cn('w-[72vw] md:w-[220px] bg-card border-r flex flex-col', className)}>
+    <aside className={cn('w-[72vw] max-w-xs md:w-56 lg:w-60 bg-card border-r flex flex-col', className)}>
       <div className="p-4">
         <Link href="/dashboard">
           <Logo />
@@ -79,11 +83,18 @@ function SidebarContent({ className, onNavigate }: { className?: string; onNavig
         {user && (
           <p className="mb-2 text-sm font-medium">{user.name}</p>
         )}
-        <Button variant="ghost" className="w-full justify-start" onClick={logout}>
+        <Button
+          variant="ghost"
+          className="w-full justify-start"
+          onClick={() => {
+            logout();
+            onNavigate?.();
+          }}
+        >
           <LogOut className="h-[18px] w-[18px] mr-2" /> Sair
         </Button>
       </div>
-    </div>
+    </aside>
   );
 }
 
@@ -103,14 +114,22 @@ export default function AppSidebar() {
     return <SidebarContent />;
   }
 
+  const closeDrawer = () => setOpen(false);
+
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <Button variant="ghost" size="icon" onClick={() => setOpen(true)}>
         <Menu className="h-5 w-5" />
       </Button>
-      <SheetContent side="left" className="p-0 shadow-xl z-50 w-[72vw]">
-        <SidebarContent className="h-full" onNavigate={() => setOpen(false)} />
-      </SheetContent>
+      <SheetPortal>
+        <SheetOverlay className="fixed inset-0 z-50 bg-black/40 md:hidden" />
+        <SheetContent
+          side="left"
+          className="p-0 w-[72vw] max-w-xs md:w-56 lg:w-60 h-full overflow-y-auto shadow-xl bg-background"
+        >
+          <SidebarContent className="h-full" onNavigate={closeDrawer} />
+        </SheetContent>
+      </SheetPortal>
     </Sheet>
   );
 }
