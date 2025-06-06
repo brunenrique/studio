@@ -45,3 +45,4 @@ export default function AppLayout({
       </SidebarProvider>
     </div>
   );
+}

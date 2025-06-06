@@ -12,7 +12,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { FilePenLine, Trash2, CheckSquare } from "lucide-react";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { SmartModal } from "@/components/SmartModal";
+import { useState } from "react";
 import { format } from "date-fns";
 
 interface TaskTableProps {
@@ -33,6 +34,8 @@ export function TaskTable({ tasks, onEdit, onDelete, onToggleStatus }: TaskTable
         return "secondary";
     }
   };
+
+  const [toDelete, setToDelete] = useState<Task | null>(null);
 
   return (
     <Table>
@@ -84,25 +87,35 @@ export function TaskTable({ tasks, onEdit, onDelete, onToggleStatus }: TaskTable
                 <FilePenLine className="h-4 w-4" />
                 <span className="sr-only">Editar</span>
               </Button>
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive/80">
-                    <Trash2 className="h-4 w-4" />
-                    <span className="sr-only">Excluir</span>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-destructive hover:text-destructive/80"
+                onClick={() => setToDelete(task)}
+              >
+                <Trash2 className="h-4 w-4" />
+                <span className="sr-only">Excluir</span>
+              </Button>
+              <SmartModal
+                id="delete-task"
+                open={toDelete?.id === task.id}
+                onClose={() => setToDelete(null)}
+                title="Confirmar Exclusão"
+              >
+                <p className="text-sm">Tem certeza que deseja excluir esta tarefa?</p>
+                <div className="mt-4 flex justify-end gap-2">
+                  <Button onClick={() => setToDelete(null)}>Cancelar</Button>
+                  <Button
+                    variant="destructive"
+                    onClick={() => {
+                      onDelete(task.id);
+                      setToDelete(null);
+                    }}
+                  >
+                    Excluir
                   </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Confirmar Exclusão</AlertDialogTitle>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                    <AlertDialogAction onClick={() => onDelete(task.id)} className="bg-destructive hover:bg-destructive/90">
-                      Excluir
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+                </div>
+              </SmartModal>
             </TableCell>
           </TableRow>
         ))}

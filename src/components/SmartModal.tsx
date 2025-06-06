@@ -29,6 +29,9 @@ export function SmartModal({ id, open, onClose, title, children }: SmartModalPro
     <AnimatePresence>
       {isOpen && (
         <motion.div
+          onClick={(e) => {
+            if (e.target === e.currentTarget) modal.setOpen(false);
+          }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
