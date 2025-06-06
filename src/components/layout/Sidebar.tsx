@@ -1,150 +1,110 @@
 "use client";
 
+import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import {
-  LayoutDashboard,
-  Users,
-  CalendarDays,
-  ListChecks,
-  FileText,
-  LogOut,
-  Settings,
-  PanelLeft,
-  BookOpenCheck,
-  HeartPulse,
-  LineChart,
-  Pill,
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { Logo } from '@/components/Logo';
+import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent } from '@/components/ui/sheet';
+import { Menu, LayoutDashboard, Users, CalendarDays, ListChecks, FileText, Pill, HeartPulse, BookOpenCheck, LineChart, Settings, LogOut } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
-import {
-  SidebarProvider,
-  Sidebar,
-  SidebarHeader,
-  SidebarContent,
-  SidebarFooter,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
-  SidebarSeparator,
-  SidebarTrigger,
-  SidebarInset,
-} from "@/components/ui/sidebar";
 
-const navItems = [
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/patients', label: 'Pacientes', icon: Users },
-  { href: '/appointments', label: 'Agendamentos', icon: CalendarDays },
-  { href: '/waiting-list', label: 'Lista de Espera', icon: ListChecks },
-  { href: '/templates', label: 'Modelos', icon: FileText },
-  { href: '/medications', label: 'Medicamentos', icon: Pill },
-  { href: '/self-care', label: 'Saúde Mental', icon: HeartPulse },
-  { href: '/knowledge-base', label: 'Base de Conhecimento', icon: BookOpenCheck },
-  { href: '/analytics', label: 'Tendências', icon: LineChart },
-  { href: '/settings', label: 'Configurações', icon: Settings },
+const sections = [
+  {
+    title: 'Consultório',
+    items: [
+      { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+      { href: '/patients', label: 'Pacientes', icon: Users },
+      { href: '/appointments', label: 'Agendamentos', icon: CalendarDays },
+      { href: '/waiting-list', label: 'Lista de Espera', icon: ListChecks },
+    ],
+  },
+  {
+    title: 'Ferramentas',
+    items: [
+      { href: '/templates', label: 'Modelos', icon: FileText },
+      { href: '/medications', label: 'Medicamentos', icon: Pill },
+      { href: '/self-care', label: 'Saúde Mental', icon: HeartPulse },
+      { href: '/knowledge-base', label: 'Base de Conhecimento', icon: BookOpenCheck },
+      { href: '/analytics', label: 'Tendências', icon: LineChart },
+    ],
+  },
+  {
+    title: 'Sistema',
+    items: [
+      { href: '/settings', label: 'Configurações', icon: Settings },
+    ],
+  },
 ];
 
-// Choose the most important features to appear in the top vertical section
-const leftItems = [
-  navItems[0], // Dashboard
-  navItems[1], // Pacientes
-  navItems[2], // Agendamentos
-];
-
-const rightItems = navItems.filter((item) => !leftItems.includes(item));
-
-export function LeftSidebar() {
+function SidebarContent({ className }: { className?: string }) {
   const pathname = usePathname();
   const { logout, user } = useAuth();
-  const router = useRouter();
-
-  const handleLogout = async () => {
-    await logout();
-    router.push('/login');
-  };
-
   return (
-    <Sidebar className="border-r bg-card" collapsible="icon" side="left">
-      <SidebarHeader className="p-4">
-        <Link href="/dashboard" className="mb-4 block">
+    <div className={cn('w-[240px] bg-card border-r flex flex-col', className)}>
+      <div className="p-4">
+        <Link href="/dashboard">
           <Logo />
         </Link>
-      </SidebarHeader>
-      <SidebarContent className="flex-grow p-2 space-y-2">
-        <SidebarMenu>
-          {leftItems.map((item) => (
-            <SidebarMenuItem key={item.href}>
-              <Link href={item.href}>
-                <SidebarMenuButton
-                  variant="default"
-                  className={cn(
-                    'w-full justify-start text-base h-12',
-                    pathname === item.href ||
-                      (pathname.startsWith(item.href) && item.href !== '/dashboard')
-                      ? 'bg-primary/10 text-primary font-semibold'
-                      : 'hover:bg-primary/5'
-                  )}
-                  tooltip={{ children: item.label, side: 'right', align: 'center', className: 'ml-2' }}
-                >
-                  <item.icon className="h-5 w-5 mr-3" />
-                  <span className="truncate">{item.label}</span>
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-          ))}
-        </SidebarMenu>
-      </SidebarContent>
-      <SidebarFooter className="p-4 border-t">
-        {user && (
-          <div className="mb-4 text-center group-data-[collapsible=icon]:hidden">
-            <p className="font-semibold text-sm">{user.name}</p>
-            <p className="text-xs text-muted-foreground">{user.email}</p>
+      </div>
+      <nav className="flex-1 overflow-y-auto px-2 space-y-6 text-sm">
+        {sections.map(section => (
+          <div key={section.title} className="space-y-1">
+            <p className="px-2 text-muted-foreground font-semibold mb-1">{section.title}</p>
+            <ul className="space-y-1">
+              {section.items.map(item => (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    className={cn('flex items-center gap-2 rounded-md px-2 py-2 hover:bg-primary/20',
+                      pathname === item.href && 'bg-primary/20 font-semibold')}
+                  >
+                    <item.icon className="h-[18px] w-[18px]" />
+                    <span>{item.label}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
+        ))}
+      </nav>
+      <div className="border-t p-4 max-[480px]:hidden">
+        {user && (
+          <p className="mb-2 text-sm font-medium">{user.name}</p>
         )}
-        <Button variant="ghost" onClick={handleLogout} className="w-full justify-start text-base h-12 group-data-[collapsible=icon]:px-2">
-          <LogOut className="h-5 w-5 mr-3 group-data-[collapsible=icon]:mr-0" />
-          <span className="truncate group-data-[collapsible=icon]:hidden">Sair</span>
+        <Button variant="ghost" className="w-full justify-start" onClick={logout}>
+          <LogOut className="h-[18px] w-[18px] mr-2" /> Sair
         </Button>
-      </SidebarFooter>
-    </Sidebar>
+      </div>
+    </div>
   );
 }
 
-export function RightSidebar() {
-  const pathname = usePathname();
+export default function AppSidebar() {
+  const [open, setOpen] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 1024px)');
+    const handle = () => setIsDesktop(mq.matches);
+    handle();
+    mq.addEventListener('change', handle);
+    return () => mq.removeEventListener('change', handle);
+  }, []);
+
+  if (isDesktop) {
+    return <SidebarContent />;
+  }
 
   return (
-    <Sidebar className="border-l bg-card" collapsible="icon" side="right">
-      <SidebarContent className="flex-grow p-2 space-y-2">
-        <SidebarMenu>
-          {rightItems.map((item) => (
-            <SidebarMenuItem key={item.href}>
-              <Link href={item.href}>
-                <SidebarMenuButton
-                  variant="default"
-                  className={cn(
-                    'w-full justify-start text-base h-12',
-                    pathname === item.href ||
-                      (pathname.startsWith(item.href) && item.href !== '/dashboard')
-                      ? 'bg-primary/10 text-primary font-semibold'
-                      : 'hover:bg-primary/5'
-                  )}
-                  tooltip={{ children: item.label, side: 'left', align: 'center', className: 'mr-2' }}
-                >
-                  <item.icon className="h-5 w-5 mr-3" />
-                  <span className="truncate">{item.label}</span>
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-          ))}
-        </SidebarMenu>
-      </SidebarContent>
-    </Sidebar>
+    <Sheet open={open} onOpenChange={setOpen}>
+      <Button variant="ghost" size="icon" onClick={() => setOpen(true)}>
+        <Menu className="h-5 w-5" />
+      </Button>
+      <SheetContent side="left" className="p-0">
+        <SidebarContent className="h-full" />
+      </SheetContent>
+    </Sheet>
   );
 }
-
-export { LeftSidebar as AppSidebar };
-
