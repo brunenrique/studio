@@ -36,22 +36,22 @@ import {
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/analytics', label: 'Tendências', icon: LineChart },
   { href: '/patients', label: 'Pacientes', icon: Users },
   { href: '/appointments', label: 'Agendamentos', icon: CalendarDays },
   { href: '/waiting-list', label: 'Lista de Espera', icon: ListChecks },
   { href: '/templates', label: 'Modelos', icon: FileText },
-  { href: '/self-care', label: 'Saúde Mental', icon: HeartPulse },
   { href: '/medications', label: 'Medicamentos', icon: Pill },
+  { href: '/self-care', label: 'Saúde Mental', icon: HeartPulse },
   { href: '/knowledge-base', label: 'Base de Conhecimento', icon: BookOpenCheck },
+  { href: '/analytics', label: 'Tendências', icon: LineChart },
   { href: '/settings', label: 'Configurações', icon: Settings },
 ];
 
 // Choose the most important features to appear in the top vertical section
 const verticalItems = [
   navItems[0], // Dashboard
-  navItems[2], // Pacientes
-  navItems[3], // Agendamentos
+  navItems[1], // Pacientes
+  navItems[2], // Agendamentos
 ];
 
 const horizontalItems = navItems.filter((item) => !verticalItems.includes(item));
