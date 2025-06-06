@@ -6,7 +6,8 @@ import { TaskFormDialog } from '@/components/tasks/TaskFormDialog';
 import { TaskTable } from '@/components/tasks/TaskTable';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { PlusCircle } from 'lucide-react';
+import Link from 'next/link';
+import { PlusCircle, ArrowLeft } from 'lucide-react';
 import { useTasks } from '@/hooks/useTasks';
 import { db } from '@/lib/firebaseClient';
 import { addDoc, collection, updateDoc, doc, deleteDoc, serverTimestamp } from 'firebase/firestore';
@@ -60,7 +61,11 @@ export default function PatientDetailPage({ params }: PatientDetailPageProps) {
   };
 
   return (
-    <Tabs defaultValue="details" className="space-y-4">
+    <>
+      <Link href="/patients" className="mb-4 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+        <ArrowLeft className="h-4 w-4" /> Pacientes
+      </Link>
+      <Tabs defaultValue="details" className="space-y-4">
       <TabsList>
         <TabsTrigger value="details">Detalhes</TabsTrigger>
         <TabsTrigger value="tasks">Ações & To-Do</TabsTrigger>
@@ -86,6 +91,7 @@ export default function PatientDetailPage({ params }: PatientDetailPageProps) {
           <TaskTable tasks={tasks} onEdit={(t) => { setEditing(t); setIsFormOpen(true); }} onDelete={handleDelete} onToggleStatus={handleToggle} />
         </div>
       </TabsContent>
-    </Tabs>
+      </Tabs>
+    </>
   );
 }
