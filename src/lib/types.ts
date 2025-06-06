@@ -154,3 +154,12 @@ export interface TimelineEvent {
   title: string;
   description?: string;
 }
+
+// 🔥 Entrada para o Heatmap de Sintomas
+export interface SymptomHeatmapEntry {
+  id: string;
+  patientId: string;
+  date: string; // ISO 8601
+  symptom: string;
+  severity: number; // 1-5
+}
