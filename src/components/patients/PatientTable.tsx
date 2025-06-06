@@ -14,17 +14,7 @@ import { FilePenLine, Trash2, Eye, PlusCircle } from "lucide-react";
 import Link from "next/link";
 import { PatientFormDialog } from "./PatientFormDialog";
 import { useState } from "react";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import { SmartModal } from "@/components/SmartModal";
 import { useToast } from "@/hooks/use-toast";
 import { format, differenceInYears, parseISO } from 'date-fns';
 
@@ -37,6 +27,7 @@ interface PatientTableProps {
 export function PatientTable({ patients, onUpdatePatient, onDeletePatient }: PatientTableProps) {
   const [editingPatient, setEditingPatient] = useState<Patient | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [toDelete, setToDelete] = useState<Patient | null>(null);
   const { toast } = useToast();
 
   const handleEdit = (patient: Patient) => {
@@ -107,28 +98,37 @@ export function PatientTable({ patients, onUpdatePatient, onDeletePatient }: Pat
                   <FilePenLine className="h-4 w-4" />
                   <span className="sr-only">Editar</span>
                 </Button>
-                 <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive/80">
-                      <Trash2 className="h-4 w-4" />
-                      <span className="sr-only">Excluir</span>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-destructive hover:text-destructive/80"
+                  onClick={() => setToDelete(patient)}
+                >
+                  <Trash2 className="h-4 w-4" />
+                  <span className="sr-only">Excluir</span>
+                </Button>
+                <SmartModal
+                  id="delete-patient"
+                  open={toDelete?.id === patient.id}
+                  onClose={() => setToDelete(null)}
+                  title="Confirmar Exclusão"
+                >
+                  <p className="text-sm">
+                    Tem certeza que deseja excluir o paciente {patient.name}? Esta ação não pode ser desfeita.
+                  </p>
+                  <div className="mt-4 flex justify-end gap-2">
+                    <Button onClick={() => setToDelete(null)}>Cancelar</Button>
+                    <Button
+                      variant="destructive"
+                      onClick={() => {
+                        handleDelete(patient.id);
+                        setToDelete(null);
+                      }}
+                    >
+                      Excluir
                     </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Confirmar Exclusão</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Tem certeza que deseja excluir o paciente {patient.name}? Esta ação não pode ser desfeita.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                      <AlertDialogAction onClick={() => handleDelete(patient.id)} className="bg-destructive hover:bg-destructive/90">
-                        Excluir
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                  </div>
+                </SmartModal>
               </TableCell>
             </TableRow>
           ))}
