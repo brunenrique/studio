@@ -1,8 +1,8 @@
 // 🔐 Papéis disponíveis no sistema
-export type UserRole = 'Admin Global' | 'Psicólogo' | 'Admin/Secretário';
+export type UserRole = "Admin Global" | "Psicólogo" | "Admin/Secretário";
 
 // 🩺 Status possíveis de um agendamento
-export type AttendanceStatus = 'pending' | 'present' | 'absent' | 'rescheduled';
+export type AttendanceStatus = "pending" | "present" | "absent" | "rescheduled";
 
 // 👤 Representação de um usuário (psicólogo ou administrativo)
 export interface User {
@@ -48,6 +48,15 @@ export interface WaitingListItem {
   addedDate: string; // ISO 8601
   requestedDate?: string;
   notes?: string;
+}
+
+// 📚 Item da base de conhecimento interna
+export interface KnowledgeBaseItem {
+  id: string;
+  title: string;
+  description: string;
+  link?: string; // Pode ser um link do Google Drive ou referência externa
+  createdDate: string; // ISO 8601
 }
 
 // 🔄 Tipo utilitário: paciente parcial para formulários e updates
