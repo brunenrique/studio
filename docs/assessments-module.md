@@ -9,7 +9,7 @@
 
 ## Deploy
 
-1. Configure variáveis em `.env.local` e `.env` para chaves do Firebase, SendGrid e Twilio (`SENDGRID_API_KEY`, `SENDGRID_FROM_EMAIL`, `TWILIO_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_WHATSAPP_FROM`, `ASSESSMENT_TOKEN_SECRET`).
+1. Configure variáveis em `.env.local` e `.env` para chaves do Firebase, SendGrid e Twilio (`SENDGRID_API_KEY`, `SENDGRID_FROM_EMAIL`, `TWILIO_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_WHATSAPP_FROM`, `ASSESSMENT_TOKEN_SECRET`, `CRYPTO_SECRET_KEY (base64)`).
 2. Execute `npm install` para instalar dependências.
 3. Inicie os emuladores com `firebase emulators:start` para testes locais.
 4. Para deploy, rode `firebase deploy --only functions,firestore`.

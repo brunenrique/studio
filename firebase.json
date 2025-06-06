@@ -2,6 +2,9 @@
   "functions": {
     "source": "functions"
   },
+  "firestore": {
+    "rules": "docs/firestore.rules"
+  },
   "emulators": {
     "apphosting": {
       "port": 5002,

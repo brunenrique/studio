@@ -1,3 +1,5 @@
+process.env.CRYPTO_SECRET_KEY = 'MTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3ODkwMTI=';
+
 import { encrypt, decrypt } from '../src/lib/utils';
 
 describe('encrypt/decrypt', () => {

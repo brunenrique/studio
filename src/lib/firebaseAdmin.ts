@@ -14,7 +14,10 @@ if (!getApps().length) {
 export const adminDb = getFirestore(app);
 export const adminAuth = getAuth(app);
 
-const TOKEN_SECRET = process.env.ASSESSMENT_TOKEN_SECRET || 'secret';
+const TOKEN_SECRET = process.env.ASSESSMENT_TOKEN_SECRET;
+if (!TOKEN_SECRET) {
+  throw new Error('ASSESSMENT_TOKEN_SECRET environment variable is required');
+}
 
 export function signAssessmentToken(payload: { assessmentId: string; patientId: string }): string {
   return jwt.sign(payload, TOKEN_SECRET, { expiresIn: '7d' });
