@@ -27,7 +27,7 @@ import {
   mockFinanceRecords,
 } from "@/lib/mock-data";
 import { startOfWeek, endOfWeek, isSameDay, differenceInCalendarDays } from "date-fns";
-import Image from "next/image";
+import CustomImage from "@/components/CustomImage";
 
 export default function DashboardPage() {
   const { user, isLoading } = useAuth();
@@ -80,8 +80,8 @@ export default function DashboardPage() {
           <h1 className="text-3xl font-bold font-headline text-primary">Bem-vindo(a), {user.name}!</h1>
           <p className="text-muted-foreground mt-1">Aqui está um resumo da sua atividade recente.</p>
         </div>
-        <Image
-          src={user.profileImage || "https://placehold.co/100x100?text=Foto"}
+        <CustomImage
+          src={user.profileImage || undefined}
           alt={`Foto de perfil de ${user.name}`}
           width={100}
           height={100}
