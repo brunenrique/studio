@@ -116,3 +116,33 @@ export interface AssessmentResult extends Assessment {
 
 // 🔄 Tipo utilitário: paciente parcial para formulários e updates
 export type PartialPatient = Partial<Patient>;
+
+// 🗒️ Tarefa profissional
+export type TaskPriority = 'low' | 'medium' | 'high';
+
+export type TaskStatus = 'pending' | 'done';
+
+export type TaskType = 'session' | 'report' | 'admin';
+
+export interface Task {
+  id: string;
+  patientId: string | null;
+  title: string;
+  description: string;
+  priority: TaskPriority;
+  dueDate: string; // ISO 8601
+  status: TaskStatus;
+  taskType: TaskType;
+  createdAt: string; // ISO 8601
+  updatedAt: string; // ISO 8601
+  createdBy: string;
+}
+
+// 📝 Registro de auditoria
+export interface AuditLogEntry {
+  id: string;
+  action: string;
+  userId?: string;
+  timestamp: string; // ISO 8601 or Firestore timestamp string
+  details?: string;
+}
