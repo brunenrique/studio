@@ -19,7 +19,7 @@ export function useFloatingMenu(config: FloatingMenuConfig) {
   const menu = useSmartMenu(rest);
   const floating = useFloating({
     placement,
-    middleware: [offset(4), flip(), shift({ padding: 5 })],
+    middleware: [offset(8), flip(), shift({ padding: 8 })],
   });
 
   useEffect(() => {
