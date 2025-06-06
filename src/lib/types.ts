@@ -137,3 +137,12 @@ export interface Task {
   updatedAt: string; // ISO 8601
   createdBy: string;
 }
+
+// 📝 Registro de auditoria
+export interface AuditLogEntry {
+  id: string;
+  action: string;
+  userId?: string;
+  timestamp: string; // ISO 8601 or Firestore timestamp string
+  details?: string;
+}
