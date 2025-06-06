@@ -8,7 +8,13 @@ export default function WelcomeCard() {
   const { user } = useAuth();
   const banner = useBannerImage();
 
-  if (!user) return null;
+  if (!user) {
+    return (
+      <div className="flex h-32 items-center justify-center rounded-lg bg-muted">
+        Carregando...
+      </div>
+    );
+  }
 
   return (
     <div className="bg-primary/10 rounded-xl p-6 grid gap-4 lg:grid-cols-3 items-center">
