@@ -1,10 +1,9 @@
 "use client";
 
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { Menu } from 'lucide-react';
-import { AppSidebar } from './Sidebar'; // Import the new sidebar
+import AppSidebar from './Sidebar';
 import { NotificationBell } from './NotificationBell';
+import { Logo } from '@/components/Logo';
 import { useAuth } from '@/contexts/AuthContext';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
@@ -38,27 +37,18 @@ export function AppHeader() {
 
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background/80 backdrop-blur-sm px-4 md:px-6 justify-between md:justify-end">
-      <div className="md:hidden">
-         <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="outline" size="icon">
-              <Menu className="h-5 w-5" />
-              <span className="sr-only">Toggle navigation menu</span>
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left" className="p-0 w-[280px] flex flex-col">
-            {/* Embed AppSidebar content here for mobile */}
-            <AppSidebar /> 
-          </SheetContent>
-        </Sheet>
+    <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-4 border-b bg-background/80 backdrop-blur-sm px-4 md:px-6">
+      <div className="flex items-center gap-4">
+        <AppSidebar />
+        <Logo />
       </div>
 
-      <NotificationBell />
-      <ThemeToggle />
+      <div className="flex items-center gap-4 ml-auto">
+        <NotificationBell />
+        <ThemeToggle />
 
-      {user && (
-         <DropdownMenu>
+        {user && (
+          <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-10 w-10 rounded-full">
                 <Avatar className="h-10 w-10">
@@ -92,7 +82,8 @@ export function AppHeader() {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-      )}
+        )}
+      </div>
     </header>
   );
 }
