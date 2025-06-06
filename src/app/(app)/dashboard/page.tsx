@@ -15,6 +15,7 @@ import {
 } from '@/lib/mock-data';
 import { startOfWeek, endOfWeek, isSameDay, differenceInCalendarDays } from 'date-fns';
 import Image from 'next/image';
+import AppLayout from '../layout';
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -57,18 +58,20 @@ export default function DashboardPage() {
     .sort((a, b) => a.date.getTime() - b.date.getTime());
 
   return (
-    <div className="space-y-8">
-      <div className="bg-card p-6 rounded-lg shadow-md flex flex-col md:flex-row items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold font-headline text-primary">Bem-vindo(a), {user.name}!</h1>
-          <p className="text-muted-foreground mt-1">Aqui está um resumo da sua atividade recente.</p>
-        </div>
-        <Image 
+    <AppLayout>
+      <div className="space-y-8">
+        <div className="bg-card p-6 rounded-lg shadow-md flex flex-col md:flex-row items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold font-headline text-primary">Bem-vindo(a), {user.name}!</h1>
+            <p className="text-muted-foreground mt-1">Aqui está um resumo da sua atividade recente.</p>
+          </div>
+          <Image
             src="https://placehold.co/300x200.png"
             alt="Decorative dashboard illustration"
             width={300}
             height={200}
-            className="rounded-lg mt-4 md:mt-0"
+            className="rounded-lg mt-4 md:mt-0 w-full max-w-xs h-auto"
+            sizes="(min-width: 768px) 300px, 100vw"
             data-ai-hint="clinic illustration"
         />
       </div>
@@ -194,5 +197,6 @@ export default function DashboardPage() {
         </CardContent>
       </Card>
     </div>
+    </AppLayout>
   );
 }
