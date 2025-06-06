@@ -38,27 +38,33 @@ const sections = [
   },
 ];
 
-function SidebarContent({ className }: { className?: string }) {
+function SidebarContent({ className, onNavigate }: { className?: string; onNavigate?: () => void }) {
   const pathname = usePathname();
   const { logout, user } = useAuth();
   return (
-    <div className={cn('w-[240px] bg-card border-r flex flex-col', className)}>
+    <div className={cn('w-[72vw] md:w-[220px] bg-card border-r flex flex-col', className)}>
       <div className="p-4">
         <Link href="/dashboard">
           <Logo />
         </Link>
       </div>
       <nav className="flex-1 overflow-y-auto px-2 space-y-6 text-sm">
-        {sections.map(section => (
-          <div key={section.title} className="space-y-1">
+        {sections.map((section, i) => (
+          <div
+            key={section.title}
+            className={cn('space-y-1', i > 0 && 'mt-4 border-t border-border/20 pt-4')}
+          >
             <p className="px-2 text-muted-foreground font-semibold mb-1">{section.title}</p>
             <ul className="space-y-1">
               {section.items.map(item => (
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className={cn('flex items-center gap-2 rounded-md px-2 py-2 hover:bg-primary/20',
-                      pathname === item.href && 'bg-primary/20 font-semibold')}
+                    onClick={onNavigate}
+                    className={cn(
+                      'flex items-center gap-2 rounded-md px-4 py-2 hover:bg-primary/15',
+                      pathname === item.href && 'bg-primary/15 font-semibold'
+                    )}
                   >
                     <item.icon className="h-[18px] w-[18px]" />
                     <span>{item.label}</span>
@@ -102,8 +108,8 @@ export default function AppSidebar() {
       <Button variant="ghost" size="icon" onClick={() => setOpen(true)}>
         <Menu className="h-5 w-5" />
       </Button>
-      <SheetContent side="left" className="p-0">
-        <SidebarContent className="h-full" />
+      <SheetContent side="left" className="p-0 shadow-xl z-50 w-[72vw]">
+        <SidebarContent className="h-full" onNavigate={() => setOpen(false)} />
       </SheetContent>
     </Sheet>
   );
