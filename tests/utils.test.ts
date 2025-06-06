@@ -1,3 +1,5 @@
+process.env.CRYPTO_SECRET_KEY = Buffer.from('01234567890123456789012345678901').toString('base64');
+
 import { encrypt, decrypt } from '../src/lib/utils';
 
 describe('encrypt/decrypt', () => {
