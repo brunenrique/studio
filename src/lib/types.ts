@@ -154,7 +154,6 @@ export interface TimelineEvent {
   title: string;
   description?: string;
 }
-
 // 🔥 Entrada para o Heatmap de Sintomas
 export interface SymptomHeatmapEntry {
   id: string;
@@ -163,3 +162,4 @@ export interface SymptomHeatmapEntry {
   symptom: string;
   severity: number; // 1-5
 }
+

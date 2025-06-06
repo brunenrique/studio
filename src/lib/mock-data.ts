@@ -56,6 +56,22 @@ const initialSessionNotesP2: SessionNote[] = [
   },
 ];
 
+// 📝 Notas mock – paciente 3
+const initialSessionNotesP3: SessionNote[] = [
+  {
+    id: 'sn004',
+    date: new Date(new Date().setDate(today.getDate() - 21)).toISOString(),
+    notes: 'Primeira consulta. Queixas de dores de cabeça recorrentes sem causa física aparente.',
+    patientHistorySummaryForAI: 'Paciente referenciado por médico clínico geral.',
+  },
+  {
+    id: 'sn005',
+    date: new Date(new Date().setDate(today.getDate() - 5)).toISOString(),
+    notes: 'Relatou melhora significativa após iniciar prática de meditação diária.',
+    patientHistorySummaryForAI: 'Primeira consulta com queixas de dores de cabeça recorrentes.',
+  },
+];
+
 // 👩‍⚕️ Pacientes mock
 export let mockPatients: Patient[] = [
   {
@@ -78,6 +94,13 @@ export let mockPatients: Patient[] = [
     contact: 'charlie@example.com',
     dateOfBirth: '2000-02-10',
     sessionNotes: [],
+  },
+  {
+    id: 'patient-004',
+    name: 'Dana Scully',
+    contact: 'dana@example.com',
+    dateOfBirth: '1974-02-23',
+    sessionNotes: initialSessionNotesP3,
   },
 ];
 
@@ -164,6 +187,23 @@ export const mockAppointments: Appointment[] = [
     durationMinutes: 50,
     status: 'pending',
   },
+  {
+    id: 'appt-005',
+    patientId: 'patient-004',
+    patientName: 'Dana Scully',
+    dateTime: new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate(), 16, 0).toISOString(),
+    durationMinutes: 50,
+    status: 'pending',
+  },
+  {
+    id: 'appt-006',
+    patientId: 'patient-002',
+    patientName: 'Bob The Builder',
+    dateTime: new Date(nextWeek.getFullYear(), nextWeek.getMonth(), nextWeek.getDate(), 13, 30).toISOString(),
+    durationMinutes: 50,
+    status: 'rescheduled',
+    notes: 'Reagendado pelo paciente.',
+  },
 ];
 
 // ⏳ Lista de espera mock
@@ -182,6 +222,14 @@ export const mockWaitingList: WaitingListItem[] = [
     contact: 'clark@example.com',
     addedDate: new Date(today.setDate(today.getDate() - 3)).toISOString(),
     notes: 'Encaminhamento urgente do Dr. Hamilton.',
+  },
+  {
+    id: 'wait-003',
+    patientName: 'Bruce Wayne',
+    contact: 'bruce@example.com',
+    requestedDate: 'Manhãs de segunda-feira',
+    addedDate: today.toISOString(),
+    notes: 'Prefere sessões presenciais.',
   },
 ];
 
@@ -211,6 +259,12 @@ export const mockFinanceRecords: FinanceRecord[] = [
     amount: 200,
     description: 'Sessão do mês anterior',
   },
+  {
+    id: 'fin-005',
+    date: new Date(today.getFullYear(), today.getMonth(), 18).toISOString(),
+    amount: 250,
+    description: 'Sessão em grupo',
+  },
 ];
 
 // 📑 Modelos de texto reutilizáveis
@@ -226,6 +280,12 @@ export const mockTemplates: Template[] = [
     name: 'Email de Lembrete',
     category: 'email',
     content: 'Olá {{nome}}, este é um lembrete do seu próximo agendamento...'
+  },
+  {
+    id: 'tpl-003',
+    name: 'Plano Terapêutico Básico',
+    category: 'treatment-plan',
+    content: 'Objetivos, metas e intervenções sugeridas para as próximas 8 semanas.'
   }
 ];
 
@@ -247,6 +307,11 @@ export const mockKnowledgeBaseArticles: KnowledgeBaseArticle[] = [
     question: 'Os dados são criptografados?',
     answer:
       'Este protótipo usa criptografia apenas em campos selecionados. Veja a documentação para mais detalhes.'
+  },
+  {
+    id: 'kb-004',
+    question: 'Como exportar os registros financeiros?',
+    answer: 'Na seção de Relatórios, escolha "Exportar Finanças" para gerar um arquivo CSV.'
   }
 ];
 
@@ -279,6 +344,13 @@ export const mockMedications: Medication[] = [
     class: 'Benzodiazepínico',
     indications: 'Transtorno de ansiedade, crises convulsivas',
     sideEffects: 'Sedação, tontura, dependência'
+  },
+  {
+    id: 'med-005',
+    name: 'Quetiapina',
+    class: 'Antipsicótico atípico',
+    indications: 'Transtorno bipolar, esquizofrenia',
+    sideEffects: 'Sonolência, ganho de peso'
   }
 ];
 
