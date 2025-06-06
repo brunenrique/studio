@@ -29,7 +29,6 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
-  SidebarSeparator,
   SidebarTrigger,
   SidebarInset,
 } from "@/components/ui/sidebar"; // Assuming enhanced sidebar is available
@@ -46,15 +45,6 @@ const navItems = [
   { href: '/knowledge-base', label: 'Base de Conhecimento', icon: BookOpenCheck },
   { href: '/settings', label: 'Configurações', icon: Settings },
 ];
-
-// Choose the most important features to appear in the top vertical section
-const verticalItems = [
-  navItems[0], // Dashboard
-  navItems[2], // Pacientes
-  navItems[3], // Agendamentos
-];
-
-const horizontalItems = navItems.filter((item) => !verticalItems.includes(item));
 
 export function AppSidebar() {
   const pathname = usePathname();
@@ -73,9 +63,9 @@ export function AppSidebar() {
           <Logo />
         </Link>
       </SidebarHeader>
-      <SidebarContent className="flex-grow p-2 space-y-2">
+      <SidebarContent className="flex-grow p-2">
         <SidebarMenu>
-          {verticalItems.map((item) => (
+          {navItems.map((item) => (
             <SidebarMenuItem key={item.href}>
               <Link href={item.href}>
                 <SidebarMenuButton
@@ -95,28 +85,6 @@ export function AppSidebar() {
             </SidebarMenuItem>
           ))}
         </SidebarMenu>
-        <SidebarSeparator />
-        <ul className="flex flex-row flex-wrap gap-1">
-          {horizontalItems.map((item) => (
-            <SidebarMenuItem key={item.href} className="flex-none">
-              <Link href={item.href}>
-                <SidebarMenuButton
-                  variant="default"
-                  className={cn(
-                    "w-20 justify-center text-xs h-14",
-                    pathname === item.href || (pathname.startsWith(item.href) && item.href !== '/dashboard')
-                      ? "bg-primary/10 text-primary font-semibold"
-                      : "hover:bg-primary/5"
-                  )}
-                  tooltip={{ children: item.label, side: 'right', align: 'center', className: "ml-2" }}
-                >
-                  <item.icon className="h-5 w-5 mb-1" />
-                  <span className="truncate whitespace-normal text-center">{item.label}</span>
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-          ))}
-        </ul>
       </SidebarContent>
       <SidebarFooter className="p-4 border-t">
         {user && (
