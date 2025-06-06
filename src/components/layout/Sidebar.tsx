@@ -42,7 +42,7 @@ function SidebarContent({ className, onNavigate }: { className?: string; onNavig
   const pathname = usePathname();
   const { logout, user } = useAuth();
   return (
-    <div className={cn('w-[72vw] max-w-xs md:w-56 lg:w-60 bg-card border-r flex flex-col', className)}>
+    <aside className={cn('w-[72vw] max-w-xs md:w-56 lg:w-60 bg-card border-r flex flex-col', className)}>
       <div className="p-4">
         <Link href="/dashboard">
           <Logo />
@@ -90,7 +90,7 @@ function SidebarContent({ className, onNavigate }: { className?: string; onNavig
           <LogOut className="h-[18px] w-[18px] mr-2" /> Sair
         </Button>
       </div>
-    </div>
+    </aside>
   );
 }
 
