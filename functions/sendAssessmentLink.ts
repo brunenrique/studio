@@ -9,7 +9,10 @@ const db = admin.firestore();
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
 const twilioClient = twilio(process.env.TWILIO_SID as string, process.env.TWILIO_AUTH_TOKEN as string);
-const TOKEN_SECRET = process.env.ASSESSMENT_TOKEN_SECRET as string;
+const TOKEN_SECRET = process.env.ASSESSMENT_TOKEN_SECRET;
+if (!TOKEN_SECRET) {
+  throw new Error('ASSESSMENT_TOKEN_SECRET environment variable is required');
+}
 
 function signToken(data: { patientId: string; assessmentId: string }) {
   return jwt.sign(data, TOKEN_SECRET, { expiresIn: '7d' });
