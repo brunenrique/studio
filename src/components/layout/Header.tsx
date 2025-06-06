@@ -42,7 +42,6 @@ export function AppHeader() {
   const menu = useSmartMenu({ id: 'profile', restoreFocus: false });
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [search, setSearch] = useState('');
-  const router = useRouter();
 
   useEffect(() => {
     if (menu.open) {
