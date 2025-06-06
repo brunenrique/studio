@@ -1,5 +1,5 @@
 
-import { format, addDays } from "date-fns";
+import { format, addDays } from 'date-fns';
 import type {
   Patient,
   Appointment,
@@ -11,7 +11,6 @@ import type {
   FinanceRecord,
   Medication,
   SymptomHeatmapEntry,
-import {
   FormulationDiagram,
   // outros tipos aqui
 } from '@/lib/types';
