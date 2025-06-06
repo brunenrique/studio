@@ -37,7 +37,6 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
   }, [patientId]);
 
   const handleAddNote = async (
-    id: string,
     noteContent: string,
     noteDate: string
   ) => {
@@ -67,7 +66,7 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
     });
   };
 
-  const handleDeleteNote = async (id: string, noteId: string) => {
+  const handleDeleteNote = async (noteId: string) => {
     if (!patient) return;
 
     setPatient(prev => {
@@ -86,12 +85,42 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
     });
   };
 
-  const handleSavePatient = (updatedPatient: Patient) => {
-    setPatient(updatedPatient);
-    updateMockPatient(updatedPatient);
-    toast({
-      title: "Paciente Atualizado",
-      description: "Os dados do paciente foram salvos com sucesso.",
+const handleEditNote = async (
+  noteId: string,
+  content: string,
+  date: string,
+) => {
+  if (!patient) return;
+
+  await new Promise(resolve => setTimeout(resolve, 500));
+
+  setPatient(prev => {
+    if (!prev) return null;
+    const updated = {
+      ...prev,
+      sessionNotes: prev.sessionNotes.map(note =>
+        note.id === noteId ? { ...note, notes: content, date } : note,
+      ),
+    };
+    updateMockPatient(updated);
+    return updated;
+  });
+
+  toast({
+    title: "Nota Atualizada",
+    description: "As alterações foram salvas com sucesso.",
+  });
+};
+
+const handleSavePatient = (updatedPatient: Patient) => {
+  setPatient(updatedPatient);
+  updateMockPatient(updatedPatient);
+  toast({
+    title: "Paciente Atualizado",
+    description: "Os dados do paciente foram salvos com sucesso.",
+  });
+};
+
     });
   };
 
@@ -177,11 +206,12 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
           </div>
         </div>
       </Card>
-      {/* ✅ Corrigido: passando também o onDeleteNote */}
+
       <SessionNotesSection
         patient={patient}
         onAddNote={handleAddNote}
         onDeleteNote={handleDeleteNote}
+        onEditNote={handleEditNote}
       />
       <AIInsightsSection
         patient={patient}
