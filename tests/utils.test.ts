@@ -1,17 +1,17 @@
 import { encrypt, decrypt } from '../src/lib/utils';
 
-describe('encryption utils', () => {
+describe('encrypt/decrypt', () => {
   const text = 'hello world';
 
-  test('encrypt returns a different string', () => {
-    const ciphertext = encrypt(text);
-    expect(typeof ciphertext).toBe('string');
-    expect(ciphertext).not.toBe(text);
+  it('encrypt returns a different string', () => {
+    const cipher = encrypt(text);
+    expect(typeof cipher).toBe('string');
+    expect(cipher).not.toBe(text);
   });
 
-  test('decrypt(encrypt(text)) returns original', () => {
-    const ciphertext = encrypt(text);
-    const plain = decrypt(ciphertext);
+  it('decrypt(encrypt(text)) returns original', () => {
+    const cipher = encrypt(text);
+    const plain = decrypt(cipher);
     expect(plain).toBe(text);
   });
 });
