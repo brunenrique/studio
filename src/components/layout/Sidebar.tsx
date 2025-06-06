@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { Logo } from '@/components/Logo';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetOverlay, SheetPortal } from '@/components/ui/sheet';
 import { Menu, LayoutDashboard, Users, CalendarDays, ListChecks, FileText, Pill, HeartPulse, BookOpenCheck, LineChart, Settings, LogOut } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
@@ -38,11 +38,11 @@ const sections = [
   },
 ];
 
-function SidebarContent({ className }: { className?: string }) {
+function SidebarContent({ className, onNavigate }: { className?: string; onNavigate?: () => void }) {
   const pathname = usePathname();
   const { logout, user } = useAuth();
   return (
-    <div className={cn('w-[240px] bg-card border-r flex flex-col', className)}>
+    <div className={cn('w-[72vw] max-w-xs md:w-56 lg:w-60 bg-card border-r flex flex-col', className)}>
       <div className="p-4">
         <Link href="/dashboard">
           <Logo />
@@ -50,15 +50,21 @@ function SidebarContent({ className }: { className?: string }) {
       </div>
       <nav className="flex-1 overflow-y-auto px-2 space-y-6 text-sm">
         {sections.map(section => (
-          <div key={section.title} className="space-y-1">
+          <div
+            key={section.title}
+            className="space-y-1 mt-4 first:mt-0 border-t border-border/20 pt-4 first:border-t-0"
+          >
             <p className="px-2 text-muted-foreground font-semibold mb-1">{section.title}</p>
             <ul className="space-y-1">
               {section.items.map(item => (
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className={cn('flex items-center gap-2 rounded-md px-2 py-2 hover:bg-primary/20',
-                      pathname === item.href && 'bg-primary/20 font-semibold')}
+                    onClick={onNavigate}
+                    className={cn(
+                      'flex items-center gap-2 rounded-md px-4 py-2 hover:bg-primary/15',
+                      pathname === item.href && 'bg-primary/15 font-semibold'
+                    )}
                   >
                     <item.icon className="h-[18px] w-[18px]" />
                     <span>{item.label}</span>
@@ -73,7 +79,14 @@ function SidebarContent({ className }: { className?: string }) {
         {user && (
           <p className="mb-2 text-sm font-medium">{user.name}</p>
         )}
-        <Button variant="ghost" className="w-full justify-start" onClick={logout}>
+        <Button
+          variant="ghost"
+          className="w-full justify-start"
+          onClick={() => {
+            logout();
+            onNavigate?.();
+          }}
+        >
           <LogOut className="h-[18px] w-[18px] mr-2" /> Sair
         </Button>
       </div>
@@ -97,14 +110,22 @@ export default function AppSidebar() {
     return <SidebarContent />;
   }
 
+  const closeDrawer = () => setOpen(false);
+
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <Button variant="ghost" size="icon" onClick={() => setOpen(true)}>
         <Menu className="h-5 w-5" />
       </Button>
-      <SheetContent side="left" className="p-0">
-        <SidebarContent className="h-full" />
-      </SheetContent>
+      <SheetPortal>
+        <SheetOverlay className="fixed inset-0 z-50 bg-black/40 md:hidden" />
+        <SheetContent
+          side="left"
+          className="p-0 w-[72vw] max-w-xs md:w-56 lg:w-60 h-full overflow-y-auto shadow-xl bg-background"
+        >
+          <SidebarContent className="h-full" onNavigate={closeDrawer} />
+        </SheetContent>
+      </SheetPortal>
     </Sheet>
   );
 }
