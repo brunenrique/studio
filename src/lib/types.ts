@@ -154,6 +154,7 @@ export interface TimelineEvent {
   title: string;
   description?: string;
 }
+
 // 🔥 Entrada para o Heatmap de Sintomas
 export interface SymptomHeatmapEntry {
   id: string;
@@ -161,5 +162,11 @@ export interface SymptomHeatmapEntry {
   date: string; // ISO 8601
   symptom: string;
   severity: number; // 1-5
+}
+
+// 🌳 Diagrama de Formulacao da Sessao
+export interface FormulationDiagram {
+  sessionId: string;
+  diagramJson: string;
 }
 

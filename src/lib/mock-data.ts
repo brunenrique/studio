@@ -11,7 +11,11 @@ import type {
   FinanceRecord,
   Medication,
   SymptomHeatmapEntry,
+import {
+  FormulationDiagram,
+  // outros tipos aqui
 } from '@/lib/types';
+
 
 // 👤 Usuário mock
 export const mockUser: User = {
@@ -360,4 +364,17 @@ export const mockSymptomEntries: SymptomHeatmapEntry[] = [
   { id: 'sym-003', patientId: 'patient-001', date: format(addDays(new Date(), -3), 'yyyy-MM-dd'), symptom: 'Ansiedade', severity: 4 },
   { id: 'sym-004', patientId: 'patient-001', date: format(addDays(new Date(), -2), 'yyyy-MM-dd'), symptom: 'Ansiedade', severity: 5 },
   { id: 'sym-005', patientId: 'patient-001', date: format(addDays(new Date(), -1), 'yyyy-MM-dd'), symptom: 'Ansiedade', severity: 1 },
+];
+export const mockFormulations: FormulationDiagram[] = [
+  {
+    sessionId: 'session-001',
+    diagramJson: JSON.stringify({
+      label: 'Problema Principal',
+      children: [
+        { label: 'Pensamentos Automáticos', children: [{ label: '"Sou incapaz"' }] },
+        { label: 'Emoções', children: [{ label: 'Tristeza' }, { label: 'Ansiedade' }] },
+        { label: 'Comportamentos', children: [{ label: 'Isolamento' }] }
+      ]
+    })
+  }
 ];
