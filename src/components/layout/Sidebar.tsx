@@ -10,8 +10,10 @@ import {
   Menu, LayoutDashboard, Users, CalendarDays, ListChecks, FileText, Pill,
   HeartPulse, BookOpenCheck, LineChart, Settings, LogOut,
 } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
+import { useSmartMenu } from '@/lib/use-smart-menu';
 
 const sections = [
   {
@@ -64,9 +66,11 @@ function SidebarContent({ className, onNavigate }: { className?: string; onNavig
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    onClick={onNavigate}
+                    onClick={() => {
+                      onNavigate?.();
+                    }}
                     className={cn(
-                      'flex items-center gap-2 rounded-md px-4 py-2 hover:bg-primary/15',
+                      'flex items-center gap-2 rounded-md px-4 py-2 hover:bg-primary/15 focus:outline focus:outline-2 focus:outline-primary/70',
                       pathname === item.href && 'bg-primary/15 font-semibold'
                     )}
                   >
@@ -99,37 +103,52 @@ function SidebarContent({ className, onNavigate }: { className?: string; onNavig
 }
 
 export default function AppSidebar() {
-  const [open, setOpen] = useState(false);
-  const [isDesktop, setIsDesktop] = useState(false);
-
-  useEffect(() => {
-    const mq = window.matchMedia('(min-width: 1024px)');
-    const handle = () => setIsDesktop(mq.matches);
-    handle();
-    mq.addEventListener('change', handle);
-    return () => mq.removeEventListener('change', handle);
-  }, []);
-
-  if (isDesktop) {
-    return <SidebarContent />;
-  }
-
-  const closeDrawer = () => setOpen(false);
+  const {
+    open,
+    setOpen,
+    toggle,
+    ref,
+    saveFocus,
+    animation,
+  } = useSmartMenu({
+    id: 'sidebar',
+    animation: { duration: 300, easing: 'easeOutExpo', delay: 100 },
+  });
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
-      <Button variant="ghost" size="icon" onClick={() => setOpen(true)}>
-        <Menu className="h-5 w-5" />
-      </Button>
-      <SheetPortal>
-        <SheetOverlay className="fixed inset-0 z-50 bg-black/40 md:hidden" />
-        <SheetContent
-          side="left"
-          className="p-0 w-[72vw] max-w-xs md:w-56 lg:w-60 h-full overflow-y-auto shadow-xl bg-background"
-        >
-          <SidebarContent className="h-full" onNavigate={closeDrawer} />
-        </SheetContent>
-      </SheetPortal>
-    </Sheet>
+    <>
+      <div className="lg:hidden">
+        <Button variant="ghost" size="icon" onClick={toggle} title="Abrir menu" data-menu-button>
+          <Menu className="h-5 w-5" />
+        </Button>
+      </div>
+      <Sheet open={open} onOpenChange={setOpen}>
+        <SheetPortal>
+          <SheetOverlay className="fixed inset-0 z-50 bg-black/60 md:hidden backdrop-blur-sm" />
+          <SheetContent
+            side="left"
+            className="p-0 w-[72vw] max-w-xs md:w-56 lg:w-60 h-full overflow-y-auto shadow-xl bg-background"
+          >
+            <div className="flex justify-end p-4 lg:hidden">
+              <Button variant="ghost" size="icon" onClick={() => setOpen(false)} title="Fechar menu">
+                <Menu className="h-5 w-5 rotate-180" />
+              </Button>
+            </div>
+            <motion.div
+              ref={ref}
+              initial={{ x: -300, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: -300, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            >
+              <SidebarContent
+                className="h-full"
+                onNavigate={() => setTimeout(() => setOpen(false), 150)}
+              />
+            </motion.div>
+          </SheetContent>
+        </SheetPortal>
+      </Sheet>
+    </>
   );
 }
