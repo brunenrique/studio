@@ -17,8 +17,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useSmartMenu } from '@/lib/use-smart-menu';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Input } from '@/components/ui/input';
 
 export function AppHeader() {
   const { user, logout } = useAuth();
@@ -40,6 +41,7 @@ export function AppHeader() {
 
   const menu = useSmartMenu({ id: 'profile', restoreFocus: false });
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     if (menu.open) {
@@ -57,6 +59,21 @@ export function AppHeader() {
         <AppSidebar />
         <Logo />
       </div>
+
+      <form
+        onSubmit={e => {
+          e.preventDefault();
+          router.push(`/search?q=${encodeURIComponent(search)}`);
+        }}
+        className="flex-1 max-w-xs hidden md:block"
+      >
+        <Input
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          placeholder="Buscar..."
+          className="w-full"
+        />
+      </form>
 
       <div className="flex items-center gap-4 ml-auto">
         <NotificationBell />
