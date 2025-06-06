@@ -72,7 +72,6 @@ export default function DashboardPage() {
             data-ai-hint="clinic illustration"
         />
       </div>
-
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {dashboard.showAppointments && (
         <Card className="shadow-lg hover:shadow-xl transition-shadow">
@@ -159,7 +158,6 @@ export default function DashboardPage() {
         </Card>
         )}
       </div>
-
       <Card className="shadow-lg">
         <CardHeader>
           <CardTitle className="flex items-center"><FileText className="mr-2 h-5 w-5 text-primary" />Funcionalidades Principais</CardTitle>
@@ -183,7 +181,6 @@ export default function DashboardPage() {
           </Button>
         </CardContent>
       </Card>
-      
       <Card className="shadow-lg bg-primary/5 border-primary/20">
         <CardHeader>
           <CardTitle className="flex items-center"><Lightbulb className="mr-2 h-5 w-5 text-primary" />Lembrete de Segurança</CardTitle>
@@ -196,7 +193,6 @@ export default function DashboardPage() {
           </p>
         </CardContent>
       </Card>
-
     </div>
   );
 }

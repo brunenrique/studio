@@ -1,5 +1,14 @@
 import { encrypt, decrypt } from '../src/lib/utils';
 
+beforeAll(() => {
+  const key = Buffer.alloc(32).toString('base64');
+  process.env.CRYPTO_SECRET_KEY = key;
+});
+
+afterAll(() => {
+  delete process.env.CRYPTO_SECRET_KEY;
+});
+
 describe('encrypt/decrypt', () => {
   const plaintext = 'hello world';
 

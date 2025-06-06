@@ -4,43 +4,43 @@
 
 @layer base {
   :root {
-    --background: 210 100% 97%; /* Very light blue - #F0F8FF */
-    --foreground: 205 30% 25%; /* Dark grayish blue */
+    --background: 216 33% 97%; /* Soft off-white - #F5F7FA */
+    --foreground: 210 40% 20%; /* Dark navy */
 
-    --card: 210 100% 99%;
-    --card-foreground: 205 30% 25%;
+    --card: 0 0% 100%;
+    --card-foreground: 210 40% 20%;
 
-    --popover: 210 100% 99%;
-    --popover-foreground: 205 30% 25%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 40% 20%;
 
-    --primary: 197 71% 73%; /* Light sky blue - #87CEEB */
-    --primary-foreground: 210 25% 15%; /* Dark blue for contrast */
+    --primary: 205 98% 26%; /* Dark petrol blue */
+    --primary-foreground: 210 40% 95%;
 
-    --secondary: 220 50% 92%; /* Lighter shade for secondary elements */
-    --secondary-foreground: 205 30% 25%;
+    --secondary: 210 25% 90%;
+    --secondary-foreground: 210 40% 20%;
 
-    --muted: 210 40% 90%;
-    --muted-foreground: 210 25% 45%;
+    --muted: 210 25% 85%;
+    --muted-foreground: 210 20% 40%;
 
-    --accent: 240 67% 94%; /* Soft lavender - #E6E6FA */
-    --accent-foreground: 240 25% 30%; /* Darker purple/blue */
+    --accent: 43 59% 50%; /* Metallic gold */
+    --accent-foreground: 210 40% 15%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 210 30% 88%;
-    --input: 210 30% 92%;
-    --ring: 197 60% 65%; /* Based on primary */
+    --border: 210 25% 85%;
+    --input: 210 25% 92%;
+    --ring: 205 80% 40%; /* Based on primary */
 
     --radius: 0.5rem;
 
     /* Sidebar specific colors - can be adjusted if needed or inherit from above */
-    --sidebar-background: 210 60% 95%;
-    --sidebar-foreground: 205 30% 20%;
-    --sidebar-primary: 197 71% 68%;
-    --sidebar-primary-foreground: 210 25% 10%;
-    --sidebar-accent: 240 60% 90%;
-    --sidebar-accent-foreground: 240 25% 25%;
+    --sidebar-background: 216 33% 97%;
+    --sidebar-foreground: 210 40% 20%;
+    --sidebar-primary: 205 98% 26%;
+    --sidebar-primary-foreground: 210 40% 95%;
+    --sidebar-accent: 43 59% 50%;
+    --sidebar-accent-foreground: 210 40% 15%;
     --sidebar-border: 210 30% 85%;
     --sidebar-ring: 197 60% 60%;
 
@@ -52,41 +52,41 @@
   }
 
   .dark {
-    --background: 220 25% 10%;
-    --foreground: 210 40% 95%;
+    --background: 210 40% 10%;
+    --foreground: 210 40% 96%;
 
     --card: 220 25% 12%;
-    --card-foreground: 210 40% 95%;
+    --card-foreground: 210 40% 96%;
 
     --popover: 220 25% 12%;
-    --popover-foreground: 210 40% 95%;
+    --popover-foreground: 210 40% 96%;
 
-    --primary: 197 65% 60%;
-    --primary-foreground: 197 20% 15%;
+    --primary: 205 98% 60%;
+    --primary-foreground: 205 20% 15%;
 
     --secondary: 220 20% 25%;
-    --secondary-foreground: 210 40% 95%;
+    --secondary-foreground: 210 40% 96%;
 
     --muted: 220 15% 25%;
     --muted-foreground: 210 30% 70%;
 
-    --accent: 240 30% 35%;
-    --accent-foreground: 240 50% 90%;
+    --accent: 43 70% 60%;
+    --accent-foreground: 43 100% 15%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
 
     --border: 220 20% 20%;
     --input: 220 20% 22%;
-    --ring: 197 60% 55%;
+    --ring: 205 80% 40%;
     
     /* Sidebar specific colors for dark mode */
-    --sidebar-background: 220 25% 8%;
-    --sidebar-foreground: 210 40% 90%;
-    --sidebar-primary: 197 65% 55%;
-    --sidebar-primary-foreground: 197 20% 10%;
-    --sidebar-accent: 240 30% 30%;
-    --sidebar-accent-foreground: 240 50% 85%;
+    --sidebar-background: 210 40% 10%;
+    --sidebar-foreground: 210 40% 96%;
+    --sidebar-primary: 205 98% 60%;
+    --sidebar-primary-foreground: 205 20% 15%;
+    --sidebar-accent: 43 70% 60%;
+    --sidebar-accent-foreground: 43 100% 15%;
     --sidebar-border: 220 20% 18%;
     --sidebar-ring: 197 60% 50%;
 

@@ -1,8 +1,24 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
-import CryptoJS from 'crypto-js'; // Assuming you have crypto-js installed
+import CryptoJS from 'crypto-js';
+import crypto from 'crypto';
 
-const SECRET_KEY = process.env.NEXT_PUBLIC_CRYPTO_SECRET_KEY || 'your-secret-key-fallback'; // Use a strong, environment-specific key
+let cachedKey: Buffer | undefined;
+
+export function getCryptoKey(): Buffer {
+  if (cachedKey) return cachedKey;
+  const key = process.env.CRYPTO_SECRET_KEY;
+  if (!key) {
+    if (process.env.NODE_ENV === "development") {
+      console.warn("[dev] Generated random CRYPTO_SECRET_KEY");
+      cachedKey = crypto.randomBytes(32);
+      return cachedKey;
+    }
+    throw new Error("CRYPTO_SECRET_KEY is not set");
+  }
+  cachedKey = Buffer.from(key, "base64");
+  return cachedKey;
+}
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -14,7 +30,8 @@ export function cn(...inputs: ClassValue[]) {
  * @returns The encrypted string.
  */
 export function encrypt(text: string): string {
-  return CryptoJS.AES.encrypt(text, SECRET_KEY).toString();
+  const key = getCryptoKey().toString('base64');
+  return CryptoJS.AES.encrypt(text, key).toString();
 }
 
 /**
@@ -23,5 +40,6 @@ export function encrypt(text: string): string {
  * @returns The decrypted string.
  */
 export function decrypt(ciphertext: string): string {
-  return CryptoJS.AES.decrypt(ciphertext, SECRET_KEY).toString(CryptoJS.enc.Utf8);
+  const key = getCryptoKey().toString('base64');
+  return CryptoJS.AES.decrypt(ciphertext, key).toString(CryptoJS.enc.Utf8);
 }

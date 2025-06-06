@@ -10,9 +10,19 @@ export interface DashboardSettings {
   showBirthdays: boolean;
 }
 
+export interface GlobalSystemSettings {
+  workHoursStart: string;
+  workHoursEnd: string;
+  defaultSessionDuration: number;
+  blockedTimes: string; // comma separated ISO strings
+  externalIntegration: boolean;
+}
+
 interface SettingsContextType {
   dashboard: DashboardSettings;
   updateDashboard: (settings: Partial<DashboardSettings>) => void;
+  system: GlobalSystemSettings;
+  updateSystem: (settings: Partial<GlobalSystemSettings>) => void;
 }
 
 const defaultDashboard: DashboardSettings = {
@@ -23,16 +33,33 @@ const defaultDashboard: DashboardSettings = {
   showBirthdays: true,
 };
 
+const defaultSystem: GlobalSystemSettings = {
+  workHoursStart: '09:00',
+  workHoursEnd: '17:00',
+  defaultSessionDuration: 50,
+  blockedTimes: '',
+  externalIntegration: false,
+};
+
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
 
 export const SettingsProvider = ({ children }: { children: ReactNode }) => {
   const [dashboard, setDashboard] = useState<DashboardSettings>(defaultDashboard);
+  const [system, setSystem] = useState<GlobalSystemSettings>(defaultSystem);
 
   useEffect(() => {
-    const stored = localStorage.getItem('psiguard_dashboard_settings');
-    if (stored) {
+    const storedDashboard = localStorage.getItem('psiguard_dashboard_settings');
+    if (storedDashboard) {
       try {
-        setDashboard(JSON.parse(stored));
+        setDashboard(JSON.parse(storedDashboard));
+      } catch (_) {
+        // ignore parse errors
+      }
+    }
+    const storedSystem = localStorage.getItem('psiguard_system_settings');
+    if (storedSystem) {
+      try {
+        setSystem(JSON.parse(storedSystem));
       } catch (_) {
         // ignore parse errors
       }
@@ -47,8 +74,16 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
+  const updateSystem = (settings: Partial<GlobalSystemSettings>) => {
+    setSystem((prev) => {
+      const updated = { ...prev, ...settings };
+      localStorage.setItem('psiguard_system_settings', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
   return (
-    <SettingsContext.Provider value={{ dashboard, updateDashboard }}>
+    <SettingsContext.Provider value={{ dashboard, updateDashboard, system, updateSystem }}>
       {children}
     </SettingsContext.Provider>
   );

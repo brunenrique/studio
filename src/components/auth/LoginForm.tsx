@@ -24,7 +24,7 @@ const formSchema = z.object({
 }); 
 
 export function LoginForm() {
-  const { login, isLoading } = useAuth();
+  const { login, loginWithGoogle, isLoading } = useAuth();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema), 
@@ -75,6 +75,15 @@ export function LoginForm() {
             />
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Entrar"}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              onClick={loginWithGoogle}
+              disabled={isLoading}
+            >
+              Entrar com Google
             </Button>
           </form>
         </Form>
