@@ -1,135 +1,154 @@
 "use client";
 
+import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import {
-  LayoutDashboard,
-  Users,
-  CalendarDays,
-  ListChecks,
-  FileText,
-  LogOut,
-  Settings,
-  PanelLeft,
-  BookOpenCheck,
-  HeartPulse,
-  LineChart,
-  Pill,
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { Logo } from '@/components/Logo';
-import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetOverlay, SheetPortal } from '@/components/ui/sheet';
 import {
-  SidebarProvider,
-  Sidebar,
-  SidebarHeader,
-  SidebarContent,
-  SidebarFooter,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
-  SidebarSeparator,
-  SidebarTrigger,
-  SidebarInset,
-} from "@/components/ui/sidebar"; // Assuming enhanced sidebar is available
+  Menu, LayoutDashboard, Users, CalendarDays, ListChecks, FileText, Pill,
+  HeartPulse, BookOpenCheck, LineChart, Settings, LogOut,
+} from 'lucide-react';
+import { useEffect } from 'react';
+import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
+import { useSmartMenu } from '@/lib/use-smart-menu';
 
-const navItems = [
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/analytics', label: 'Tendências', icon: LineChart },
-  { href: '/patients', label: 'Pacientes', icon: Users },
-  { href: '/appointments', label: 'Agendamentos', icon: CalendarDays },
-  { href: '/waiting-list', label: 'Lista de Espera', icon: ListChecks },
-  { href: '/templates', label: 'Modelos', icon: FileText },
-  { href: '/self-care', label: 'Saúde Mental', icon: HeartPulse },
-  { href: '/medications', label: 'Medicamentos', icon: Pill },
-  { href: '/knowledge-base', label: 'Base de Conhecimento', icon: BookOpenCheck },
-  { href: '/settings', label: 'Configurações', icon: Settings },
+const sections = [
+  {
+    title: 'Consultório',
+    items: [
+      { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+      { href: '/patients', label: 'Pacientes', icon: Users },
+      { href: '/appointments', label: 'Agendamentos', icon: CalendarDays },
+      { href: '/waiting-list', label: 'Lista de Espera', icon: ListChecks },
+    ],
+  },
+  {
+    title: 'Ferramentas',
+    items: [
+      { href: '/templates', label: 'Modelos', icon: FileText },
+      { href: '/medications', label: 'Guia Rápido', icon: Pill },
+      { href: '/self-care', label: 'Saúde Mental', icon: HeartPulse },
+      { href: '/knowledge-base', label: 'Base de Conhecimento', icon: BookOpenCheck },
+      { href: '/analytics', label: 'Tendências', icon: LineChart },
+    ],
+  },
+  {
+    title: 'Sistema',
+    items: [
+      { href: '/settings', label: 'Configurações', icon: Settings },
+    ],
+  },
 ];
 
-// Choose the most important features to appear in the top vertical section
-const verticalItems = [
-  navItems[0], // Dashboard
-  navItems[2], // Pacientes
-  navItems[3], // Agendamentos
-];
-
-const horizontalItems = navItems.filter((item) => !verticalItems.includes(item));
-
-export function AppSidebar() {
+function SidebarContent({ className, onNavigate }: { className?: string; onNavigate?: () => void }) {
   const pathname = usePathname();
   const { logout, user } = useAuth();
-  const router = useRouter();
-
-  const handleLogout = async () => {
-    await logout();
-    router.push('/login');
-  };
 
   return (
-    <Sidebar className="border-r bg-card" collapsible="icon">
-      <SidebarHeader className="p-4">
-        <Link href="/dashboard" className="mb-4 block">
+    <aside className={cn('w-[72vw] max-w-xs md:w-56 lg:w-60 bg-card border-r flex flex-col', className)}>
+      <div className="p-4">
+        <Link href="/dashboard">
           <Logo />
         </Link>
-      </SidebarHeader>
-      <SidebarContent className="flex-grow p-2 space-y-2">
-        <SidebarMenu>
-          {verticalItems.map((item) => (
-            <SidebarMenuItem key={item.href}>
-              <Link href={item.href}>
-                <SidebarMenuButton
-                  variant="default"
-                  className={cn(
-                    "w-full justify-start text-base h-12",
-                    pathname === item.href || (pathname.startsWith(item.href) && item.href !== '/dashboard')
-                      ? "bg-primary/10 text-primary font-semibold"
-                      : "hover:bg-primary/5"
-                  )}
-                  tooltip={{ children: item.label, side: 'right', align: 'center', className: "ml-2" }}
-                >
-                  <item.icon className="h-5 w-5 mr-3" />
-                  <span className="truncate">{item.label}</span>
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-          ))}
-        </SidebarMenu>
-        <SidebarSeparator />
-        <ul className="flex flex-row flex-wrap gap-1">
-          {horizontalItems.map((item) => (
-            <SidebarMenuItem key={item.href} className="flex-none">
-              <Link href={item.href}>
-                <SidebarMenuButton
-                  variant="default"
-                  className={cn(
-                    "w-20 justify-center text-xs h-14",
-                    pathname === item.href || (pathname.startsWith(item.href) && item.href !== '/dashboard')
-                      ? "bg-primary/10 text-primary font-semibold"
-                      : "hover:bg-primary/5"
-                  )}
-                  tooltip={{ children: item.label, side: 'right', align: 'center', className: "ml-2" }}
-                >
-                  <item.icon className="h-5 w-5 mb-1" />
-                  <span className="truncate whitespace-normal text-center">{item.label}</span>
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-          ))}
-        </ul>
-      </SidebarContent>
-      <SidebarFooter className="p-4 border-t">
-        {user && (
-          <div className="mb-4 text-center group-data-[collapsible=icon]:hidden">
-            <p className="font-semibold text-sm">{user.name}</p>
-            <p className="text-xs text-muted-foreground">{user.email}</p>
+      </div>
+      <nav className="flex-1 overflow-y-auto px-2 space-y-6 text-sm">
+        {sections.map((section, i) => (
+          <div
+            key={section.title}
+            className={cn('space-y-1', i > 0 && 'mt-4 border-t border-border/20 pt-4')}
+          >
+            <p className="px-2 text-muted-foreground font-semibold mb-1">{section.title}</p>
+            <ul className="space-y-1">
+              {section.items.map(item => (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    onClick={() => {
+                      onNavigate?.();
+                    }}
+                    className={cn(
+                      'flex items-center gap-2 rounded-md px-4 py-2 hover:bg-primary/15 focus:outline focus:outline-2 focus:outline-primary/70',
+                      pathname === item.href && 'bg-primary/15 font-semibold'
+                    )}
+                  >
+                    <item.icon className="h-[18px] w-[18px]" />
+                    <span>{item.label}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
+        ))}
+      </nav>
+      <div className="border-t p-4 max-[480px]:hidden">
+        {user && (
+          <p className="mb-2 text-sm font-medium">{user.name}</p>
         )}
-        <Button variant="ghost" onClick={handleLogout} className="w-full justify-start text-base h-12 group-data-[collapsible=icon]:px-2">
-          <LogOut className="h-5 w-5 mr-3 group-data-[collapsible=icon]:mr-0" />
-          <span className="truncate group-data-[collapsible=icon]:hidden">Sair</span>
+        <Button
+          variant="ghost"
+          className="w-full justify-start"
+          onClick={() => {
+            logout();
+            onNavigate?.();
+          }}
+        >
+          <LogOut className="h-[18px] w-[18px] mr-2" /> Sair
         </Button>
-      </SidebarFooter>
-    </Sidebar>
+      </div>
+    </aside>
+  );
+}
+
+export default function AppSidebar() {
+  const {
+    open,
+    setOpen,
+    toggle,
+    ref,
+    saveFocus,
+    animation,
+  } = useSmartMenu({
+    id: 'sidebar',
+    animation: { duration: 300, easing: 'easeOutExpo', delay: 100 },
+  });
+
+  return (
+    <>
+      <div className="lg:hidden">
+        <Button variant="ghost" size="icon" onClick={toggle} title="Abrir menu" data-menu-button>
+          <Menu className="h-5 w-5" />
+        </Button>
+      </div>
+      <Sheet open={open} onOpenChange={setOpen}>
+        <SheetPortal>
+          <SheetOverlay className="fixed inset-0 z-50 bg-black/60 md:hidden backdrop-blur-sm" />
+          <SheetContent
+            side="left"
+            className="p-0 w-[72vw] max-w-xs md:w-56 lg:w-60 h-full overflow-y-auto shadow-xl bg-background"
+          >
+            <div className="flex justify-end p-4 lg:hidden">
+              <Button variant="ghost" size="icon" onClick={() => setOpen(false)} title="Fechar menu">
+                <Menu className="h-5 w-5 rotate-180" />
+              </Button>
+            </div>
+            <motion.div
+              ref={ref}
+              initial={{ x: -300, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: -300, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            >
+              <SidebarContent
+                className="h-full"
+                onNavigate={() => setTimeout(() => setOpen(false), 150)}
+              />
+            </motion.div>
+          </SheetContent>
+        </SheetPortal>
+      </Sheet>
+    </>
   );
 }

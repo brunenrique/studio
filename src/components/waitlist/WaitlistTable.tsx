@@ -10,20 +10,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { CalendarPlus, Trash2, Edit } from "lucide-react"; // CalendarPlus for scheduling
+import { CalendarPlus, Trash2 } from "lucide-react"; // CalendarPlus for scheduling
 import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import { SmartModal } from "@/components/SmartModal";
+import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 
@@ -37,6 +28,7 @@ interface WaitlistTableProps {
 export function WaitlistTable({ items, onDeleteItem }: WaitlistTableProps) {
   const { toast } = useToast();
   const router = useRouter();
+  const [toDelete, setToDelete] = useState<WaitingListItem | null>(null);
 
   const handleDelete = (itemId: string, patientName: string) => {
     onDeleteItem(itemId);
@@ -93,28 +85,37 @@ export function WaitlistTable({ items, onDeleteItem }: WaitlistTableProps) {
               {/* <Button variant="ghost" size="icon" className="mr-2 text-blue-600 hover:text-blue-500">
                 <Edit className="h-4 w-4" />
               </Button> */}
-              <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive/80">
-                      <Trash2 className="h-4 w-4" />
-                      <span className="sr-only">Excluir</span>
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Confirmar Exclusão</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Tem certeza que deseja remover {item.patientName} da lista de espera?
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                      <AlertDialogAction onClick={() => handleDelete(item.id, item.patientName)} className="bg-destructive hover:bg-destructive/90">
-                        Excluir
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-destructive hover:text-destructive/80"
+                onClick={() => setToDelete(item)}
+              >
+                <Trash2 className="h-4 w-4" />
+                <span className="sr-only">Excluir</span>
+              </Button>
+              <SmartModal
+                id="delete-wait-item"
+                open={toDelete?.id === item.id}
+                onClose={() => setToDelete(null)}
+                title="Confirmar Exclusão"
+              >
+                <p className="text-sm">
+                  Tem certeza que deseja remover {item.patientName} da lista de espera?
+                </p>
+                <div className="mt-4 flex justify-end gap-2">
+                  <Button onClick={() => setToDelete(null)}>Cancelar</Button>
+                  <Button
+                    variant="destructive"
+                    onClick={() => {
+                      handleDelete(item.id, item.patientName);
+                      setToDelete(null);
+                    }}
+                  >
+                    Excluir
+                  </Button>
+                </div>
+              </SmartModal>
             </TableCell>
           </TableRow>
         ))}

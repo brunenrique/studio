@@ -5,6 +5,7 @@ import { NotificationProvider } from '@/contexts/NotificationContext';
 import { SettingsProvider } from '@/contexts/SettingsContext';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { Toaster } from "@/components/ui/toaster";
+import { TooltipProvider } from '@radix-ui/react-tooltip';
 
 export const metadata: Metadata = {
   title: 'PsiGuard',
@@ -24,16 +25,19 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=PT+Sans:wght@400;700&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased">
-        <ThemeProvider>
-          <AuthProvider>
-            <SettingsProvider>
-              <NotificationProvider>
-                {children}
-                <Toaster />
-              </NotificationProvider>
-            </SettingsProvider>
-          </AuthProvider>
-        </ThemeProvider>
+        {/* Envolva o conteúdo principal com TooltipProvider */}
+        <TooltipProvider>
+          <ThemeProvider>
+            <AuthProvider>
+              <SettingsProvider>
+                <NotificationProvider>
+                  {children}
+                  <Toaster />
+                </NotificationProvider>
+              </SettingsProvider>
+            </AuthProvider>
+          </ThemeProvider>
+        </TooltipProvider>
       </body>
     </html>
   );
