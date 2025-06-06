@@ -1,3 +1,5 @@
+
+import { format, addDays } from "date-fns";
 import type {
   Patient,
   Appointment,
@@ -8,6 +10,8 @@ import type {
   KnowledgeBaseArticle,
   FinanceRecord,
   Medication,
+  SymptomHeatmapEntry,
+  FormulationDiagram,
 } from '@/lib/types';
 
 // 👤 Usuário mock
@@ -276,5 +280,27 @@ export const mockMedications: Medication[] = [
     class: 'Benzodiazepínico',
     indications: 'Transtorno de ansiedade, crises convulsivas',
     sideEffects: 'Sedação, tontura, dependência'
+  }
+];
+
+export const mockSymptomEntries: SymptomHeatmapEntry[] = [
+  { id: 'sym-001', patientId: 'patient-001', date: format(addDays(new Date(), -5), 'yyyy-MM-dd'), symptom: 'Ansiedade', severity: 3 },
+  { id: 'sym-002', patientId: 'patient-001', date: format(addDays(new Date(), -4), 'yyyy-MM-dd'), symptom: 'Ansiedade', severity: 2 },
+  { id: 'sym-003', patientId: 'patient-001', date: format(addDays(new Date(), -3), 'yyyy-MM-dd'), symptom: 'Ansiedade', severity: 4 },
+  { id: 'sym-004', patientId: 'patient-001', date: format(addDays(new Date(), -2), 'yyyy-MM-dd'), symptom: 'Ansiedade', severity: 5 },
+  { id: 'sym-005', patientId: 'patient-001', date: format(addDays(new Date(), -1), 'yyyy-MM-dd'), symptom: 'Ansiedade', severity: 1 },
+];
+
+export const mockFormulations: FormulationDiagram[] = [
+  {
+    sessionId: 'session-001',
+    diagramJson: JSON.stringify({
+      label: 'Problema Principal',
+      children: [
+        { label: 'Pensamentos Automáticos', children: [{ label: '"Sou incapaz"' }] },
+        { label: 'Emoções', children: [{ label: 'Tristeza' }, { label: 'Ansiedade' }] },
+        { label: 'Comportamentos', children: [{ label: 'Isolamento' }] }
+      ]
+    })
   }
 ];

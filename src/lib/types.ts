@@ -146,3 +146,26 @@ export interface AuditLogEntry {
   timestamp: string; // ISO 8601 or Firestore timestamp string
   details?: string;
 }
+
+// 📊 Evento para a Linha do Tempo
+export interface TimelineEvent {
+  id: string;
+  date: string; // ISO 8601
+  title: string;
+  description?: string;
+}
+
+// 🔥 Entrada para o Heatmap de Sintomas
+export interface SymptomHeatmapEntry {
+  id: string;
+  patientId: string;
+  date: string; // ISO 8601
+  symptom: string;
+  severity: number; // 1-5
+}
+
+// 🌳 Diagrama de Formulacao da Sessao
+export interface FormulationDiagram {
+  sessionId: string;
+  diagramJson: string;
+}

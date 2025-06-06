@@ -13,5 +13,8 @@ service cloud.firestore {
     match /tasks/{taskId} {
       allow read, write: if request.auth != null && request.auth.token.role == 'Psychologist';
     }
+    match /formulations/{id} {
+      allow read, write: if isPsychologist();
+    }
   }
 }
