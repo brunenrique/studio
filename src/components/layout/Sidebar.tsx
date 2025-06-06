@@ -32,7 +32,7 @@ import {
   SidebarSeparator,
   SidebarTrigger,
   SidebarInset,
-} from "@/components/ui/sidebar"; // Assuming enhanced sidebar is available
+} from "@/components/ui/sidebar";
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -48,15 +48,15 @@ const navItems = [
 ];
 
 // Choose the most important features to appear in the top vertical section
-const verticalItems = [
+const leftItems = [
   navItems[0], // Dashboard
   navItems[1], // Pacientes
   navItems[2], // Agendamentos
 ];
 
-const horizontalItems = navItems.filter((item) => !verticalItems.includes(item));
+const rightItems = navItems.filter((item) => !leftItems.includes(item));
 
-export function AppSidebar() {
+export function LeftSidebar() {
   const pathname = usePathname();
   const { logout, user } = useAuth();
   const router = useRouter();
@@ -67,7 +67,7 @@ export function AppSidebar() {
   };
 
   return (
-    <Sidebar className="border-r bg-card" collapsible="icon">
+    <Sidebar className="border-r bg-card" collapsible="icon" side="left">
       <SidebarHeader className="p-4">
         <Link href="/dashboard" className="mb-4 block">
           <Logo />
@@ -75,18 +75,19 @@ export function AppSidebar() {
       </SidebarHeader>
       <SidebarContent className="flex-grow p-2 space-y-2">
         <SidebarMenu>
-          {verticalItems.map((item) => (
+          {leftItems.map((item) => (
             <SidebarMenuItem key={item.href}>
               <Link href={item.href}>
                 <SidebarMenuButton
                   variant="default"
                   className={cn(
-                    "w-full justify-start text-base h-12",
-                    pathname === item.href || (pathname.startsWith(item.href) && item.href !== '/dashboard')
-                      ? "bg-primary/10 text-primary font-semibold"
-                      : "hover:bg-primary/5"
+                    'w-full justify-start text-base h-12',
+                    pathname === item.href ||
+                      (pathname.startsWith(item.href) && item.href !== '/dashboard')
+                      ? 'bg-primary/10 text-primary font-semibold'
+                      : 'hover:bg-primary/5'
                   )}
-                  tooltip={{ children: item.label, side: 'right', align: 'center', className: "ml-2" }}
+                  tooltip={{ children: item.label, side: 'right', align: 'center', className: 'ml-2' }}
                 >
                   <item.icon className="h-5 w-5 mr-3" />
                   <span className="truncate">{item.label}</span>
@@ -95,28 +96,6 @@ export function AppSidebar() {
             </SidebarMenuItem>
           ))}
         </SidebarMenu>
-        <SidebarSeparator />
-        <ul className="flex flex-row flex-wrap gap-1">
-          {horizontalItems.map((item) => (
-            <SidebarMenuItem key={item.href} className="flex-none">
-              <Link href={item.href}>
-                <SidebarMenuButton
-                  variant="default"
-                  className={cn(
-                    "w-20 justify-center text-xs h-14",
-                    pathname === item.href || (pathname.startsWith(item.href) && item.href !== '/dashboard')
-                      ? "bg-primary/10 text-primary font-semibold"
-                      : "hover:bg-primary/5"
-                  )}
-                  tooltip={{ children: item.label, side: 'right', align: 'center', className: "ml-2" }}
-                >
-                  <item.icon className="h-5 w-5 mb-1" />
-                  <span className="truncate whitespace-normal text-center">{item.label}</span>
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-          ))}
-        </ul>
       </SidebarContent>
       <SidebarFooter className="p-4 border-t">
         {user && (
@@ -133,3 +112,39 @@ export function AppSidebar() {
     </Sidebar>
   );
 }
+
+export function RightSidebar() {
+  const pathname = usePathname();
+
+  return (
+    <Sidebar className="border-l bg-card" collapsible="icon" side="right">
+      <SidebarContent className="flex-grow p-2 space-y-2">
+        <SidebarMenu>
+          {rightItems.map((item) => (
+            <SidebarMenuItem key={item.href}>
+              <Link href={item.href}>
+                <SidebarMenuButton
+                  variant="default"
+                  className={cn(
+                    'w-full justify-start text-base h-12',
+                    pathname === item.href ||
+                      (pathname.startsWith(item.href) && item.href !== '/dashboard')
+                      ? 'bg-primary/10 text-primary font-semibold'
+                      : 'hover:bg-primary/5'
+                  )}
+                  tooltip={{ children: item.label, side: 'left', align: 'center', className: 'mr-2' }}
+                >
+                  <item.icon className="h-5 w-5 mr-3" />
+                  <span className="truncate">{item.label}</span>
+                </SidebarMenuButton>
+              </Link>
+            </SidebarMenuItem>
+          ))}
+        </SidebarMenu>
+      </SidebarContent>
+    </Sidebar>
+  );
+}
+
+export { LeftSidebar as AppSidebar };
+
