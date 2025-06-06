@@ -146,3 +146,11 @@ export interface AuditLogEntry {
   timestamp: string; // ISO 8601 or Firestore timestamp string
   details?: string;
 }
+
+// 📊 Evento para a Linha do Tempo
+export interface TimelineEvent {
+  id: string;
+  date: string; // ISO 8601
+  title: string;
+  description?: string;
+}
