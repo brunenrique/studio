@@ -6,7 +6,10 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Logo } from '@/components/Logo';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetOverlay, SheetPortal } from '@/components/ui/sheet';
-import { Menu, LayoutDashboard, Users, CalendarDays, ListChecks, FileText, Pill, HeartPulse, BookOpenCheck, LineChart, Settings, LogOut } from 'lucide-react';
+import {
+  Menu, LayoutDashboard, Users, CalendarDays, ListChecks, FileText, Pill,
+  HeartPulse, BookOpenCheck, LineChart, Settings, LogOut,
+} from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 
@@ -41,6 +44,7 @@ const sections = [
 function SidebarContent({ className, onNavigate }: { className?: string; onNavigate?: () => void }) {
   const pathname = usePathname();
   const { logout, user } = useAuth();
+
   return (
     <aside className={cn('w-[72vw] max-w-xs md:w-56 lg:w-60 bg-card border-r flex flex-col', className)}>
       <div className="p-4">
@@ -49,10 +53,10 @@ function SidebarContent({ className, onNavigate }: { className?: string; onNavig
         </Link>
       </div>
       <nav className="flex-1 overflow-y-auto px-2 space-y-6 text-sm">
-        {sections.map(section => (
+        {sections.map((section, i) => (
           <div
             key={section.title}
-            className="space-y-1 mt-4 first:mt-0 border-t border-border/20 pt-4 first:border-t-0"
+            className={cn('space-y-1', i > 0 && 'mt-4 border-t border-border/20 pt-4')}
           >
             <p className="px-2 text-muted-foreground font-semibold mb-1">{section.title}</p>
             <ul className="space-y-1">
