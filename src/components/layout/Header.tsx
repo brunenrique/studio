@@ -15,7 +15,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useSmartMenu } from '@/lib/use-smart-menu/useSmartMenu';
+import { useSmartMenu } from '@/lib/use-smart-menu';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
