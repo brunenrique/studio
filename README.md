@@ -25,3 +25,12 @@ CRYPTO_SECRET_KEY=REPLACE_ME_BASE64_32BYTES
 ```
 
 Todos os dados de pacientes são criptografados no cliente usando AES antes de serem manipulados.
+
+## Sidebar
+
+O botão que alterna a sidebar (ícone de menu) só aparece em telas pequenas graças à classe `lg:hidden`.
+Em monitores maiores a sidebar permanece aberta por padrão e somente é renderizada após o login com sucesso,
+processado em `src/app/(app)/layout.tsx`.
+
+Se a sidebar não aparecer, verifique se a autenticação está funcionando
+e se o CSS foi construído corretamente pelo Tailwind.
