@@ -1,5 +1,5 @@
 // 🔐 Papéis disponíveis no sistema
-export type UserRole = 'Admin Global' | 'Psicólogo' | 'Admin/Secretário';
+export type UserRole = 'ADMIN' | 'PSYCHOLOGIST' | 'RECEPCAO' | 'AGENDAMENTO';
 
 // 🩺 Status possíveis de um agendamento
 export type AttendanceStatus = 'pending' | 'present' | 'absent' | 'rescheduled';
@@ -10,6 +10,7 @@ export interface User {
   name: string;
   email: string;
   role: UserRole;
+  isApproved: boolean;
   profileImage?: string;
 }
 

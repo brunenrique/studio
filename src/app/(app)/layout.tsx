@@ -12,7 +12,7 @@ export default function AppLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -25,6 +25,14 @@ export default function AppLayout({
     return (
       <div className="flex min-h-screen items-center justify-center">
         <p>Carregando...</p>
+      </div>
+    );
+  }
+
+  if (user && !user.isApproved) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <p>Aguardando aprovação do administrador...</p>
       </div>
     );
   }
