@@ -5,6 +5,23 @@ service cloud.firestore {
       return request.auth != null && request.auth.token.role == 'PSYCHOLOGIST';
     }
 
+    // Users can only manage their own document
+    match /users/{userId} {
+      allow create, read, update, delete:
+          if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Posts: creation requires matching authorId. Update and delete allowed
+    // only by the user who created the post. Reads are public by default.
+    match /posts/{postId} {
+      allow create:
+          if request.auth != null &&
+             request.resource.data.authorId == request.auth.uid;
+      allow read: if true;
+      allow update, delete:
+          if request.auth != null && request.auth.uid == resource.data.authorId;
+    }
+
     match /testsLibrary/{testId} {
       allow read: if isPsychologist();
     }
