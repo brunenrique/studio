@@ -1,7 +1,6 @@
 "use client";
 
 import type { User } from '@/lib/types';
-import { mockUser } from '@/lib/mock-data';
 import { useRouter } from 'next/navigation';
 import type { ReactNode } from 'react';
 import React, { createContext, useContext, useState, useEffect } from 'react';
@@ -11,6 +10,7 @@ import { doc, getDoc, setDoc } from 'firebase/firestore';
 import {
   GoogleAuthProvider,
   signInWithPopup,
+  signInWithEmailAndPassword,
   onAuthStateChanged,
   signOut,
 } from 'firebase/auth';
@@ -86,11 +86,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           const storedUser = localStorage.getItem('psiguard_user');
           if (storedUser) {
             setUser(JSON.parse(storedUser));
-          } else {
-            const autoUser = { ...mockUser, sessionId: crypto.randomUUID() };
-            setUser(autoUser);
-            localStorage.setItem('psiguard_user', JSON.stringify(autoUser));
-            localStorage.setItem(SESSION_KEY, autoUser.sessionId);
           }
         }
         setIsLoading(false);
@@ -100,51 +95,56 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = async (email: string, pass: string) => {
     setIsLoading(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    // In a real app, you'd validate credentials against a backend.
-    // For this mock, we'll use a hardcoded psychologist user if email matches.
-    if (email === mockUser.email) {
-      try {
-        const ref = doc(db, 'users', mockUser.id);
-        const snap = await getDoc(ref);
-        const data = snap.exists() ? (snap.data() as Partial<User>) : undefined;
-        if (data && data.isApproved === false) {
-          alert('Seu acesso ainda n\u00e3o foi aprovado.');
-          setIsLoading(false);
-          return;
-        }
-        const newSession = crypto.randomUUID();
-        await setDoc(
-          ref,
-          {
-            role: mockUser.role,
-            isApproved: data?.isApproved ?? true,
-            name: mockUser.name,
-            email: mockUser.email,
-            sessionId: newSession,
-          },
-          { merge: true }
-        );
-        const finalUser = {
-          ...mockUser,
-          isApproved: data?.isApproved ?? true,
-          sessionId: newSession,
-        };
-        setUser(finalUser);
-        localStorage.setItem('psiguard_user', JSON.stringify(finalUser));
-        localStorage.setItem(SESSION_KEY, newSession);
-        router.push('/dashboard');
-      } catch (err) {
-        console.error('Failed to save mock user', err);
+    try {
+      const result = await signInWithEmailAndPassword(auth, email, pass);
+      const fbUser = result.user;
+
+      const userRef = doc(db, 'users', fbUser.uid);
+      const snap = await getDoc(userRef);
+      const data = snap.exists() ? (snap.data() as Partial<User>) : undefined;
+
+      if (data && data.isApproved === false) {
+        alert('Seu acesso ainda n\u00e3o foi aprovado.');
+        await signOut(auth);
+        setIsLoading(false);
+        return;
       }
-    } else {
-      // Basic error handling - in a real app, show a toast or error message
-      console.error("Login failed: Invalid credentials");
+
+      const newSession = crypto.randomUUID();
+      const mappedUser: User = {
+        id: fbUser.uid,
+        name: fbUser.displayName || data?.name || '',
+        email: fbUser.email || email,
+        role: (data?.role as User['role']) || 'PSYCHOLOGIST',
+        isApproved: data?.isApproved ?? true,
+        profileImage: fbUser.photoURL || data?.profileImage,
+        sessionId: newSession,
+      };
+
+      await setDoc(
+        userRef,
+        {
+          role: mappedUser.role,
+          isApproved: mappedUser.isApproved,
+          name: mappedUser.name,
+          email: mappedUser.email,
+          sessionId: newSession,
+        },
+        { merge: true }
+      );
+
+      setUser(mappedUser);
+      localStorage.setItem('psiguard_user', JSON.stringify(mappedUser));
+      localStorage.setItem(SESSION_KEY, newSession);
+      router.push('/dashboard');
+    } catch (err) {
+      console.error('Login failed', err);
+      alert('Erro ao fazer login. Verifique suas credenciais.');
       setUser(null);
       localStorage.removeItem('psiguard_user');
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   const loginWithGoogle = async () => {
