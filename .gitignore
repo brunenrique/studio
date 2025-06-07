@@ -37,6 +37,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# functions build output
+functions/lib
+
 .genkit/*
 .env*
 !.env.local.example
