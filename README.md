@@ -19,9 +19,29 @@ NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
 NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
 
-# 🔐 Chave de criptografia AES-256-GCM (32 bytes base64). 
+# 🔐 Chave de criptografia AES-256-GCM (32 bytes base64).
 # NÃO use esta chave em produção!
 CRYPTO_SECRET_KEY=REPLACE_ME_BASE64_32BYTES
+
+# JSON da service account (para admin/scripts)
+FIREBASE_SERVICE_ACCOUNT={"project_id":"demo"}
+# Token para formulários de inventário
+ASSESSMENT_TOKEN_SECRET=secret
+
+# SendGrid (opcional)
+SENDGRID_API_KEY=SG.x
+SENDGRID_FROM_EMAIL=from@example.com
+
+# Twilio (opcional)
+TWILIO_SID=ACxxx
+TWILIO_AUTH_TOKEN=token
+TWILIO_WHATSAPP_FROM=whatsapp:+5511999999999
+TWILIO_SMS_FROM=+5511999999999
+
+# URLs e agendamentos
+PUBLIC_URL=http://localhost:9003
+TASK_REMINDER_MINUTES=10
+ASSESSMENT_REMINDER_HOURS=24
 ```
 
 Todos os dados de pacientes são criptografados no cliente usando AES antes de serem manipulados.
