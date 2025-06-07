@@ -9,15 +9,17 @@ import { AppointmentFormDialog } from '@/components/appointments/AppointmentForm
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { db } from '@/lib/firebaseClient';
-import { addDoc, collection, updateDoc, doc, deleteDoc } from 'firebase/firestore';
+import { addDoc, collection, updateDoc, doc, deleteDoc, serverTimestamp } from 'firebase/firestore';
 import { useAppointments } from '@/hooks/useAppointments';
 import { mockPatients } from '@/lib/mock-data';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function AppointmentsPage() {
   const { appointments } = useAppointments();
   const [patients, setPatients] = useState<Patient[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const { toast } = useToast();
+  const { user } = useAuth();
 
   useEffect(() => {
     setPatients(mockPatients);
@@ -33,6 +35,12 @@ export default function AppointmentsPage() {
         durationMinutes: appointmentData.durationMinutes,
         status: appointmentData.status,
         notes: appointmentData.notes || '',
+      });
+      await addDoc(collection(db, 'appointments', appointmentData.id, 'history'), {
+        before: exists,
+        after: appointmentData,
+        userId: user?.id || 'unknown',
+        timestamp: serverTimestamp(),
       });
       toast({ title: 'Agendamento Atualizado' });
     } else {

@@ -1,5 +1,14 @@
-import { encryptPatient, decryptPatient } from '../src/lib/patientCrypto';
+import { encryptPatient, decryptPatient, decryptPatientForRole } from '../src/lib/patientCrypto';
 import { Patient } from '../src/lib/types';
+
+beforeAll(() => {
+  const key = Buffer.alloc(32).toString('base64');
+  process.env.CRYPTO_SECRET_KEY = key;
+});
+
+afterAll(() => {
+  delete process.env.CRYPTO_SECRET_KEY;
+});
 
 const patient: Patient = {
   id: 'p1',
@@ -17,4 +26,12 @@ test('encryptPatient/decryptPatient roundtrip', () => {
   expect(enc.name).not.toBe(patient.name);
   const dec = decryptPatient(enc);
   expect(dec).toEqual(patient);
+});
+
+test('decryptPatientForRole only decrypts for PSYCHOLOGIST', () => {
+  const enc = encryptPatient(patient);
+  const asPsych = decryptPatientForRole(enc, 'PSYCHOLOGIST');
+  expect(asPsych).toEqual(patient);
+  const asOther = decryptPatientForRole(enc, 'RECEPCAO');
+  expect(asOther.name).not.toBe(patient.name);
 });

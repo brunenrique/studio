@@ -30,3 +30,11 @@ export function decryptPatient(patient: Patient): Patient {
     sessionNotes: patient.sessionNotes.map(decNote),
   };
 }
+
+export function decryptPatientForRole(
+  patient: Patient,
+  role: import('./types').UserRole,
+): Patient {
+  if (role !== 'PSYCHOLOGIST') return patient;
+  return decryptPatient(patient);
+}
