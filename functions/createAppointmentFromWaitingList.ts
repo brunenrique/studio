@@ -5,16 +5,20 @@ admin.initializeApp();
 const db = admin.firestore();
 
 export const createAppointmentFromWaitingList = functions.https.onCall(
-  async (
-    data: {
+  async (data: any, context) => {
+    const {
+      waitingListEntryId,
+      date,
+      time,
+      durationMinutes,
+      psychologistId,
+    } = data as {
       waitingListEntryId: string;
       date: string;
       time: string;
       durationMinutes: number;
       psychologistId: string;
-    },
-  ) => {
-    const { waitingListEntryId, date, time, durationMinutes, psychologistId } = data;
+    };
 
     const waitingSnap = await db.collection('waitingList').doc(waitingListEntryId).get();
     if (!waitingSnap.exists) {

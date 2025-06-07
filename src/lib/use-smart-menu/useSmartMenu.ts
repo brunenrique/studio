@@ -8,7 +8,7 @@ export function useSmartMenu(config: SmartMenuConfig) {
     if (typeof window === 'undefined') return false
     return localStorage.getItem(`menu:${id}`) === 'true'
   })
-  const ref = useRef<HTMLElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
 
   const toggle = () => {
     setOpen(prev => {
