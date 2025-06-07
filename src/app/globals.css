@@ -13,7 +13,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 210 40% 20%;
 
-    --primary: 205 98% 26%; /* Dark petrol blue */
+    --primary: 210 70% 24%; /* Deep navy */
     --primary-foreground: 210 40% 95%;
 
     --secondary: 210 25% 90%;
@@ -22,7 +22,7 @@
     --muted: 210 25% 85%;
     --muted-foreground: 210 20% 40%;
 
-    --accent: 43 59% 50%; /* Metallic gold */
+    --accent: 177 70% 45%; /* Turquoise */
     --accent-foreground: 210 40% 15%;
 
     --destructive: 0 84.2% 60.2%;
@@ -39,7 +39,7 @@
     --sidebar-foreground: 210 40% 20%;
     --sidebar-primary: 205 98% 26%;
     --sidebar-primary-foreground: 210 40% 95%;
-    --sidebar-accent: 43 59% 50%;
+    --sidebar-accent: 177 70% 45%;
     --sidebar-accent-foreground: 210 40% 15%;
     --sidebar-border: 210 30% 85%;
     --sidebar-ring: 197 60% 60%;
@@ -61,7 +61,7 @@
     --popover: 220 25% 12%;
     --popover-foreground: 210 40% 96%;
 
-    --primary: 205 98% 60%;
+    --primary: 210 70% 60%;
     --primary-foreground: 205 20% 15%;
 
     --secondary: 220 20% 25%;
@@ -70,8 +70,8 @@
     --muted: 220 15% 25%;
     --muted-foreground: 210 30% 70%;
 
-    --accent: 43 70% 60%;
-    --accent-foreground: 43 100% 15%;
+    --accent: 177 70% 55%;
+    --accent-foreground: 177 100% 15%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
@@ -85,8 +85,8 @@
     --sidebar-foreground: 210 40% 96%;
     --sidebar-primary: 205 98% 60%;
     --sidebar-primary-foreground: 205 20% 15%;
-    --sidebar-accent: 43 70% 60%;
-    --sidebar-accent-foreground: 43 100% 15%;
+    --sidebar-accent: 177 70% 55%;
+    --sidebar-accent-foreground: 177 100% 15%;
     --sidebar-border: 220 20% 18%;
     --sidebar-ring: 197 60% 50%;
 
