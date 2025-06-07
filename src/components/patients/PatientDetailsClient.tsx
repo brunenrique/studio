@@ -46,7 +46,7 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
 
   const attendanceReport = useMemo(() => {
     const totalAgendamentos = appointments.length;
-    const faltas = appointments.filter(a => a.status === "absent" || a.status === "no-show").length;
+    const faltas = appointments.filter(a => a.status === "absent").length;
     const comparecimentos = appointments.filter(a => a.status === "present").length;
     const percentualComparecimento = totalAgendamentos
       ? (comparecimentos / totalAgendamentos) * 100
@@ -162,5 +162,25 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
     });
   };
 
-  // ...restante do componente permanece como está (sem alteração)
+  if (isLoading || !patient) {
+    return <p>Carregando...</p>;
+  }
+
+  return (
+    <div>
+      <Card className="mb-4">
+        <CardHeader>
+          <CardTitle>{patient.name}</CardTitle>
+          <CardDescription>{patient.contact}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p>
+            Nascimento:{" "}
+            {format(parseISO(patient.dateOfBirth), "dd/MM/yyyy")} -
+            {differenceInYears(new Date(), parseISO(patient.dateOfBirth))} anos
+          </p>
+        </CardContent>
+      </Card>
+    </div>
+  );
 }

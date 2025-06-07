@@ -97,65 +97,6 @@ export function AppointmentFormDialog({
   const [patientQuery, setPatientQuery] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [phoneError, setPhoneError] = useState<string | null>(null);
-"use client";
-
-import type { Appointment, Patient, AttendanceStatus } from "@/lib/types";
-import { useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import {
-  Calendar as CalendarIcon,
-  CheckCircle,
-  XCircle,
-  Ban,
-  Edit3,
-  Trash2,
-  Clock,
-  User,
-  AlertCircle,
-  Info,
-  Phone,
-  MessageCircle,
-  History,
-} from "lucide-react";
-import {
-  format,
-  parseISO,
-  isSameDay,
-  isPast,
-  isToday,
-  addMinutes,
-} from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { SmartModal } from "@/components/SmartModal";
-import { useToast } from "@/hooks/use-toast";
-import { Badge } from "@/components/ui/badge";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import Link from "next/link";
-import { useAuth } from "@/contexts/AuthContext";
-import { cn } from "@/lib/utils";
-import { useSettings } from "@/contexts/SettingsContext";
-import { BlockTimeDialog } from "@/components/BlockTimeDialog";
-import { AppointmentHistoryModal } from "@/components/AppointmentHistoryModal";
 
 const { system } = useSettings();
 const { toast } = useToast();
@@ -256,42 +197,35 @@ const { toast } = useToast();
   async function onSubmit(values: AppointmentFormValues) {
     if (phoneError) return;
     setIsLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 1000));
     const [hours, minutes] = values.time.split(":").map(Number);
     const combinedDateTime = setMinutes(setHours(values.date, hours), minutes);
-const iso = combinedDateTime.toISOString();
+    const iso = combinedDateTime.toISOString();
 
-if (isDateTimeBlocked(combinedDateTime, blocked, weekly)) {
-  toast({
-    title: "Horário Bloqueado",
-    description: "Este horário está bloqueado na agenda.",
-    variant: "destructive",
-  });
-  setIsLoading(false);
-  return;
-}
-
-if (
-  appointments?.some(
-    (a) => a.id !== appointment?.id && a.dateTime === iso
-  )
-) {
-  toast({
-    title: "Horário Ocupado",
-    description: "Já existe um agendamento neste horário.",
-    variant: "destructive",
-  });
-  setIsLoading(false);
-  return;
-}
-
+    if (isDateTimeBlocked(combinedDateTime, blocked, weekly)) {
+      toast({
+        title: "Horário Bloqueado",
+        description: "Este horário está bloqueado na agenda.",
+        variant: "destructive",
+      });
       setIsLoading(false);
       return;
     }
+
+    if (appointments?.some(a => a.id !== appointment?.id && a.dateTime === iso)) {
+      toast({
+        title: "Horário Ocupado",
+        description: "Já existe um agendamento neste horário.",
+        variant: "destructive",
+      });
+      setIsLoading(false);
+      return;
+    }
+
     const appointmentData: Appointment = {
       id: appointment?.id || `appt-${Date.now()}`,
       patientId: values.patientId,
-      patientName: patients.find((p) => p.id === values.patientId)?.name ?? "",
+      patientName: patients.find(p => p.id === values.patientId)?.name ?? "",
       dateTime: iso,
       durationMinutes: values.durationMinutes,
       status: values.status as AttendanceStatus,
