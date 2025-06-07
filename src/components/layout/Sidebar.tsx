@@ -146,7 +146,7 @@ export default function AppSidebar() {
     animation,
   } = useSmartMenu({
     id: 'sidebar',
-    animation: { duration: 300, easing: 'easeOutExpo', delay: 100 },
+    animation: { duration: 300, easing: 'easeOut', delay: 100 },
   });
 
   return (
