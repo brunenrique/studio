@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { MessageCircle } from "lucide-react";
-import { pipeline, Pipeline } from "@xenova/transformers";
+import type { Pipeline } from "@xenova/transformers";
 
 interface ChatMessage {
   sender: "user" | "bot";
@@ -15,15 +15,36 @@ export default function AssistantWidget() {
   const [input, setInput] = useState("");
   const [generator, setGenerator] = useState<Pipeline | null>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (open && !generator) {
+    let cancelled = false;
+    if (open && !generator && typeof window !== "undefined") {
       setLoading(true);
-      pipeline("text-generation", "Xenova/distilgpt2", { quantized: true })
-        .then((pipe) => setGenerator(pipe))
-        .finally(() => setLoading(false));
+      setError(null);
+      import("@xenova/transformers")
+        .then(async (mod) => {
+          const pipe = await mod.pipeline(
+            "text-generation",
+            "Xenova/gpt2",
+            { quantized: true }
+          );
+          if (!cancelled) {
+            setGenerator(pipe);
+          }
+        })
+        .catch((err) => {
+          console.error("Failed to load model", err);
+          if (!cancelled) setError("Falha ao carregar o modelo");
+        })
+        .finally(() => {
+          if (!cancelled) setLoading(false);
+        });
     }
+    return () => {
+      cancelled = true;
+    };
   }, [open, generator]);
 
   async function send() {
@@ -78,18 +99,23 @@ export default function AssistantWidget() {
               </div>
             ))}
           </div>
+          {error && (
+            <p className="text-red-500 text-xs">{error}</p>
+          )}
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKey}
             rows={2}
             className="w-full border rounded p-1"
-            placeholder={loading ? "Carregando modelo..." : "Digite sua pergunta"}
-            disabled={loading}
+            placeholder={
+              error ?? (loading ? "Carregando modelo..." : "Digite sua pergunta")
+            }
+            disabled={loading || !generator}
           />
           <button
             onClick={send}
-            disabled={loading}
+            disabled={loading || !generator}
             className="bg-primary text-white rounded px-2 py-1 disabled:opacity-50"
           >
             Enviar
