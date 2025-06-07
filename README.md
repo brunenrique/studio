@@ -62,6 +62,30 @@ para passos de correção.
 
 Todos os dados de pacientes são criptografados no cliente usando AES antes de serem manipulados.
 
+### Exemplo de inicialização do Firebase
+
+Caso queira integrar manualmente em outro projeto, o código abaixo demonstra a configuração básica utilizando as chaves já incluídas neste repositório:
+
+```ts
+// Import the functions you need from the SDKs you need
+import { initializeApp } from 'firebase/app';
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: 'AIzaSyCkp-Yp3CPOVl5jkmprh7BwP86Es-H9RzI',
+  authDomain: 'plataforma-bpsy.firebaseapp.com',
+  projectId: 'plataforma-bpsy',
+  storageBucket: 'plataforma-bpsy.firebasestorage.app',
+  messagingSenderId: '115174793204',
+  appId: '1:115174793204:web:dd38de43781c2ac5a423a1',
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+```
+
 ## Seeding com dados de exemplo
 
 Para popular o Firestore com dados fictícios, defina as variáveis `FIREBASE_SERVICE_ACCOUNT` e `CRYPTO_SECRET_KEY` em seu ambiente.
