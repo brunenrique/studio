@@ -1,7 +1,7 @@
 "use client";
 
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { routeTabs } from "@/data/navigation";
+import { routeTabs } from "@/lib/navigation";
 import { usePathname, useRouter } from "next/navigation";
 
 export function ContextTabs() {

@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { Sidebar } from '@/components/navigation/Sidebar';
+import AppSidebar from '@/components/layout/Sidebar';
 import { AppHeader } from '@/components/layout/Header';
 import { ContextTabs } from '@/components/navigation/ContextTabs';
 
@@ -35,7 +35,7 @@ export default function AppLayout({
 
   return (
     <div className="flex min-h-screen w-full">
-      <Sidebar />
+      <AppSidebar />
       <div className="flex flex-1 flex-col">
         <AppHeader />
         <ContextTabs />
