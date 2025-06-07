@@ -10,23 +10,8 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
+import { useAuth } from "@/contexts/AuthContext";
 
-// Mock user registration function
-const mockRegisterUser = async (
-  email: string,
-  password: string,
-  role: string
-): Promise<{ success: boolean }> => {
-  // In a real application, this would be an API call to your backend
-  console.log("Attempting to register user:", { email, password, role });
-  // Simulate a successful registration after a delay
-  return new Promise<{ success: boolean }>((resolve) => {
-    setTimeout(() => {
-      console.log("Mock registration successful!");
-      resolve({ success: true });
-    }, 1000);
-  });
-};
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
@@ -36,6 +21,8 @@ export default function RegisterPage() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const router = useRouter();
+
+  const { register } = useAuth();
 
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -50,18 +37,11 @@ export default function RegisterPage() {
     }
 
     try {
-      // Replace with actual API call later
-      const result = await mockRegisterUser(email, password, role);
-      if (result.success) {
-        setSuccess(true);
-        // Redirect to login after a short delay
-        setTimeout(() => {
-          router.push('/login');
-        }, 2000);
-      } else {
-        // Handle registration failure (e.g., email already exists)
-        setError('Falha no registro. Tente novamente.'); // More specific error handling needed
-      }
+      await register(email, password, role as any);
+      setSuccess(true);
+      setTimeout(() => {
+        router.push('/login');
+      }, 2000);
     } catch (err) {
       setError('Ocorreu um erro durante o registro. Tente novamente mais tarde.');
     } finally {
