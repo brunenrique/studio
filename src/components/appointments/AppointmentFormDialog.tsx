@@ -86,6 +86,7 @@ export function AppointmentFormDialog({
   const [isLoading, setIsLoading] = useState(false);
   const [patientQuery, setPatientQuery] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [phoneError, setPhoneError] = useState<string | null>(null);
 
   const isOpen =
     controlledIsOpen !== undefined ? controlledIsOpen : internalOpen;
@@ -165,10 +166,25 @@ export function AppointmentFormDialog({
     }
   }, [appointment, defaultDate, form, isOpen, patients]);
 
+  useEffect(() => {
+    const sub = form.watch((values, { name }) => {
+      if (name === 'contact') {
+        const existing = patients.find(p => p.contact === values.contact);
+        if (values.contact && existing && existing.id !== form.getValues('patientId')) {
+          setPhoneError('Telefone já cadastrado para outro paciente.');
+        } else {
+          setPhoneError(null);
+        }
+      }
+    });
+    return () => sub.unsubscribe();
+  }, [form, patients]);
+
   async function onSubmit(values: AppointmentFormValues) {
+    if (phoneError) return;
     setIsLoading(true);
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    const [hours, minutes] = values.time.split(":"").map(Number);
+    const [hours, minutes] = values.time.split(":").map(Number);
     const combinedDateTime = setMinutes(setHours(values.date, hours), minutes);
     const appointmentData: Appointment = {
       id: appointment?.id || `appt-${Date.now()}`,
@@ -191,5 +207,215 @@ export function AppointmentFormDialog({
     return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
   });
 
-  return null; // interface do componente omitida por brevidade
+  const handlePatientSelect = (p: Patient) => {
+    form.setValue('patientId', p.id);
+    form.setValue('contact', p.contact);
+    form.setValue('cpf', p.cpf ? formatCPF(p.cpf) : '');
+    setPatientQuery(p.name);
+    setShowSuggestions(false);
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogContent className="sm:max-w-md rounded-lg shadow-xl">
+        <DialogHeader>
+          <DialogTitle className="font-headline text-xl">
+            {appointment ? 'Editar Agendamento' : 'Novo Agendamento'}
+          </DialogTitle>
+          <DialogDescription>
+            {appointment ? 'Atualize as informações do agendamento.' : 'Preencha os dados para criar um agendamento.'}
+          </DialogDescription>
+        </DialogHeader>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4">
+            <div className="relative">
+              <FormField
+                control={form.control}
+                name="patientId"
+                render={() => (
+                  <FormItem>
+                    <FormLabel>Paciente</FormLabel>
+                    <FormControl>
+                      <Input
+                        value={patientQuery}
+                        onChange={(e) => {
+                          setPatientQuery(e.target.value);
+                          setShowSuggestions(true);
+                          form.setValue('patientId', '');
+                        }}
+                        onFocus={() => setShowSuggestions(true)}
+                        placeholder="Nome do paciente"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {showSuggestions && filteredPatients.length > 0 && (
+                <div className="absolute z-10 mt-1 max-h-40 w-full overflow-y-auto rounded-md border bg-white shadow">
+                  {filteredPatients.map((p) => (
+                    <button
+                      type="button"
+                      key={p.id}
+                      onClick={() => handlePatientSelect(p)}
+                      className="flex w-full cursor-pointer items-start px-3 py-2 text-left hover:bg-muted"
+                    >
+                      <div className="flex-1">
+                        <p className="text-sm font-medium">{p.name}</p>
+                        <p className="text-xs text-muted-foreground">Última sessão: {getLastAttendance(p) ?? 'N/A'}</p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+            <FormField
+              control={form.control}
+              name="contact"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Telefone</FormLabel>
+                  <FormControl>
+                    <Input placeholder="(xx) xxxxx-xxxx" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                  {phoneError && <p className="text-sm text-red-500">{phoneError}</p>}
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="cpf"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>CPF</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      onChange={(e) => field.onChange(formatCPF(e.target.value))}
+                      placeholder="000.000.000-00"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="date"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel>Data</FormLabel>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button variant="outline" className={cn('w-full pl-3 text-left font-normal', !field.value && 'text-muted-foreground')}>
+                            {field.value && isValid(field.value) ? (
+                              format(field.value, 'dd/MM/yyyy')
+                            ) : (
+                              <span>Escolha uma data</span>
+                            )}
+                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar mode="single" selected={field.value} onSelect={field.onChange} initialFocus />
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="time"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Hora</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <Clock className="mr-2 h-4 w-4 opacity-50" />
+                          <SelectValue placeholder="HH:MM" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent position="popper" className="max-h-60">
+                        {timeOptions.map((t) => (
+                          <SelectItem key={t} value={t}>
+                            {t}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <FormField
+              control={form.control}
+              name="durationMinutes"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Duração (min)</FormLabel>
+                  <FormControl>
+                    <Input type="number" min={10} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="status"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Status</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="pending">Pendente</SelectItem>
+                      <SelectItem value="present">Presente</SelectItem>
+                      <SelectItem value="absent">Ausente</SelectItem>
+                      <SelectItem value="rescheduled">Remarcado</SelectItem>
+                      <SelectItem value="canceled">Cancelado</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="notes"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Observações</FormLabel>
+                  <FormControl>
+                    <Textarea rows={3} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <DialogFooter className="pt-4">
+              <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
+                Cancelar
+              </Button>
+              <Button type="submit" disabled={isLoading}>
+                {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Salvar'}
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
+  );
 }
