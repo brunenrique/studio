@@ -2,7 +2,7 @@
 
 import type { Patient, SessionNote } from "@/lib/types";
 import { getMockPatientById, updateMockPatient } from "@/lib/mock-data";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, UserCircle, CalendarDays as CalendarIcon, Phone, Gift } from "lucide-react";
@@ -16,6 +16,7 @@ import { format, parseISO, differenceInYears } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import { useNotifications } from "@/contexts/NotificationContext";
 import { usePatientAssessments } from "@/hooks/usePatientAssessments";
+import { usePatientAppointments } from "@/hooks/usePatientAppointments";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import Image from "next/image";
@@ -36,7 +37,22 @@ const { user } = useAuth();
 const { addNotification } = useNotifications();
 
   const { data: assessments, loading: loadingAssessments } = usePatientAssessments(patientId);
+  const { appointments, loading: loadingAppointments } = usePatientAppointments(patientId);
   const criticalTerms = useCriticalTerms(patient ? patient.sessionNotes : []);
+
+  const attendanceReport = useMemo(() => {
+    const totalAgendamentos = appointments.length;
+    const faltas = appointments.filter(a => a.status === "absent" || a.status === "no-show").length;
+    const comparecimentos = appointments.filter(a => a.status === "present").length;
+    const percentualComparecimento = totalAgendamentos
+      ? (comparecimentos / totalAgendamentos) * 100
+      : 0;
+    const last = appointments
+      .filter(a => a.status === "present")
+      .sort((a, b) => parseISO(b.dateTime).getTime() - parseISO(a.dateTime).getTime())[0];
+    const ultimaPresenca = last ? last.dateTime : null;
+    return { totalAgendamentos, faltas, comparecimentos, percentualComparecimento, ultimaPresenca };
+  }, [appointments]);
 
   useEffect(() => {
     const foundPatient = getMockPatientById(patientId);
@@ -259,6 +275,38 @@ const handleSavePatient = (updatedPatient: Patient) => {
             : undefined
         }
       />
+      {user?.role === "PSYCHOLOGIST" && (
+        <Card className="shadow-lg mt-6">
+          <CardHeader>
+            <CardTitle className="font-semibold text-lg">Relatório de Comparecimento</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {loadingAppointments ? (
+              <p>Carregando dados...</p>
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm">
+                <div>
+                  <span className="font-semibold">Total Sessões:</span> {attendanceReport.totalAgendamentos}
+                </div>
+                <div>
+                  <span className="font-semibold">Faltas:</span> {attendanceReport.faltas}
+                </div>
+                <div>
+                  <span className="font-semibold">Comparecimentos:</span> {attendanceReport.comparecimentos}
+                </div>
+                <div className={attendanceReport.percentualComparecimento < 50 ? "text-red-600 font-semibold" : "font-semibold"}>
+                  % Presença: {attendanceReport.percentualComparecimento.toFixed(0)}%
+                </div>
+                {attendanceReport.ultimaPresenca && (
+                  <div className="sm:col-span-2">
+                    <span className="font-semibold">Última Presença:</span> {format(parseISO(attendanceReport.ultimaPresenca), "dd/MM/yyyy")}
+                  </div>
+                )}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
       <Accordion type="single" collapsible className="mt-6">
         <AccordionItem value="assessments">
           <AccordionTrigger>Mensuração & Avaliação</AccordionTrigger>
