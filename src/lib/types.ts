@@ -24,6 +24,8 @@ export interface SessionNote {
   id: string;
   date: string; // ISO 8601
   notes: string;
+  sessionSummary?: string;
+  sessionTags?: string[];
   patientHistorySummaryForAI?: string;
 }
 

@@ -14,6 +14,10 @@ import { AIInsightsSection } from "./AIInsightsSection";
 import { PatientFormDialog } from "./PatientFormDialog";
 import { format, parseISO, differenceInYears } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
+import {
+  generateSessionSummary,
+  extractSessionTags,
+} from "@/lib/sessionNotes";
 import { useNotifications } from "@/contexts/NotificationContext";
 import { usePatientAssessments } from "@/hooks/usePatientAssessments";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -56,6 +60,8 @@ const { addNotification } = useNotifications();
       id: `sn-${Date.now()}`,
       date: noteDate,
       notes: noteContent,
+      sessionSummary: generateSessionSummary(noteContent),
+      sessionTags: extractSessionTags(noteContent),
     };
 
     await new Promise(resolve => setTimeout(resolve, 500));
@@ -110,7 +116,15 @@ const handleEditNote = async (
     const updated = {
       ...prev,
       sessionNotes: prev.sessionNotes.map(note =>
-        note.id === noteId ? { ...note, notes: content, date } : note,
+        note.id === noteId
+          ? {
+              ...note,
+              notes: content,
+              date,
+              sessionSummary: generateSessionSummary(content),
+              sessionTags: extractSessionTags(content),
+            }
+          : note,
       ),
     };
     updateMockPatient(updated);

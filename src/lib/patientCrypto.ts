@@ -2,11 +2,23 @@ import type { Patient, SessionNote } from "./types";
 import { encrypt, decrypt } from "./utils";
 
 function encNote(note: SessionNote): SessionNote {
-  return { ...note, notes: encrypt(note.notes) };
+  return {
+    ...note,
+    notes: encrypt(note.notes),
+    sessionSummary: note.sessionSummary
+      ? encrypt(note.sessionSummary)
+      : undefined,
+  };
 }
 
 function decNote(note: SessionNote): SessionNote {
-  return { ...note, notes: decrypt(note.notes) };
+  return {
+    ...note,
+    notes: decrypt(note.notes),
+    sessionSummary: note.sessionSummary
+      ? decrypt(note.sessionSummary)
+      : undefined,
+  };
 }
 
 export function encryptPatient(patient: Patient): Patient {
