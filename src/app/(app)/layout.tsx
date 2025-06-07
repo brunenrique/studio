@@ -3,9 +3,9 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import Sidebar from '@/components/layout/Sidebar';
+import { Sidebar } from '@/components/navigation/Sidebar';
 import { AppHeader } from '@/components/layout/Header';
-import { TopTabs } from '@/components/layout/TopTabs';
+import { ContextTabs } from '@/components/navigation/ContextTabs';
 
 
 export default function AppLayout({
@@ -38,7 +38,7 @@ export default function AppLayout({
       <Sidebar />
       <div className="flex flex-1 flex-col">
         <AppHeader />
-        <TopTabs />
+        <ContextTabs />
         <main className="flex-1 overflow-y-auto bg-background p-8 md:p-12">
           {children}
         </main>
