@@ -15,6 +15,7 @@ export interface GlobalSystemSettings {
   workHoursEnd: string;
   defaultSessionDuration: number;
   blockedTimes: string; // comma separated ISO strings
+  weeklyBlockedTimes: string; // lines: weekday HH:MM-HH:MM
   externalIntegration: boolean;
 }
 
@@ -38,6 +39,7 @@ const defaultSystem: GlobalSystemSettings = {
   workHoursEnd: '17:00',
   defaultSessionDuration: 50,
   blockedTimes: '',
+  weeklyBlockedTimes: '',
   externalIntegration: false,
 };
 

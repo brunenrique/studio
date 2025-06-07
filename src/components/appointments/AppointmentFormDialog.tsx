@@ -38,6 +38,8 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { CalendarIcon, Loader2, Clock } from "lucide-react";
 import { cn, formatCPF, isValidCPF } from "@/lib/utils";
+import { useSettings } from "@/contexts/SettingsContext";
+import { parseBlockedTimes, parseWeeklyBlockedTimes, isDateTimeBlocked } from "@/lib/availability";
 import { format, parseISO, setHours, setMinutes, addMinutes, isValid } from "date-fns";
 import type { Appointment, Patient, AttendanceStatus } from "@/lib/types";
 import { mockAppointments } from "@/lib/mock-data";
@@ -87,6 +89,7 @@ export function AppointmentFormDialog({
   const [patientQuery, setPatientQuery] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [phoneError, setPhoneError] = useState<string | null>(null);
+  const { system } = useSettings();
 
   const isOpen =
     controlledIsOpen !== undefined ? controlledIsOpen : internalOpen;
@@ -186,6 +189,10 @@ export function AppointmentFormDialog({
     await new Promise((resolve) => setTimeout(resolve, 1000));
     const [hours, minutes] = values.time.split(":").map(Number);
     const combinedDateTime = setMinutes(setHours(values.date, hours), minutes);
+    if (isDateTimeBlocked(combinedDateTime, blocked, weekly)) {
+      setIsLoading(false);
+      return;
+    }
     const appointmentData: Appointment = {
       id: appointment?.id || `appt-${Date.now()}`,
       patientId: values.patientId,
@@ -200,11 +207,17 @@ export function AppointmentFormDialog({
     onOpenChange(false);
   }
 
+  const blocked = parseBlockedTimes(system.blockedTimes, system.defaultSessionDuration);
+  const weekly = parseWeeklyBlockedTimes(system.weeklyBlockedTimes);
   const timeOptions = Array.from({ length: 24 * 2 }, (_, i) => {
     const totalMinutes = i * 30;
     const hours = Math.floor(totalMinutes / 60);
     const minutes = totalMinutes % 60;
     return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+  }).filter((t) => {
+    const [h, m] = t.split(":" ).map(Number);
+    const date = setMinutes(setHours(form.getValues("date"), h), m);
+    return !isDateTimeBlocked(date, blocked, weekly);
   });
 
   const handlePatientSelect = (p: Patient) => {
