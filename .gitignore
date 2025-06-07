@@ -43,7 +43,6 @@ functions/lib
 .genkit/*
 .env*
 !.env.local.example
-!.env.local
 
 # firebase
 firebase-debug.log
