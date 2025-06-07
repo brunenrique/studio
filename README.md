@@ -60,6 +60,20 @@ npx ts-node src/scripts/seed-demo-data.ts
 
 Isso criará coleções como `patients`, `appointments`, `tasks` e outras com registros de demonstração.
 
+## Controle de notificações
+
+Cada documento em `patients` pode conter o campo opcional `notificationsOptOut`:
+
+```json
+{
+  "notificationsOptOut": { "email": false, "sms": true }
+}
+```
+
+Quando definido, as funções de envio respeitam essas preferências e não enviam
+mensagens para os canais desativados. Todo envio é registrado na subcoleção
+`patients/{patientId}/notificationLog`.
+
 ## Sidebar
 
 O botão que alterna a sidebar (ícone de menu) só aparece em telas pequenas graças à classe `lg:hidden`.
