@@ -1,5 +1,5 @@
-import type { Patient, SessionNote } from './types';
-import { encrypt, decrypt } from './utils';
+import type { Patient, SessionNote } from "./types";
+import { encrypt, decrypt } from "./utils";
 
 function encNote(note: SessionNote): SessionNote {
   return { ...note, notes: encrypt(note.notes) };
@@ -12,6 +12,7 @@ function decNote(note: SessionNote): SessionNote {
 export function encryptPatient(patient: Patient): Patient {
   return {
     ...patient,
+    psychologistId: patient.psychologistId,
     name: encrypt(patient.name),
     contact: encrypt(patient.contact),
     cpf: patient.cpf ? encrypt(patient.cpf) : undefined,
@@ -23,6 +24,7 @@ export function encryptPatient(patient: Patient): Patient {
 export function decryptPatient(patient: Patient): Patient {
   return {
     ...patient,
+    psychologistId: patient.psychologistId,
     name: decrypt(patient.name),
     contact: decrypt(patient.contact),
     cpf: patient.cpf ? decrypt(patient.cpf) : undefined,
@@ -33,8 +35,8 @@ export function decryptPatient(patient: Patient): Patient {
 
 export function decryptPatientForRole(
   patient: Patient,
-  role: import('./types').UserRole,
+  role: import("./types").UserRole,
 ): Patient {
-  if (role !== 'PSYCHOLOGIST') return patient;
+  if (role !== "PSYCHOLOGIST") return patient;
   return decryptPatient(patient);
 }
