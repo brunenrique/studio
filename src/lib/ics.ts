@@ -1,6 +1,14 @@
 import { Appointment } from "./types";
 import { format, addMinutes, parseISO } from "date-fns";
 
+function escapeText(text: string): string {
+  return text
+    .replace(/\\/g, "\\\\")
+    .replace(/\r\n|\r|\n/g, "\\n")
+    .replace(/,/g, "\\,")
+    .replace(/;/g, "\\;");
+}
+
 export function generateICS(appointments: Appointment[]): string {
   const lines = [
     "BEGIN:VCALENDAR",
@@ -17,8 +25,8 @@ export function generateICS(appointments: Appointment[]): string {
     lines.push(`DTSTAMP:${format(new Date(), "yyyyMMdd'T'HHmmss")}`);
     lines.push(`DTSTART:${format(start, "yyyyMMdd'T'HHmmss")}`);
     lines.push(`DTEND:${format(end, "yyyyMMdd'T'HHmmss")}`);
-    lines.push(`SUMMARY:Sessão com ${a.patientName}`);
-    if (a.notes) lines.push(`DESCRIPTION:${a.notes}`);
+    lines.push(`SUMMARY:${escapeText(`Sessão com ${a.patientName}`)}`);
+    if (a.notes) lines.push(`DESCRIPTION:${escapeText(a.notes)}`);
     lines.push("END:VEVENT");
   });
 
