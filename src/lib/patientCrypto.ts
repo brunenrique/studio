@@ -30,6 +30,7 @@ export function encryptPatient(patient: Patient): Patient {
     cpf: patient.cpf ? encrypt(patient.cpf) : undefined,
     dateOfBirth: encrypt(patient.dateOfBirth),
     sessionNotes: patient.sessionNotes.map(encNote),
+    treatmentPlan: patient.treatmentPlan ? encrypt(patient.treatmentPlan) : undefined,
   };
 }
 
@@ -42,6 +43,7 @@ export function decryptPatient(patient: Patient): Patient {
     cpf: patient.cpf ? decrypt(patient.cpf) : undefined,
     dateOfBirth: decrypt(patient.dateOfBirth),
     sessionNotes: patient.sessionNotes.map(decNote),
+    treatmentPlan: patient.treatmentPlan ? decrypt(patient.treatmentPlan) : undefined,
   };
 }
 

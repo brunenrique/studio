@@ -25,6 +25,7 @@ const patient: Patient = {
       sessionTags: ['teste'],
     },
   ],
+  treatmentPlan: 'Plano inicial',
 };
 
 test('encryptPatient/decryptPatient roundtrip', () => {
