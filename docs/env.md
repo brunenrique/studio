@@ -24,3 +24,4 @@ NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=plataforma-bpsy.firebasestorage.app
 NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=115174793204
 NEXT_PUBLIC_FIREBASE_APP_ID=1:115174793204:web:dd38de43781c2ac5a423a1
 ```
+- `SESSION_VALIDATION_MS`: intervalo em milissegundos para validar a sessão do usuário (padrão 60000).

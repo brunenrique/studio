@@ -54,6 +54,7 @@ CRYPTO_SECRET_KEY=REPLACE_ME_BASE64_32BYTES
 | `APPOINTMENT_REMINDER_CRON` | Cron de execução do lembrete de sessões (padrão `* * * * *`) | sim |
 | `TASK_REMINDER_CRON` | Cron de execução do lembrete de tarefas (padrão `* * * * *`) | sim |
 | `ASSESSMENT_REMINDER_HOURS` | Horas após a criação para lembrar inventários pendentes (padrão 24) | sim |
+| `SESSION_VALIDATION_MS` | Intervalo em ms para validar a sessão do usuário (padrão 60000) | sim |
 | `PUBLIC_URL` | URL pública usada nos links (requer HTTPS) | não |
 
 Se ocorrerem erros de login como "Could not reach Cloud Firestore backend" ou
