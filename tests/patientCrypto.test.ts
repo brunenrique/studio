@@ -17,7 +17,13 @@ const patient: Patient = {
   cpf: '11122233344',
   dateOfBirth: '2000-01-01',
   sessionNotes: [
-    { id: 'n1', date: '2024-01-01', notes: 'ok' }
+    {
+      id: 'n1',
+      date: '2024-01-01',
+      notes: 'ok',
+      sessionSummary: 'ok',
+      sessionTags: ['teste'],
+    },
   ],
 };
 

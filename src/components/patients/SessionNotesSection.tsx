@@ -17,6 +17,8 @@ import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
+import { Badge } from "@/components/ui/badge";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface SessionNotesSectionProps {
   patient: Patient;
@@ -49,6 +51,7 @@ export function SessionNotesSection({
   const [editNoteDate, setEditNoteDate] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const handleSaveNote = async () => {
     if (newNote.trim() === "") return;
@@ -229,6 +232,21 @@ export function SessionNotesSection({
                         </div>
                       </div>
                       <p className="text-sm whitespace-pre-wrap leading-relaxed">{note.notes}</p>
+                      {user?.role === 'PSYCHOLOGIST' && note.sessionSummary && (
+                        <p className="text-sm text-muted-foreground mt-2">
+                          <span className="font-semibold">Resumo Clínico:</span>{' '}
+                          {note.sessionSummary}
+                        </p>
+                      )}
+                      {user?.role === 'PSYCHOLOGIST' && note.sessionTags && note.sessionTags.length > 0 && (
+                        <div className="mt-2 flex flex-wrap gap-1">
+                          {note.sessionTags.map(tag => (
+                            <Badge key={tag} variant="outline" className="text-xs">
+                              {tag}
+                            </Badge>
+                          ))}
+                        </div>
+                      )}
                     </>
                   )}
                 </div>

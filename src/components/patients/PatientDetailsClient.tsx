@@ -14,6 +14,10 @@ import { AIInsightsSection } from "./AIInsightsSection";
 import { PatientFormDialog } from "./PatientFormDialog";
 import { format, parseISO, differenceInYears } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
+import {
+  generateSessionSummary,
+  extractSessionTags,
+} from "@/lib/sessionNotes";
 import { useNotifications } from "@/contexts/NotificationContext";
 import { usePatientAssessments } from "@/hooks/usePatientAssessments";
 import { usePatientAppointments } from "@/hooks/usePatientAppointments";
@@ -54,5 +58,109 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
     return { totalAgendamentos, faltas, comparecimentos, percentualComparecimento, ultimaPresenca };
   }, [appointments]);
 
-  // ...restante do código permanece o mesmo
+  useEffect(() => {
+    const foundPatient = getMockPatientById(patientId);
+    if (foundPatient) {
+      setPatient(foundPatient);
+    }
+    setIsLoading(false);
+  }, [patientId]);
+
+  const handleAddNote = async (
+    noteContent: string,
+    noteDate: string
+  ) => {
+    if (!patient) return;
+
+    const newNote: SessionNote = {
+      id: `sn-${Date.now()}`,
+      date: noteDate,
+      notes: noteContent,
+      sessionSummary: generateSessionSummary(noteContent),
+      sessionTags: extractSessionTags(noteContent),
+    };
+
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    setPatient(prev => {
+      if (!prev) return null;
+      const updated = {
+        ...prev,
+        sessionNotes: [...prev.sessionNotes, newNote],
+      };
+      updateMockPatient(updated);
+      return updated;
+    });
+
+    toast({
+      title: "Nota Adicionada",
+      description: "A nova nota de sessão foi salva com sucesso.",
+    });
+    addNotification(`Nota adicionada para ${patient.name}`);
+  };
+
+  const handleDeleteNote = async (noteId: string) => {
+    if (!patient) return;
+
+    setPatient(prev => {
+      if (!prev) return null;
+      const updated = {
+        ...prev,
+        sessionNotes: prev.sessionNotes.filter(note => note.id !== noteId),
+      };
+      updateMockPatient(updated);
+      return updated;
+    });
+
+    toast({
+      title: "Nota Removida",
+      description: "A nota foi excluída com sucesso.",
+    });
+  };
+
+  const handleEditNote = async (
+    noteId: string,
+    content: string,
+    date: string,
+  ) => {
+    if (!patient) return;
+
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    setPatient(prev => {
+      if (!prev) return null;
+      const updated = {
+        ...prev,
+        sessionNotes: prev.sessionNotes.map(note =>
+          note.id === noteId
+            ? {
+                ...note,
+                notes: content,
+                date,
+                sessionSummary: generateSessionSummary(content),
+                sessionTags: extractSessionTags(content),
+              }
+            : note,
+        ),
+      };
+      updateMockPatient(updated);
+      return updated;
+    });
+
+    toast({
+      title: "Nota Atualizada",
+      description: "As alterações foram salvas com sucesso.",
+    });
+  };
+
+  const handleSavePatient = (updatedPatient: Patient) => {
+    setPatient(updatedPatient);
+    updateMockPatient(updatedPatient);
+    toast({
+      title: "Paciente Atualizado",
+      description: "Os dados do paciente foram salvos com sucesso.",
+    });
+  };
+
+  // ...restante do componente permanece como está (sem alteração)
 }
