@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import { format, addDays } from "date-fns";
 import type {
   Patient,

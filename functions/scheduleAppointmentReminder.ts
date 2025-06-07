@@ -1,13 +1,17 @@
-import * as functions from 'firebase-functions';
-import * as admin from 'firebase-admin';
-import sgMail from '@sendgrid/mail';
-import twilio from 'twilio';
+import * as functions from "firebase-functions";
+import * as admin from "firebase-admin";
+import sgMail from "@sendgrid/mail";
+import twilio from "twilio";
+import { isValidEmail, isValidE164 } from "./src/validators";
 
 admin.initializeApp();
 const db = admin.firestore();
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
-const twilioClient = twilio(process.env.TWILIO_SID as string, process.env.TWILIO_AUTH_TOKEN as string);
+const twilioClient = twilio(
+  process.env.TWILIO_SID as string,
+  process.env.TWILIO_AUTH_TOKEN as string,
+);
 
 const SENDGRID_FROM = process.env.SENDGRID_FROM_EMAIL as string;
 const TWILIO_SMS_FROM = process.env.TWILIO_SMS_FROM;
@@ -21,23 +25,42 @@ async function notifyPatient(patientId: string, message: string) {
   if (!patient) return;
   const contact = patient.contact;
   if (contact) {
-    if (contact.includes('@')) {
-      await sgMail.send({ to: contact, from: SENDGRID_FROM, subject: 'Lembrete de Sessão', text: message });
+    if (contact.includes("@")) {
+      if (isValidEmail(contact)) {
+        await sgMail.send({
+          to: contact,
+          from: SENDGRID_FROM,
+          subject: "Lembrete de Sessão",
+          text: message,
+        });
+      } else {
+        console.error("Contato de email inválido", contact);
+      }
     } else if (TWILIO_SMS_FROM) {
-      await twilioClient.messages.create({ from: TWILIO_SMS_FROM, to: contact, body: message });
+      if (isValidE164(contact)) {
+        await twilioClient.messages.create({
+          from: TWILIO_SMS_FROM,
+          to: contact,
+          body: message,
+        });
+      } else {
+        console.error("Contato de telefone inválido", contact);
+      }
     }
   }
 }
 
 async function processReminders(minutesBefore: number, flag: string) {
   const now = Date.now();
-  const targetStart = new Date(now + (minutesBefore - 1) * 60 * 1000).toISOString();
+  const targetStart = new Date(
+    now + (minutesBefore - 1) * 60 * 1000,
+  ).toISOString();
   const targetEnd = new Date(now + minutesBefore * 60 * 1000).toISOString();
   const snap = await db
-    .collection('appointments')
-    .where('status', '==', 'pending')
-    .where('dateTime', '>=', targetStart)
-    .where('dateTime', '<=', targetEnd)
+    .collection("appointments")
+    .where("status", "==", "pending")
+    .where("dateTime", ">=", targetStart)
+    .where("dateTime", "<=", targetEnd)
     .get();
 
   for (const docSnap of snap.docs) {
@@ -50,8 +73,8 @@ async function processReminders(minutesBefore: number, flag: string) {
 }
 
 export const scheduleAppointmentReminder = functions.pubsub
-  .schedule('* * * * *')
+  .schedule("* * * * *")
   .onRun(async () => {
-    await processReminders(MINUTES_BEFORE_24H, 'reminder24hSent');
-    await processReminders(MINUTES_BEFORE_30M, 'reminder30mSent');
+    await processReminders(MINUTES_BEFORE_24H, "reminder24hSent");
+    await processReminders(MINUTES_BEFORE_30M, "reminder30mSent");
   });
