@@ -10,12 +10,14 @@ import { PatientFormDialog } from '@/components/patients/PatientFormDialog';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
+import { useNotifications } from "@/contexts/NotificationContext";
 
 export default function PatientsPage() {
   const { user } = useAuth();
   const [patients, setPatients] = useState<Patient[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const { toast } = useToast();
+  const { addNotification } = useNotifications();
 
   if (!user || user.role !== 'Psicólogo') {
     return <p className="p-4">Acesso restrito aos psicólogos.</p>;
@@ -46,6 +48,10 @@ export default function PatientsPage() {
         : "Paciente Adicionado",
       description: `Os dados de ${patientData.name} foram salvos.`,
     });
+
+    if (!patients.find(p => p.id === patientData.id)) {
+      addNotification(`Novo paciente adicionado: ${patientData.name}`);
+    }
 
     setIsFormOpen(false);
   };
