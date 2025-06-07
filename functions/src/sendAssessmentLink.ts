@@ -5,6 +5,7 @@ import { onCall, CallableRequest } from 'firebase-functions/v2/https';
 import sgMail from '@sendgrid/mail';
 import twilio from 'twilio';
 import jwt from 'jsonwebtoken';
+import type { StringValue } from 'ms';
 
 admin.initializeApp();
 const db = admin.firestore();
@@ -39,11 +40,17 @@ async function logNotification(
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
 const twilioClient = twilio(process.env.TWILIO_SID as string, process.env.TWILIO_AUTH_TOKEN as string);
-const TOKEN_SECRET = process.env.ASSESSMENT_TOKEN_SECRET as string;
-if (!TOKEN_SECRET) {
-  throw new Error('ASSESSMENT_TOKEN_SECRET environment variable is required');
-}
-const TOKEN_EXPIRY = process.env.ASSESSMENT_TOKEN_EXPIRY || '7d';
+
+const TOKEN_SECRET = (() => {
+  const secret = process.env.ASSESSMENT_TOKEN_SECRET;
+  if (!secret) {
+    console.error('ASSESSMENT_TOKEN_SECRET environment variable is required.');
+    throw new Error('Configuração do servidor incompleta.');
+  }
+  return secret;
+})();
+
+const TOKEN_EXPIRY = (process.env.ASSESSMENT_TOKEN_EXPIRY || '7d') as StringValue;
 const PUBLIC_URL = process.env.PUBLIC_URL as string;
 if (PUBLIC_URL && !PUBLIC_URL.startsWith('https://')) {
   console.warn('PUBLIC_URL should use HTTPS');
