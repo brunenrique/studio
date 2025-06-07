@@ -119,6 +119,14 @@ export default function SettingsPage() {
               placeholder="2024-05-01T15:00, 2024-05-02T10:00"
             />
           </div>
+          <div className="space-y-1">
+            <label className="block text-sm font-medium">Bloqueios semanais</label>
+            <Textarea
+              value={system.weeklyBlockedTimes}
+              onChange={(e) => handleSystem('weeklyBlockedTimes')(e.target.value)}
+              placeholder="1 09:00-11:00; 3 14:00-15:00"
+            />
+          </div>
           <label className="flex items-center gap-2">
             <Switch
               checked={system.externalIntegration}
