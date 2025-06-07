@@ -54,6 +54,7 @@ function SidebarContent({
     '/analytics': LineChart,
     '/analytics/psychologist': LineChart,
     '/settings': Settings,
+    '/settings/features': FileText,
     '/user-approvals': Users,
   };
 

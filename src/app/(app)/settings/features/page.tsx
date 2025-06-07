@@ -1,6 +1,6 @@
 "use client";
 
-import { features } from "@/lib/navigation";
+import { features } from "@/lib/features";
 import Link from "next/link";
 import {
   Card,

@@ -33,12 +33,6 @@ export interface RouteTabConfig {
   getTabs: (params: Record<string, string>) => TabItem[];
 }
 
-export interface FeatureItem {
-  label: string;
-  description: string;
-  href: string;
-  category: "Atendimento" | "Administração" | "Ferramentas Extras";
-}
 
 export const navigation: NavItem[] = [
   {
@@ -108,6 +102,12 @@ export const navigation: NavItem[] = [
     category: 'Sistema',
   },
   {
+    label: 'Funcionalidades',
+    description: 'Mapa das ferramentas dispon\u00edveis no sistema.',
+    href: '/settings/features',
+    category: 'Sistema',
+  },
+  {
     label: 'Aprovar Usu\u00e1rios',
     description: 'Gerencie solicita\u00e7\u00f5es de acesso de novos profissionais.',
     href: '/user-approvals',
@@ -144,35 +144,3 @@ export const routeTabs: RouteTabConfig[] = [
   },
 ];
 
-export const features: FeatureItem[] = [
-  {
-    category: 'Atendimento',
-    label: 'Agenda de Consultas',
-    description: 'Gerencie sua agenda semanal e visualize pacientes em espera.',
-    href: '/appointments',
-  },
-  {
-    category: 'Atendimento',
-    label: 'Cadastro de Pacientes',
-    description: 'Registre e acompanhe dados cl\u00ednicos completos.',
-    href: '/patients',
-  },
-  {
-    category: 'Administra\u00e7\u00e3o',
-    label: 'Financeiro',
-    description: 'Controle receitas, despesas e relat\u00f3rios cont\u00e1beis.',
-    href: '/finance',
-  },
-  {
-    category: 'Administra\u00e7\u00e3o',
-    label: 'Configura\u00e7\u00f5es',
-    description: 'Ajuste prefer\u00eancias e integra\u00e7\u00f5es do sistema.',
-    href: '/settings',
-  },
-  {
-    category: 'Ferramentas Extras',
-    label: 'AI Insights',
-    description: 'Analise notas cl\u00ednicas com aux\u00edlio de IA.',
-    href: '/patients',
-  },
-];
