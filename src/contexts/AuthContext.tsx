@@ -1,7 +1,7 @@
 /* istanbul ignore file */
 "use client";
 
-import type { User } from '@/lib/types';
+import type { User, UserRole } from '@/lib/types';
 import { useRouter } from 'next/navigation';
 import type { ReactNode } from 'react';
 import React, { createContext, useContext, useState, useEffect } from 'react';
@@ -12,6 +12,7 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
   onAuthStateChanged,
   signOut,
 } from 'firebase/auth';
@@ -23,7 +24,11 @@ interface AuthContextType {
   login: (email: string, pass: string) => Promise<void>; // Simplified login
   loginWithGoogle: () => Promise<void>;
   logout: () => void;
-  // register: (email: string, pass: string, name: string) => Promise<void>; // Placeholder
+  register: (
+    email: string,
+    pass: string,
+    role: UserRole
+  ) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -148,6 +153,40 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const register = async (email: string, pass: string, role: UserRole) => {
+    setIsLoading(true);
+    try {
+      const result = await createUserWithEmailAndPassword(auth, email, pass);
+      const fbUser = result.user;
+      const newSession = crypto.randomUUID();
+      const uid = fbUser.uid;
+      await setDoc(doc(db, 'users', uid), {
+        role,
+        isApproved: false,
+        email,
+        sessionId: newSession,
+      });
+
+      const mappedUser: User = {
+        id: uid,
+        name: fbUser.displayName || '',
+        email: fbUser.email || email,
+        role,
+        isApproved: false,
+        profileImage: fbUser.photoURL || undefined,
+        sessionId: newSession,
+      };
+
+      setUser(mappedUser);
+      localStorage.setItem('psiguard_user', JSON.stringify(mappedUser));
+      localStorage.setItem(SESSION_KEY, newSession);
+    } catch (err) {
+      console.error('Registration failed', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const loginWithGoogle = async () => {
     setIsLoading(true);
     try {
@@ -215,7 +254,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useSessionValidation(user, logout);
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated: !!user, isLoading, login, loginWithGoogle, logout }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        isAuthenticated: !!user,
+        isLoading,
+        login,
+        register,
+        loginWithGoogle,
+        logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
