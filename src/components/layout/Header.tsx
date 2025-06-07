@@ -82,7 +82,6 @@ export function AppHeader() {
             <DropdownMenuTrigger asChild>
               <Button
                 ref={buttonRef}
-                onClick={menu.toggle}
                 variant="ghost"
                 className="relative h-10 w-10 rounded-full"
                 title="Menu do perfil"
