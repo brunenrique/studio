@@ -9,7 +9,16 @@
 
 ## Deploy
 
-1. Configure variáveis em `.env.local` e `.env` para chaves do Firebase, SendGrid e Twilio (`SENDGRID_API_KEY`, `SENDGRID_FROM_EMAIL`, `TWILIO_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_WHATSAPP_FROM`, `ASSESSMENT_TOKEN_SECRET`, `CRYPTO_SECRET_KEY`).
+1. Copie `.env.local.example` para `.env.local` e adicione as chaves do Firebase abaixo, além das variáveis do SendGrid e Twilio (`SENDGRID_API_KEY`, `SENDGRID_FROM_EMAIL`, `TWILIO_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_WHATSAPP_FROM`, `ASSESSMENT_TOKEN_SECRET`, `CRYPTO_SECRET_KEY`).
+
+```dotenv
+NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSyCkp-Yp3CPOVl5jkmprh7BwP86Es-H9RzI
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=plataforma-bpsy.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=plataforma-bpsy
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=plataforma-bpsy.firebasestorage.app
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=115174793204
+NEXT_PUBLIC_FIREBASE_APP_ID=1:115174793204:web:dd38de43781c2ac5a423a1
+```
 2. Execute `npm install` para instalar dependências.
 3. Inicie os emuladores com `firebase emulators:start` para testes locais.
 4. Para deploy, rode `firebase deploy --only functions,firestore`.

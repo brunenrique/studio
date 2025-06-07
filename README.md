@@ -8,7 +8,13 @@ Para começar, abra `src/app/page.tsx` e siga a estrutura do App Router.
 
 ## Environment Variables
 
-Crie um arquivo **`.env.local`** na raiz do projeto com suas credenciais do Firebase.  
+Crie um arquivo **`.env.local`** na raiz do projeto com suas credenciais do Firebase.
+Você pode copiar o arquivo `\.env.local.example` e preenchê-lo com suas chaves:
+
+```bash
+cp .env.local.example .env.local
+```
+
 Use o template abaixo como guia:
 
 ```dotenv
@@ -18,6 +24,7 @@ NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
 NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
 NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+NEXT_PUBLIC_USE_EMULATORS=true
 
 # 🔐 Chave de criptografia AES-256-GCM (32 bytes base64).
 # NÃO use esta chave em produção!
@@ -34,6 +41,7 @@ CRYPTO_SECRET_KEY=REPLACE_ME_BASE64_32BYTES
 | `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET` | Bucket do Storage | não |
 | `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID` | ID do Cloud Messaging | não |
 | `NEXT_PUBLIC_FIREBASE_APP_ID` | ID do aplicativo Firebase | não |
+| `NEXT_PUBLIC_USE_EMULATORS` | Conecta SDKs aos emuladores locais | sim |
 | `CRYPTO_SECRET_KEY` | Chave AES para criptografar dados sensíveis | não |
 | `FIREBASE_SERVICE_ACCOUNT` | JSON da conta de serviço para o Admin SDK | não |
 | `ASSESSMENT_TOKEN_SECRET` | Segredo para assinar links de inventários | não |
@@ -50,7 +58,43 @@ CRYPTO_SECRET_KEY=REPLACE_ME_BASE64_32BYTES
 | `ASSESSMENT_REMINDER_HOURS` | Horas após a criação para lembrar inventários pendentes (padrão 24) | sim |
 | `PUBLIC_URL` | URL pública usada nos links (requer HTTPS) | não |
 
+Se ocorrerem erros de login como "Could not reach Cloud Firestore backend" ou
+`auth/internal-error`, consulte [docs/troubleshooting.md](docs/troubleshooting.md)
+para passos de correção.
+
 Todos os dados de pacientes são criptografados no cliente usando AES antes de serem manipulados.
+
+### Login de exemplo
+
+Durante o desenvolvimento você pode acessar o sistema usando o usuário mock abaixo. Qualquer senha é aceita.
+
+```
+E-mail: doctor.jane@psiguard.com
+```
+
+### Exemplo de inicialização do Firebase
+
+Caso queira integrar manualmente em outro projeto, o código abaixo demonstra a configuração básica utilizando as chaves já incluídas neste repositório:
+
+```ts
+// Import the functions you need from the SDKs you need
+import { initializeApp } from 'firebase/app';
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: 'AIzaSyCkp-Yp3CPOVl5jkmprh7BwP86Es-H9RzI',
+  authDomain: 'plataforma-bpsy.firebaseapp.com',
+  projectId: 'plataforma-bpsy',
+  storageBucket: 'plataforma-bpsy.firebasestorage.app',
+  messagingSenderId: '115174793204',
+  appId: '1:115174793204:web:dd38de43781c2ac5a423a1',
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+```
 
 ## Seeding com dados de exemplo
 
@@ -62,6 +106,13 @@ npx ts-node src/scripts/seed-demo-data.ts
 ```
 
 Isso criará coleções como `patients`, `appointments`, `tasks` e outras com registros de demonstração.
+
+Lembre-se de iniciar os emuladores do Firebase para que as regras de segurança
+`docs/firestore.rules` sejam aplicadas:
+
+```bash
+firebase emulators:start
+```
 
 ## Controle de notificações
 
