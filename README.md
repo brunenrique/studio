@@ -26,6 +26,17 @@ CRYPTO_SECRET_KEY=REPLACE_ME_BASE64_32BYTES
 
 Todos os dados de pacientes são criptografados no cliente usando AES antes de serem manipulados.
 
+## Seeding com dados de exemplo
+
+Para popular o Firestore com dados fictícios, defina as variáveis `FIREBASE_SERVICE_ACCOUNT` e `CRYPTO_SECRET_KEY` em seu ambiente.
+Em seguida execute:
+
+```bash
+npx ts-node src/scripts/seed-demo-data.ts
+```
+
+Isso criará coleções como `patients`, `appointments`, `tasks` e outras com registros de demonstração.
+
 ## Sidebar
 
 O botão que alterna a sidebar (ícone de menu) só aparece em telas pequenas graças à classe `lg:hidden`.
