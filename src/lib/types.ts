@@ -35,6 +35,7 @@ export interface Patient {
   cpf?: string;
   dateOfBirth: string; // ISO 8601
   sessionNotes: SessionNote[];
+  psychologistId?: string;
 }
 
 // 📅 Agendamento de sessão
@@ -47,6 +48,7 @@ export interface Appointment {
   durationMinutes: number;
   status: AttendanceStatus;
   notes?: string;
+  psychologistId?: string;
 }
 
 // ⏳ Entrada da lista de espera

@@ -1,5 +1,4 @@
-
-import { format, addDays } from 'date-fns';
+import { format, addDays } from "date-fns";
 import type {
   Patient,
   Appointment,
@@ -13,18 +12,17 @@ import type {
   SymptomHeatmapEntry,
   FormulationDiagram,
   // outros tipos aqui
-} from '@/lib/types';
-import { encryptPatient, decryptPatient } from './patientCrypto';
-
+} from "@/lib/types";
+import { encryptPatient, decryptPatient } from "./patientCrypto";
 
 // 👤 Usuário mock
 export const mockUser: User = {
-  id: 'user-psychologist-01',
-  email: 'doctor.jane@psiguard.com',
-  role: 'PSYCHOLOGIST',
+  id: "user-psychologist-01",
+  email: "doctor.jane@psiguard.com",
+  role: "PSYCHOLOGIST",
   isApproved: true,
-  name: 'Dr. Jane Doe',
-  profileImage: 'https://placehold.co/100x100?text=JD',
+  name: "Dr. Jane Doe",
+  profileImage: "https://placehold.co/100x100?text=JD",
 };
 
 // 📅 Datas auxiliares
@@ -39,78 +37,91 @@ nextWeek.setDate(today.getDate() + 7);
 // 📝 Notas mock – paciente 1
 const initialSessionNotesP1: SessionNote[] = [
   {
-    id: 'sn001',
+    id: "sn001",
     date: new Date(new Date().setDate(today.getDate() - 14)).toISOString(),
-    notes: 'Paciente relatou ansiedade relacionada ao trabalho. Discutimos mecanismos de enfrentamento.',
-    patientHistorySummaryForAI: 'Sessão inicial.',
+    notes:
+      "Paciente relatou ansiedade relacionada ao trabalho. Discutimos mecanismos de enfrentamento.",
+    patientHistorySummaryForAI: "Sessão inicial.",
   },
   {
-    id: 'sn002',
+    id: "sn002",
     date: new Date(new Date().setDate(today.getDate() - 7)).toISOString(),
-    notes: 'Acompanhamento da ansiedade. Paciente testou exercícios de respiração profunda. Relatou alguma melhora.',
-    patientHistorySummaryForAI: 'Paciente relatou ansiedade relacionada ao trabalho. Discutimos mecanismos de enfrentamento.',
+    notes:
+      "Acompanhamento da ansiedade. Paciente testou exercícios de respiração profunda. Relatou alguma melhora.",
+    patientHistorySummaryForAI:
+      "Paciente relatou ansiedade relacionada ao trabalho. Discutimos mecanismos de enfrentamento.",
   },
 ];
 
 // 📝 Notas mock – paciente 2
 const initialSessionNotesP2: SessionNote[] = [
   {
-    id: 'sn003',
+    id: "sn003",
     date: new Date(new Date().setDate(today.getDate() - 10)).toISOString(),
-    notes: 'Paciente está enfrentando dificuldades com mudanças recentes na vida. Exploramos o impacto emocional.',
-    patientHistorySummaryForAI: 'Novo paciente encaminhado com suspeita de transtorno de ajustamento.',
+    notes:
+      "Paciente está enfrentando dificuldades com mudanças recentes na vida. Exploramos o impacto emocional.",
+    patientHistorySummaryForAI:
+      "Novo paciente encaminhado com suspeita de transtorno de ajustamento.",
   },
 ];
 
 // 📝 Notas mock – paciente 3
 const initialSessionNotesP3: SessionNote[] = [
   {
-    id: 'sn004',
+    id: "sn004",
     date: new Date(new Date().setDate(today.getDate() - 21)).toISOString(),
-    notes: 'Primeira consulta. Queixas de dores de cabeça recorrentes sem causa física aparente.',
-    patientHistorySummaryForAI: 'Paciente referenciado por médico clínico geral.',
+    notes:
+      "Primeira consulta. Queixas de dores de cabeça recorrentes sem causa física aparente.",
+    patientHistorySummaryForAI:
+      "Paciente referenciado por médico clínico geral.",
   },
   {
-    id: 'sn005',
+    id: "sn005",
     date: new Date(new Date().setDate(today.getDate() - 5)).toISOString(),
-    notes: 'Relatou melhora significativa após iniciar prática de meditação diária.',
-    patientHistorySummaryForAI: 'Primeira consulta com queixas de dores de cabeça recorrentes.',
+    notes:
+      "Relatou melhora significativa após iniciar prática de meditação diária.",
+    patientHistorySummaryForAI:
+      "Primeira consulta com queixas de dores de cabeça recorrentes.",
   },
 ];
 
 // 👩‍⚕️ Pacientes mock
 export let mockPatients: Patient[] = [
   encryptPatient({
-    id: 'patient-001',
-    name: 'Alice Wonderland',
-    contact: '11999990001',
-    cpf: '12345678901',
-    dateOfBirth: '1990-05-15',
+    id: "patient-001",
+    name: "Alice Wonderland",
+    contact: "11999990001",
+    cpf: "12345678901",
+    dateOfBirth: "1990-05-15",
     sessionNotes: initialSessionNotesP1,
+    psychologistId: mockUser.id,
   }),
   encryptPatient({
-    id: 'patient-002',
-    name: 'Bob The Builder',
-    contact: '11999990002',
-    cpf: '98765432100',
-    dateOfBirth: '1985-11-20',
+    id: "patient-002",
+    name: "Bob The Builder",
+    contact: "11999990002",
+    cpf: "98765432100",
+    dateOfBirth: "1985-11-20",
     sessionNotes: initialSessionNotesP2,
+    psychologistId: mockUser.id,
   }),
   encryptPatient({
-    id: 'patient-003',
-    name: 'Charlie Brown',
-    contact: '11999990003',
-    cpf: '11122233344',
-    dateOfBirth: '2000-02-10',
+    id: "patient-003",
+    name: "Charlie Brown",
+    contact: "11999990003",
+    cpf: "11122233344",
+    dateOfBirth: "2000-02-10",
     sessionNotes: [],
+    psychologistId: mockUser.id,
   }),
   encryptPatient({
-    id: 'patient-004',
-    name: 'Dana Scully',
-    contact: '11999990004',
-    cpf: '22233344455',
-    dateOfBirth: '1974-02-23',
+    id: "patient-004",
+    name: "Dana Scully",
+    contact: "11999990004",
+    cpf: "22233344455",
+    dateOfBirth: "1974-02-23",
     sessionNotes: initialSessionNotesP3,
+    psychologistId: mockUser.id,
   }),
 ];
 
@@ -142,223 +153,304 @@ export const getMockPatientById = (id: string): Patient | null => {
 // 📆 Agendamentos mock
 export const mockAppointments: Appointment[] = [
   {
-    id: 'appt-001',
-    patientId: 'patient-001',
-    patientName: 'Alice Wonderland',
-    dateTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 10, 0).toISOString(),
+    id: "appt-001",
+    patientId: "patient-001",
+    patientName: "Alice Wonderland",
+    psychologistId: mockUser.id,
+    dateTime: new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate(),
+      10,
+      0,
+    ).toISOString(),
     durationMinutes: 50,
-    status: 'pending',
-    notes: 'Sessão regular',
+    status: "pending",
+    notes: "Sessão regular",
   },
   {
-    id: 'appt-002',
-    patientId: 'patient-002',
-    patientName: 'Bob The Builder',
-    dateTime: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 14, 0).toISOString(),
+    id: "appt-002",
+    patientId: "patient-002",
+    patientName: "Bob The Builder",
+    psychologistId: mockUser.id,
+    dateTime: new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate(),
+      14,
+      0,
+    ).toISOString(),
     durationMinutes: 50,
-    status: 'present',
-    notes: 'Sessão de acompanhamento',
+    status: "present",
+    notes: "Sessão de acompanhamento",
   },
   {
-    id: 'appt-003',
-    patientId: 'patient-003',
-    patientName: 'Charlie Brown',
-    dateTime: new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate(), 11, 30).toISOString(),
+    id: "appt-003",
+    patientId: "patient-003",
+    patientName: "Charlie Brown",
+    psychologistId: mockUser.id,
+    dateTime: new Date(
+      tomorrow.getFullYear(),
+      tomorrow.getMonth(),
+      tomorrow.getDate(),
+      11,
+      30,
+    ).toISOString(),
     durationMinutes: 50,
-    status: 'pending',
+    status: "pending",
   },
   {
-    id: 'appt-004',
-    patientId: 'patient-001',
-    patientName: 'Alice Wonderland',
-    dateTime: new Date(nextWeek.getFullYear(), nextWeek.getMonth(), nextWeek.getDate(), 9, 0).toISOString(),
+    id: "appt-004",
+    patientId: "patient-001",
+    patientName: "Alice Wonderland",
+    psychologistId: mockUser.id,
+    dateTime: new Date(
+      nextWeek.getFullYear(),
+      nextWeek.getMonth(),
+      nextWeek.getDate(),
+      9,
+      0,
+    ).toISOString(),
     durationMinutes: 50,
-    status: 'pending',
+    status: "pending",
   },
   {
-    id: 'appt-005',
-    patientId: 'patient-004',
-    patientName: 'Dana Scully',
-    dateTime: new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate(), 16, 0).toISOString(),
+    id: "appt-005",
+    patientId: "patient-004",
+    patientName: "Dana Scully",
+    psychologistId: mockUser.id,
+    dateTime: new Date(
+      tomorrow.getFullYear(),
+      tomorrow.getMonth(),
+      tomorrow.getDate(),
+      16,
+      0,
+    ).toISOString(),
     durationMinutes: 50,
-    status: 'pending',
+    status: "pending",
   },
   {
-    id: 'appt-006',
-    patientId: 'patient-002',
-    patientName: 'Bob The Builder',
-    dateTime: new Date(nextWeek.getFullYear(), nextWeek.getMonth(), nextWeek.getDate(), 13, 30).toISOString(),
+    id: "appt-006",
+    patientId: "patient-002",
+    patientName: "Bob The Builder",
+    psychologistId: mockUser.id,
+    dateTime: new Date(
+      nextWeek.getFullYear(),
+      nextWeek.getMonth(),
+      nextWeek.getDate(),
+      13,
+      30,
+    ).toISOString(),
     durationMinutes: 50,
-    status: 'rescheduled',
-    notes: 'Reagendado pelo paciente.',
+    status: "rescheduled",
+    notes: "Reagendado pelo paciente.",
   },
 ];
 
 // ⏳ Lista de espera mock
 export const mockWaitingList: WaitingListItem[] = [
   {
-    id: 'wait-001',
-    patientName: 'Diana Prince',
-    contact: 'diana@example.com',
-    requestedDate: 'Qualquer tarde de dia útil',
+    id: "wait-001",
+    patientName: "Diana Prince",
+    contact: "diana@example.com",
+    requestedDate: "Qualquer tarde de dia útil",
     addedDate: yesterday.toISOString(),
-    notes: 'Prefere terapeuta mulher, se possível (não aplicável no setup atual).',
+    notes:
+      "Prefere terapeuta mulher, se possível (não aplicável no setup atual).",
   },
   {
-    id: 'wait-002',
-    patientName: 'Clark Kent',
-    contact: 'clark@example.com',
+    id: "wait-002",
+    patientName: "Clark Kent",
+    contact: "clark@example.com",
     addedDate: new Date(today.setDate(today.getDate() - 3)).toISOString(),
-    notes: 'Encaminhamento urgente do Dr. Hamilton.',
+    notes: "Encaminhamento urgente do Dr. Hamilton.",
   },
   {
-    id: 'wait-003',
-    patientName: 'Bruce Wayne',
-    contact: 'bruce@example.com',
-    requestedDate: 'Manhãs de segunda-feira',
+    id: "wait-003",
+    patientName: "Bruce Wayne",
+    contact: "bruce@example.com",
+    requestedDate: "Manhãs de segunda-feira",
     addedDate: today.toISOString(),
-    notes: 'Prefere sessões presenciais.',
+    notes: "Prefere sessões presenciais.",
   },
 ];
 
 // 💵 Registros financeiros mock
 export const mockFinanceRecords: FinanceRecord[] = [
   {
-    id: 'fin-001',
+    id: "fin-001",
     date: new Date(today.getFullYear(), today.getMonth(), 1).toISOString(),
     amount: 200,
-    description: 'Sessão de terapia',
+    description: "Sessão de terapia",
   },
   {
-    id: 'fin-002',
+    id: "fin-002",
     date: new Date(today.getFullYear(), today.getMonth(), 5).toISOString(),
     amount: 180,
-    description: 'Sessão de acompanhamento',
+    description: "Sessão de acompanhamento",
   },
   {
-    id: 'fin-003',
+    id: "fin-003",
     date: new Date(today.getFullYear(), today.getMonth(), 12).toISOString(),
     amount: 220,
-    description: 'Sessão individual',
+    description: "Sessão individual",
   },
   {
-    id: 'fin-004',
+    id: "fin-004",
     date: new Date(today.getFullYear(), today.getMonth() - 1, 25).toISOString(),
     amount: 200,
-    description: 'Sessão do mês anterior',
+    description: "Sessão do mês anterior",
   },
   {
-    id: 'fin-005',
+    id: "fin-005",
     date: new Date(today.getFullYear(), today.getMonth(), 18).toISOString(),
     amount: 250,
-    description: 'Sessão em grupo',
+    description: "Sessão em grupo",
   },
 ];
 
 // 📑 Modelos de texto reutilizáveis
 export const mockTemplates: Template[] = [
   {
-    id: 'tpl-001',
-    name: 'Nota de Sessão Padrão',
-    category: 'session-note',
-    content: 'Paciente apresentou progresso desde a última sessão...'
+    id: "tpl-001",
+    name: "Nota de Sessão Padrão",
+    category: "session-note",
+    content: "Paciente apresentou progresso desde a última sessão...",
   },
   {
-    id: 'tpl-002',
-    name: 'Email de Lembrete',
-    category: 'email',
-    content: 'Olá {{nome}}, este é um lembrete do seu próximo agendamento...'
+    id: "tpl-002",
+    name: "Email de Lembrete",
+    category: "email",
+    content: "Olá {{nome}}, este é um lembrete do seu próximo agendamento...",
   },
   {
-    id: 'tpl-003',
-    name: 'Plano Terapêutico Básico',
-    category: 'treatment-plan',
-    content: 'Objetivos, metas e intervenções sugeridas para as próximas 8 semanas.'
-  }
+    id: "tpl-003",
+    name: "Plano Terapêutico Básico",
+    category: "treatment-plan",
+    content:
+      "Objetivos, metas e intervenções sugeridas para as próximas 8 semanas.",
+  },
 ];
 
 // 📚 Artigos da base de conhecimento
 export const mockKnowledgeBaseArticles: KnowledgeBaseArticle[] = [
   {
-    id: 'kb-001',
-    question: 'Como adicionar um paciente?',
-    answer: 'Vá para a página de pacientes e clique em "Adicionar Paciente".'
+    id: "kb-001",
+    question: "Como adicionar um paciente?",
+    answer: 'Vá para a página de pacientes e clique em "Adicionar Paciente".',
   },
   {
-    id: 'kb-002',
-    question: 'Posso personalizar as métricas do dashboard?',
+    id: "kb-002",
+    question: "Posso personalizar as métricas do dashboard?",
     answer:
-      'Sim, utilize a página de configurações para escolher quais métricas deseja ver.'
+      "Sim, utilize a página de configurações para escolher quais métricas deseja ver.",
   },
   {
-    id: 'kb-003',
-    question: 'Os dados são criptografados?',
+    id: "kb-003",
+    question: "Os dados são criptografados?",
     answer:
-      'Este protótipo usa criptografia apenas em campos selecionados. Veja a documentação para mais detalhes.'
+      "Este protótipo usa criptografia apenas em campos selecionados. Veja a documentação para mais detalhes.",
   },
   {
-    id: 'kb-004',
-    question: 'Como exportar os registros financeiros?',
-    answer: 'Na seção de Relatórios, escolha "Exportar Finanças" para gerar um arquivo CSV.'
-  }
+    id: "kb-004",
+    question: "Como exportar os registros financeiros?",
+    answer:
+      'Na seção de Relatórios, escolha "Exportar Finanças" para gerar um arquivo CSV.',
+  },
 ];
 
 // 💊 Lista de medicamentos comuns para referência rápida
 export const mockMedications: Medication[] = [
   {
-    id: 'med-001',
-    name: 'Sertralina',
-    class: 'ISRS',
-    indications: 'Depressão, transtorno de ansiedade',
-    sideEffects: 'Náusea, insônia, boca seca'
+    id: "med-001",
+    name: "Sertralina",
+    class: "ISRS",
+    indications: "Depressão, transtorno de ansiedade",
+    sideEffects: "Náusea, insônia, boca seca",
   },
   {
-    id: 'med-002',
-    name: 'Fluoxetina',
-    class: 'ISRS',
-    indications: 'Depressão, transtorno obsessivo-compulsivo',
-    sideEffects: 'Agitação, dor de cabeça, insônia'
+    id: "med-002",
+    name: "Fluoxetina",
+    class: "ISRS",
+    indications: "Depressão, transtorno obsessivo-compulsivo",
+    sideEffects: "Agitação, dor de cabeça, insônia",
   },
   {
-    id: 'med-003',
-    name: 'Bupropiona',
-    class: 'Antidepressivo atípico',
-    indications: 'Depressão maior, cessação do tabagismo',
-    sideEffects: 'Boca seca, insônia, tremores'
+    id: "med-003",
+    name: "Bupropiona",
+    class: "Antidepressivo atípico",
+    indications: "Depressão maior, cessação do tabagismo",
+    sideEffects: "Boca seca, insônia, tremores",
   },
   {
-    id: 'med-004',
-    name: 'Clonazepam',
-    class: 'Benzodiazepínico',
-    indications: 'Transtorno de ansiedade, crises convulsivas',
-    sideEffects: 'Sedação, tontura, dependência'
+    id: "med-004",
+    name: "Clonazepam",
+    class: "Benzodiazepínico",
+    indications: "Transtorno de ansiedade, crises convulsivas",
+    sideEffects: "Sedação, tontura, dependência",
   },
   {
-    id: 'med-005',
-    name: 'Quetiapina',
-    class: 'Antipsicótico atípico',
-    indications: 'Transtorno bipolar, esquizofrenia',
-    sideEffects: 'Sonolência, ganho de peso'
-  }
+    id: "med-005",
+    name: "Quetiapina",
+    class: "Antipsicótico atípico",
+    indications: "Transtorno bipolar, esquizofrenia",
+    sideEffects: "Sonolência, ganho de peso",
+  },
 ];
 
 export const mockSymptomEntries: SymptomHeatmapEntry[] = [
-  { id: 'sym-001', patientId: 'patient-001', date: format(addDays(new Date(), -5), 'yyyy-MM-dd'), symptom: 'Ansiedade', severity: 3 },
-  { id: 'sym-002', patientId: 'patient-001', date: format(addDays(new Date(), -4), 'yyyy-MM-dd'), symptom: 'Ansiedade', severity: 2 },
-  { id: 'sym-003', patientId: 'patient-001', date: format(addDays(new Date(), -3), 'yyyy-MM-dd'), symptom: 'Ansiedade', severity: 4 },
-  { id: 'sym-004', patientId: 'patient-001', date: format(addDays(new Date(), -2), 'yyyy-MM-dd'), symptom: 'Ansiedade', severity: 5 },
-  { id: 'sym-005', patientId: 'patient-001', date: format(addDays(new Date(), -1), 'yyyy-MM-dd'), symptom: 'Ansiedade', severity: 1 },
+  {
+    id: "sym-001",
+    patientId: "patient-001",
+    date: format(addDays(new Date(), -5), "yyyy-MM-dd"),
+    symptom: "Ansiedade",
+    severity: 3,
+  },
+  {
+    id: "sym-002",
+    patientId: "patient-001",
+    date: format(addDays(new Date(), -4), "yyyy-MM-dd"),
+    symptom: "Ansiedade",
+    severity: 2,
+  },
+  {
+    id: "sym-003",
+    patientId: "patient-001",
+    date: format(addDays(new Date(), -3), "yyyy-MM-dd"),
+    symptom: "Ansiedade",
+    severity: 4,
+  },
+  {
+    id: "sym-004",
+    patientId: "patient-001",
+    date: format(addDays(new Date(), -2), "yyyy-MM-dd"),
+    symptom: "Ansiedade",
+    severity: 5,
+  },
+  {
+    id: "sym-005",
+    patientId: "patient-001",
+    date: format(addDays(new Date(), -1), "yyyy-MM-dd"),
+    symptom: "Ansiedade",
+    severity: 1,
+  },
 ];
 export const mockFormulations: FormulationDiagram[] = [
   {
-    sessionId: 'session-001',
+    sessionId: "session-001",
     diagramJson: JSON.stringify({
-      label: 'Problema Principal',
+      label: "Problema Principal",
       children: [
-        { label: 'Pensamentos Automáticos', children: [{ label: '"Sou incapaz"' }] },
-        { label: 'Emoções', children: [{ label: 'Tristeza' }, { label: 'Ansiedade' }] },
-        { label: 'Comportamentos', children: [{ label: 'Isolamento' }] }
-      ]
-    })
-  }
+        {
+          label: "Pensamentos Automáticos",
+          children: [{ label: '"Sou incapaz"' }],
+        },
+        {
+          label: "Emoções",
+          children: [{ label: "Tristeza" }, { label: "Ansiedade" }],
+        },
+        { label: "Comportamentos", children: [{ label: "Isolamento" }] },
+      ],
+    }),
+  },
 ];

@@ -10,7 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useToast } from '@/hooks/use-toast';
 import { useNotifications } from '@/contexts/NotificationContext';
 import { db } from '@/lib/firebaseClient';
-import { addDoc, collection, updateDoc, doc, getDoc, serverTimestamp } from 'firebase/firestore';
+import { addDoc, collection, updateDoc, doc, getDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
 import { useAppointments } from '@/hooks/useAppointments';
 import { mockPatients, mockWaitingList } from '@/lib/mock-data';
 import { useAuth } from '@/contexts/AuthContext';
@@ -18,6 +18,8 @@ import { WaitlistDragList } from '@/components/waitlist/WaitlistDragList';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { WeeklySchedule } from '@/components/appointments/WeeklySchedule';
+import { useSettings } from '@/contexts/SettingsContext';
+import { generateICS } from '@/lib/ics';
 
 export default function AppointmentsPage() {
   const { appointments } = useAppointments();
@@ -27,6 +29,7 @@ export default function AppointmentsPage() {
   const { toast } = useToast();
   const { user } = useAuth();
   const { addNotification } = useNotifications();
+  const { system } = useSettings();
 
   useEffect(() => {
     setPatients(mockPatients);
@@ -42,6 +45,7 @@ export default function AppointmentsPage() {
         durationMinutes: appointmentData.durationMinutes,
         status: appointmentData.status,
         notes: appointmentData.notes || '',
+        psychologistId: user?.id || '',
       });
       await addDoc(collection(db, 'appointments', appointmentData.id, 'history'), {
         before: exists,
@@ -154,6 +158,23 @@ export default function AppointmentsPage() {
     );
   }
 
+  const myAppointments = appointments.filter(a => a.psychologistId === user?.id);
+
+  const handleExport = () => {
+    if (system.calendarExportMethod === 'ics') {
+      const ics = generateICS(myAppointments);
+      const blob = new Blob([ics], { type: 'text/calendar' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'agenda.ics';
+      link.click();
+      URL.revokeObjectURL(url);
+    } else {
+      alert('Integração com Google não implementada.');
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -163,32 +184,38 @@ export default function AppointmentsPage() {
             Visualize e gerencie os agendamentos das sessões.
           </p>
         </div>
-        <AppointmentFormDialog
-          isOpen={isFormOpen}
-          onOpenChange={setIsFormOpen}
-          onSave={handleAddOrUpdateAppointment}
-          patients={patients}
-          appointments={appointments}
-          appointment={null}
-        >
-          <Button onClick={() => setIsFormOpen(true)} className="shadow-md">
-            <PlusCircle className="mr-2 h-5 w-5" />
-            Novo Agendamento
+        <div className="flex gap-2">
+          <Button onClick={handleExport} variant="outline" className="shadow-md">
+            Exportar Agenda
           </Button>
-        </AppointmentFormDialog>
+          <AppointmentFormDialog
+            isOpen={isFormOpen}
+            onOpenChange={setIsFormOpen}
+            onSave={handleAddOrUpdateAppointment}
+            patients={patients}
+            appointment={null}
+          >
+            <Button onClick={() => setIsFormOpen(true)} className="shadow-md">
+              <PlusCircle className="mr-2 h-5 w-5" />
+              Novo Agendamento
+            </Button>
+          </AppointmentFormDialog>
+        </div>
       </div>
 
       <Card className="shadow-lg rounded-lg">
         <CardHeader>
           <CardTitle>Calendário de Sessões</CardTitle>
-          <CardDescription>Total de {appointments.length} agendamentos.</CardDescription>
+          <CardDescription>
+            Total de {myAppointments.length} agendamentos.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <AppointmentCalendarView
-            appointments={appointments}
+            appointments={myAppointments}
             patients={patients}
-            onUpdateAppointment={handleAddOrUpdateAppointment} // ✅ corrigido aqui
-            onDeleteAppointment={handleDeleteAppointment}     // ✅ e aqui
+            onUpdateAppointment={handleAddOrUpdateAppointment}
+            onDeleteAppointment={handleDeleteAppointment}
           />
         </CardContent>
       </Card>

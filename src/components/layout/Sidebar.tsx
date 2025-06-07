@@ -1,11 +1,16 @@
 "use client";
 
-import { usePathname } from 'next/navigation';
-import Link from 'next/link';
-import { useAuth } from '@/contexts/AuthContext';
-import { Logo } from '@/components/Logo';
-import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetOverlay, SheetPortal } from '@/components/ui/sheet';
+import { usePathname } from "next/navigation";
+import Link from "next/link";
+import { useAuth } from "@/contexts/AuthContext";
+import { Logo } from "@/components/Logo";
+import { Button } from "@/components/ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetOverlay,
+  SheetPortal,
+} from "@/components/ui/sheet";
 import {
   Menu,
   LayoutDashboard,
@@ -20,59 +25,89 @@ import {
   Settings,
   LogOut,
   ChevronDown,
-} from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { cn } from '@/lib/utils';
-import { motion } from 'framer-motion';
-import { useSmartMenu } from '@/lib/use-smart-menu';
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
+import { useSmartMenu } from "@/lib/use-smart-menu";
 
-function SidebarContent({ className, onNavigate }: { className?: string; onNavigate?: () => void }) {
+function SidebarContent({
+  className,
+  onNavigate,
+}: {
+  className?: string;
+  onNavigate?: () => void;
+}) {
   const pathname = usePathname();
   const { logout, user } = useAuth();
 
   const sections = [
     {
-      title: 'Consultório',
+      title: "Consultório",
       items: [
-        { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-        { href: '/patients', label: 'Pacientes', icon: Users },
-        { href: '/appointments', label: 'Agendamentos', icon: CalendarDays },
-        { href: '/waiting-list', label: 'Lista de Espera', icon: ListChecks },
+        { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+        { href: "/patients", label: "Pacientes", icon: Users },
+        { href: "/appointments", label: "Agendamentos", icon: CalendarDays },
+        { href: "/waiting-list", label: "Lista de Espera", icon: ListChecks },
       ],
     },
     {
-      title: 'Ferramentas',
+      title: "Ferramentas",
       items: [
-        { href: '/templates', label: 'Modelos', icon: FileText },
-        { href: '/medications', label: 'Guia Rápido', icon: Pill },
-        { href: '/self-care', label: 'Saúde Mental', icon: HeartPulse },
-        { href: '/knowledge-base', label: 'Base de Conhecimento', icon: BookOpenCheck },
-        { href: '/analytics', label: 'Tendências', icon: LineChart },
+        { href: "/templates", label: "Modelos", icon: FileText },
+        { href: "/medications", label: "Guia Rápido", icon: Pill },
+        { href: "/self-care", label: "Saúde Mental", icon: HeartPulse },
+        {
+          href: "/knowledge-base",
+          label: "Base de Conhecimento",
+          icon: BookOpenCheck,
+        },
+        { href: "/analytics", label: "Tendências", icon: LineChart },
+        {
+          href: "/analytics/psychologist",
+          label: "Indicadores",
+          icon: LineChart,
+        },
       ],
     },
     {
-      title: 'Sistema',
+      title: "Sistema",
       items: [
-        { href: '/settings', label: 'Configurações', icon: Settings },
-        ...(user?.role === 'ADMIN'
-          ? [{ href: '/user-approvals', label: 'Aprovar Usuários', icon: Users }]
+        { href: "/settings", label: "Configurações", icon: Settings },
+        ...(user?.role === "ADMIN"
+          ? [
+              {
+                href: "/user-approvals",
+                label: "Aprovar Usuários",
+                icon: Users,
+              },
+            ]
           : []),
       ],
     },
   ];
 
-  const [openSections, setOpenSections] = useState<Record<string, boolean>>(() =>
-    sections.reduce((acc, s) => {
-      acc[s.title] = true;
-      return acc;
-    }, {} as Record<string, boolean>)
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>(
+    () =>
+      sections.reduce(
+        (acc, s) => {
+          acc[s.title] = true;
+          return acc;
+        },
+        {} as Record<string, boolean>,
+      ),
   );
 
   const toggleSection = (title: string) =>
-    setOpenSections(prev => ({ ...prev, [title]: !prev[title] }));
+    setOpenSections((prev) => ({ ...prev, [title]: !prev[title] }));
 
   return (
-    <aside className={cn('w-[72vw] max-w-xs md:w-56 lg:w-60 bg-card border-r flex flex-col', className)}>
+    <aside
+      className={cn(
+        "w-[72vw] max-w-xs md:w-56 lg:w-60 bg-card border-r flex flex-col",
+        className,
+      )}
+    >
       <div className="p-4">
         <Link href="/dashboard">
           <Logo />
@@ -82,7 +117,10 @@ function SidebarContent({ className, onNavigate }: { className?: string; onNavig
         {sections.map((section, i) => (
           <div
             key={section.title}
-            className={cn('space-y-1', i > 0 && 'mt-4 border-t border-border/20 pt-4')}
+            className={cn(
+              "space-y-1",
+              i > 0 && "mt-4 border-t border-border/20 pt-4",
+            )}
           >
             <button
               onClick={() => toggleSection(section.title)}
@@ -90,12 +128,15 @@ function SidebarContent({ className, onNavigate }: { className?: string; onNavig
             >
               <span>{section.title}</span>
               <ChevronDown
-                className={cn('h-4 w-4 transition-transform', !openSections[section.title] && '-rotate-90')}
+                className={cn(
+                  "h-4 w-4 transition-transform",
+                  !openSections[section.title] && "-rotate-90",
+                )}
               />
             </button>
             {openSections[section.title] && (
               <ul className="space-y-1">
-                {section.items.map(item => (
+                {section.items.map((item) => (
                   <li key={item.href}>
                     <Link
                       href={item.href}
@@ -103,8 +144,8 @@ function SidebarContent({ className, onNavigate }: { className?: string; onNavig
                         onNavigate?.();
                       }}
                       className={cn(
-                        'flex items-center gap-2 rounded-md px-4 py-2 hover:bg-primary/15 focus:outline focus:outline-2 focus:outline-primary/70',
-                        pathname === item.href && 'bg-primary/15 font-semibold'
+                        "flex items-center gap-2 rounded-md px-4 py-2 hover:bg-primary/15 focus:outline focus:outline-2 focus:outline-primary/70",
+                        pathname === item.href && "bg-primary/15 font-semibold",
                       )}
                     >
                       <item.icon className="h-[18px] w-[18px]" />
@@ -118,9 +159,7 @@ function SidebarContent({ className, onNavigate }: { className?: string; onNavig
         ))}
       </nav>
       <div className="border-t p-4 max-[480px]:hidden">
-        {user && (
-          <p className="mb-2 text-sm font-medium">{user.name}</p>
-        )}
+        {user && <p className="mb-2 text-sm font-medium">{user.name}</p>}
         <Button
           variant="ghost"
           className="w-full justify-start"
@@ -137,22 +176,21 @@ function SidebarContent({ className, onNavigate }: { className?: string; onNavig
 }
 
 export default function AppSidebar() {
-  const {
-    open,
-    setOpen,
-    toggle,
-    ref,
-    saveFocus,
-    animation,
-  } = useSmartMenu({
-    id: 'sidebar',
-    animation: { duration: 300, easing: 'easeOut', delay: 100 },
+  const { open, setOpen, toggle, ref, saveFocus, animation } = useSmartMenu({
+    id: "sidebar",
+    animation: { duration: 300, easing: "easeOut", delay: 100 },
   });
 
   return (
     <>
       <div className="lg:hidden">
-        <Button variant="ghost" size="icon" onClick={toggle} title="Abrir menu" data-menu-button>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={toggle}
+          title="Abrir menu"
+          data-menu-button
+        >
           <Menu className="h-5 w-5" />
         </Button>
       </div>
@@ -164,7 +202,12 @@ export default function AppSidebar() {
             className="p-0 w-[72vw] max-w-xs md:w-56 lg:w-60 h-full overflow-y-auto shadow-xl bg-background"
           >
             <div className="flex justify-end p-4 lg:hidden">
-              <Button variant="ghost" size="icon" onClick={() => setOpen(false)} title="Fechar menu">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setOpen(false)}
+                title="Fechar menu"
+              >
                 <Menu className="h-5 w-5 rotate-180" />
               </Button>
             </div>
@@ -173,7 +216,7 @@ export default function AppSidebar() {
               initial={{ x: -300, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: -300, opacity: 0 }}
-              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
             >
               <SidebarContent
                 className="h-full"
