@@ -43,3 +43,31 @@ export function decrypt(ciphertext: string): string {
   const key = getCryptoKey().toString('base64');
   return CryptoJS.AES.decrypt(ciphertext, key).toString(CryptoJS.enc.Utf8);
 }
+
+// 🆔 Formata um CPF aplicando máscara 000.000.000-00
+export function formatCPF(value: string): string {
+  const digits = value.replace(/\D/g, '');
+  return digits
+    .replace(/(\d{3})(\d)/, '$1.$2')
+    .replace(/(\d{3})(\d)/, '$1.$2')
+    .replace(/(\d{3})(\d{1,2})$/, '$1-$2')
+    .slice(0, 14);
+}
+
+// ✅ Validação simples de CPF
+export function isValidCPF(cpf: string): boolean {
+  const digits = cpf.replace(/\D/g, '');
+  if (digits.length !== 11 || /^([0-9])\1+$/.test(digits)) return false;
+
+  let sum = 0;
+  for (let i = 0; i < 9; i++) sum += parseInt(digits.charAt(i)) * (10 - i);
+  let mod = (sum * 10) % 11;
+  if (mod === 10 || mod === 11) mod = 0;
+  if (mod !== parseInt(digits.charAt(9))) return false;
+
+  sum = 0;
+  for (let i = 0; i < 10; i++) sum += parseInt(digits.charAt(i)) * (11 - i);
+  mod = (sum * 10) % 11;
+  if (mod === 10 || mod === 11) mod = 0;
+  return mod === parseInt(digits.charAt(10));
+}

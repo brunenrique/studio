@@ -27,13 +27,18 @@ import { Calendar } from "@/components/ui/calendar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { CalendarIcon, Loader2, Clock } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, formatCPF, isValidCPF } from "@/lib/utils";
 import { format, parseISO, setHours, setMinutes, addMinutes, isValid } from "date-fns";
 import type { Appointment, Patient, AttendanceStatus } from "@/lib/types";
+import { mockAppointments } from "@/lib/mock-data";
 import { useState, useEffect } from "react";
 
 const appointmentFormSchema = z.object({
   patientId: z.string().min(1, "Paciente é obrigatório."),
+  contact: z.string().optional(),
+  cpf: z.string().optional().refine(v => !v || isValidCPF(v), {
+    message: "CPF inválido.",
+  }),
   date: z.date({ required_error: "Data é obrigatória." }),
   time: z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, "Hora inválida (HH:MM)."),
   durationMinutes: z.coerce.number().int().positive("Duração deve ser positiva."),
@@ -64,6 +69,8 @@ export function AppointmentFormDialog({
 }: AppointmentFormDialogProps) {
   const [internalOpen, setInternalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [patientQuery, setPatientQuery] = useState('');
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   const isOpen = controlledIsOpen !== undefined ? controlledIsOpen : internalOpen;
   const onOpenChange = controlledOnOpenChange !== undefined ? controlledOnOpenChange : setInternalOpen;
@@ -73,6 +80,8 @@ export function AppointmentFormDialog({
     defaultValues: appointment
       ? {
           patientId: appointment.patientId,
+          contact: "",
+          cpf: "",
           date: parseISO(appointment.dateTime),
           time: format(parseISO(appointment.dateTime), "HH:mm"),
           durationMinutes: appointment.durationMinutes,
@@ -81,37 +90,61 @@ export function AppointmentFormDialog({
         }
       : {
           patientId: "",
+          contact: "",
+          cpf: "",
           date: defaultDate || new Date(),
           time: "09:00",
           durationMinutes: 50,
           status: "pending",
           notes: "",
         },
-});
+  });
+
+  const filteredPatients = patients.filter(p =>
+    p.name.toLowerCase().includes(patientQuery.toLowerCase())
+  );
+
+  const getLastAttendance = (p: Patient): string | null => {
+    const appts = mockAppointments.filter(a => a.patientId === p.id);
+    const dates = [
+      ...appts.map(a => new Date(a.dateTime)),
+      ...p.sessionNotes.map(n => new Date(n.date)),
+    ];
+    if (dates.length === 0) return null;
+    const last = dates.reduce((prev, cur) => (cur > prev ? cur : prev));
+    return format(last, 'dd/MM/yyyy');
+  };
 
   useEffect(() => {
     if (isOpen) {
       if (appointment) {
+        const patient = patients.find(p => p.id === appointment.patientId);
         form.reset({
           patientId: appointment.patientId,
+          contact: patient?.contact || '',
+          cpf: patient?.cpf ? formatCPF(patient.cpf) : '',
           date: parseISO(appointment.dateTime),
           time: format(parseISO(appointment.dateTime), "HH:mm"),
           durationMinutes: appointment.durationMinutes,
           status: appointment.status,
           notes: appointment.notes || "",
         });
+        setPatientQuery(patient?.name || '');
       } else {
         form.reset({
           patientId: "",
+          contact: "",
+          cpf: "",
           date: defaultDate || new Date(),
           time: "09:00",
           durationMinutes: 50,
           status: "pending",
           notes: "",
         });
+        setPatientQuery('');
       }
     }
-  }, [appointment, defaultDate, form, isOpen]);
+  }, [appointment, defaultDate, form, isOpen, patients]);
 
 
   async function onSubmit(values: AppointmentFormValues) {
@@ -161,18 +194,74 @@ export function AppointmentFormDialog({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Paciente</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione um paciente" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {patients.map(p => (
-                        <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <div className="relative">
+                      <Input
+                        value={patientQuery}
+                        onChange={e => {
+                          setPatientQuery(e.target.value);
+                          setShowSuggestions(true);
+                          field.onChange('');
+                        }}
+                        onFocus={() => setShowSuggestions(true)}
+                        placeholder="Nome do paciente"
+                        autoComplete="off"
+                      />
+                      {showSuggestions && filteredPatients.length > 0 && (
+                        <ul className="absolute z-10 mt-1 max-h-40 w-full overflow-auto rounded-md border bg-background shadow-md">
+                          {filteredPatients.map(p => (
+                            <li
+                              key={p.id}
+                              className="cursor-pointer px-2 py-1 hover:bg-accent"
+                              onMouseDown={() => {
+                                setPatientQuery(p.name);
+                                field.onChange(p.id);
+                                form.setValue('contact', p.contact);
+                                form.setValue('cpf', formatCPF(p.cpf || ''));
+                                setShowSuggestions(false);
+                              }}
+                            >
+                              <span className="block text-sm font-medium">{p.name}</span>
+                              <span className="block text-xs text-muted-foreground">
+                                {p.cpf ? formatCPF(p.cpf) : 'Sem CPF'}
+                                {` • Último: ${getLastAttendance(p) ?? 'N/A'}`}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="contact"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Telefone</FormLabel>
+                  <FormControl>
+                    <Input placeholder="(XX) XXXXX-XXXX" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="cpf"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>CPF</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      onChange={e => field.onChange(formatCPF(e.target.value))}
+                      placeholder="000.000.000-00"
+                    />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
