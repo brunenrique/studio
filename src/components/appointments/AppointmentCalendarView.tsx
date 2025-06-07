@@ -40,7 +40,7 @@ import { SmartModal } from "@/components/SmartModal";
 import { AppointmentHistoryModal } from "./AppointmentHistoryModal";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import { TooltipProvider } from "@radix-ui/react-tooltip";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import type { Appointment, Patient, AttendanceStatus, BlockedTime } from "@/lib/types";
@@ -130,8 +130,8 @@ export function AppointmentCalendarView({
   if (selectedDate) {
     weekly.forEach((w) => {
       if (selectedDate.getDay() === w.weekday) {
-        const [sh, sm] = w.start.split(":").map(Number);
-        const [eh, em] = w.end.split(":").map(Number);
+        const [sh, sm] = w.start.split(":" ).map(Number);
+        const [eh, em] = w.end.split(":" ).map(Number);
         const start = new Date(selectedDate);
         start.setHours(sh, sm, 0, 0);
         const duration = eh * 60 + em - (sh * 60 + sm);
@@ -215,11 +215,11 @@ export function AppointmentCalendarView({
                 Bloquear Horário
               </Button>
             </div>
-            {combined.length === 0 && (
+            {combined.length === 0 ? (
               <p className="text-sm text-muted-foreground mt-4">Nenhum agendamento encontrado.</p>
-            )}
+            ) : (
               <ul className="space-y-2">
-                {combined.map(item => (
+                {combined.map((item) => (
                   item.type === "block" ? (
                     <li
                       key={item.block.id}
@@ -297,6 +297,7 @@ export function AppointmentCalendarView({
                   )
                 ))}
               </ul>
+            )}
             <div className="flex flex-wrap gap-2 pt-4">
               {Object.entries(statusMap).map(([key, val]) => (
                 <Badge key={key} className={val.color} variant="outline">
@@ -333,7 +334,6 @@ export function AppointmentCalendarView({
       >
         <button className="hidden" />
       </BlockTimeDialog>
-
       <AppointmentHistoryModal
         appointmentId={historyFor?.id ?? null}
         open={historyFor !== null}
@@ -341,7 +341,6 @@ export function AppointmentCalendarView({
           if (!o) setHistoryFor(null);
         }}
       />
-
     </TooltipProvider>
   );
 }
