@@ -1,4 +1,6 @@
-import type {NextConfig} from 'next';
+// Caminho: next.config.mjs
+
+import type { NextConfig } from 'next';
 
 const csp = [
   "default-src 'self'",
@@ -35,6 +37,7 @@ const securityHeaders = [
   }
 ];
 
+/** @type {import('next').NextConfig} */
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   typescript: {
@@ -61,6 +64,15 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+
+  // --- NOVA CONFIGURAÇÃO ADICIONADA AQUI ---
+  experimental: {
+    allowedDevOrigins: [
+      // Adicione a URL do seu Cloud Workstation aqui para resolver o aviso
+      'https://9003-firebase-studio2-1749148598567.cluster-qhrn7lb3szcfcud6uanedbkjnm.cloudworkstations.dev'
+    ],
+  },
+  // -----------------------------------------
 };
 
 export default nextConfig;
