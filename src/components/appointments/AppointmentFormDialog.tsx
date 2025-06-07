@@ -168,7 +168,7 @@ export function AppointmentFormDialog({
   async function onSubmit(values: AppointmentFormValues) {
     setIsLoading(true);
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    const [hours, minutes] = values.time.split(":"").map(Number);
+    const [hours, minutes] = values.time.split(":").map(Number);
     const combinedDateTime = setMinutes(setHours(values.date, hours), minutes);
     const appointmentData: Appointment = {
       id: appointment?.id || `appt-${Date.now()}`,
