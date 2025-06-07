@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { MessageCircle } from "lucide-react";
-import type { Pipeline } from "@xenova/transformers";
+import { useTransformersPipeline } from "@/hooks/useTransformersPipeline";
 
 interface ChatMessage {
   sender: "user" | "bot";
@@ -13,39 +13,10 @@ export default function AssistantWidget() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
-  const [generator, setGenerator] = useState<Pipeline | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { generator, loading: modelLoading, error } = useTransformersPipeline(open);
+  const [sending, setSending] = useState(false);
+  const loading = modelLoading || sending;
   const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-    if (open && !generator && typeof window !== "undefined") {
-      setLoading(true);
-      setError(null);
-      import("@xenova/transformers")
-        .then(async (mod) => {
-          const pipe = await mod.pipeline(
-            "text-generation",
-            "Xenova/gpt2",
-            { quantized: true }
-          );
-          if (!cancelled) {
-            setGenerator(pipe);
-          }
-        })
-        .catch((err) => {
-          console.error("Failed to load model", err);
-          if (!cancelled) setError("Falha ao carregar o modelo");
-        })
-        .finally(() => {
-          if (!cancelled) setLoading(false);
-        });
-    }
-    return () => {
-      cancelled = true;
-    };
-  }, [open, generator]);
 
   async function send() {
     const text = input.trim();
@@ -53,14 +24,14 @@ export default function AssistantWidget() {
     setMessages((m) => [...m, { sender: "user", text }]);
     setInput("");
     if (!generator) return;
-    setLoading(true);
+    setSending(true);
     const out = await generator(
       `Responda em portugues de forma concisa: ${text}`,
       { max_new_tokens: 60 }
     );
     const reply = (out[0] as any).generated_text.trim();
     setMessages((m) => [...m, { sender: "bot", text: reply }]);
-    setLoading(false);
+    setSending(false);
     if (window.speechSynthesis) {
       const utter = new SpeechSynthesisUtterance(reply);
       speechSynthesis.speak(utter);
