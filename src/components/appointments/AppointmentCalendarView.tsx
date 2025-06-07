@@ -2,12 +2,19 @@
 
 import type { Appointment, Patient, AttendanceStatus } from "@/lib/types";
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
   Calendar as CalendarIcon,
   CheckCircle,
   XCircle,
+  Ban,
   Edit3,
   Trash2,
   Clock,
@@ -57,8 +64,14 @@ export function AppointmentCalendarView({
   onUpdateAppointment,
   onDeleteAppointment,
 }: AppointmentCalendarViewProps) {
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
-  const [editingAppointment, setEditingAppointment] = useState<Appointment | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(
+    new Date(),
+  );
+  const [statusFilter, setStatusFilter] = useState<"all" | AttendanceStatus>(
+    "all",
+  );
+  const [editingAppointment, setEditingAppointment] =
+    useState<Appointment | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [toDelete, setToDelete] = useState<Appointment | null>(null);
   const { toast } = useToast();
@@ -77,7 +90,10 @@ export function AppointmentCalendarView({
     });
   };
 
-  const handleStatusChange = (appointmentId: string, status: AttendanceStatus) => {
+  const handleStatusChange = (
+    appointmentId: string,
+    status: AttendanceStatus,
+  ) => {
     const appointment = appointments.find((a) => a.id === appointmentId);
     if (appointment) {
       onUpdateAppointment({ ...appointment, status });
@@ -88,13 +104,15 @@ export function AppointmentCalendarView({
     }
   };
 
-  const filteredAppointments = selectedDate
-    ? appointments
-        .filter((app) => isSameDay(parseISO(app.dateTime), selectedDate))
-        .sort((a, b) => parseISO(a.dateTime).getTime() - parseISO(b.dateTime).getTime())
-    : appointments.sort(
-        (a, b) => parseISO(a.dateTime).getTime() - parseISO(b.dateTime).getTime()
-      );
+  const filteredAppointments = appointments
+    .filter(
+      (app) =>
+        (!selectedDate || isSameDay(parseISO(app.dateTime), selectedDate)) &&
+        (statusFilter === "all" || app.status === statusFilter),
+    )
+    .sort(
+      (a, b) => parseISO(a.dateTime).getTime() - parseISO(b.dateTime).getTime(),
+    );
 
   const statusMap: Record<
     AttendanceStatus,
@@ -103,15 +121,21 @@ export function AppointmentCalendarView({
     pending: { label: "Pendente", icon: Clock, color: "text-yellow-500" },
     present: { label: "Presente", icon: CheckCircle, color: "text-green-500" },
     absent: { label: "Ausente", icon: XCircle, color: "text-red-500" },
-    rescheduled: { label: "Remarcado", icon: CalendarIcon, color: "text-blue-500" },
+    rescheduled: {
+      label: "Remarcado",
+      icon: CalendarIcon,
+      color: "text-blue-500",
+    },
+    canceled: { label: "Cancelado", icon: Ban, color: "text-gray-500" },
   };
 
   const getAppointmentBadgeVariant = (
     dateTime: string,
-    status: AttendanceStatus
+    status: AttendanceStatus,
   ): "default" | "secondary" | "destructive" | "outline" => {
     if (status === "present") return "default";
     if (status === "absent") return "destructive";
+    if (status === "canceled") return "outline";
     if (isPast(parseISO(dateTime)) && status === "pending") return "secondary";
     return "outline";
   };
@@ -159,6 +183,23 @@ export function AppointmentCalendarView({
                   Visualize e gerencie os agendamentos do dia.
                 </CardDescription>
               </div>
+              <Select
+                value={statusFilter}
+                onValueChange={(val) =>
+                  setStatusFilter(val as "all" | AttendanceStatus)
+                }
+              >
+                <SelectTrigger className="w-[160px]">
+                  <SelectValue placeholder="Filtrar" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos</SelectItem>
+                  <SelectItem value="pending">Agendados</SelectItem>
+                  <SelectItem value="present">Finalizados</SelectItem>
+                  <SelectItem value="canceled">Cancelados</SelectItem>
+                  <SelectItem value="rescheduled">Remarcados</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </CardHeader>
           <CardContent>
@@ -172,14 +213,17 @@ export function AppointmentCalendarView({
                 {filteredAppointments.map((app) => {
                   const statusInfo = statusMap[app.status];
                   const appDateTime = parseISO(app.dateTime);
-                  const isAppointmentPast = isPast(appDateTime) && !isToday(appDateTime);
+                  const isAppointmentPast =
+                    isPast(appDateTime) && !isToday(appDateTime);
 
                   return (
                     <li
                       key={app.id}
                       className={cn(
                         "p-4 border rounded-lg shadow-sm hover:shadow-md transition-all",
-                        isAppointmentPast ? "bg-muted/50 opacity-80" : "bg-card"
+                        isAppointmentPast
+                          ? "bg-muted/50 opacity-80"
+                          : "bg-card",
                       )}
                     >
                       <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-2">
@@ -192,7 +236,7 @@ export function AppointmentCalendarView({
                             {format(appDateTime, "HH:mm")} -{" "}
                             {format(
                               addMinutes(appDateTime, app.durationMinutes),
-                              "HH:mm"
+                              "HH:mm",
                             )}{" "}
                             ({app.durationMinutes} min)
                           </p>
@@ -200,12 +244,15 @@ export function AppointmentCalendarView({
                         <Badge
                           variant={getAppointmentBadgeVariant(
                             app.dateTime,
-                            app.status
+                            app.status,
                           )}
                           className="mt-2 sm:mt-0 self-start sm:self-center"
                         >
                           <statusInfo.icon
-                            className={cn("mr-1.5 h-3.5 w-3.5", statusInfo.color)}
+                            className={cn(
+                              "mr-1.5 h-3.5 w-3.5",
+                              statusInfo.color,
+                            )}
                           />
                           {statusInfo.label}
                         </Badge>
@@ -223,17 +270,23 @@ export function AppointmentCalendarView({
                           onValueChange={(newStatus) =>
                             handleStatusChange(
                               app.id,
-                              newStatus as AttendanceStatus
+                              newStatus as AttendanceStatus,
                             )
                           }
-                          disabled={isAppointmentPast && app.status !== "pending"}
+                          disabled={
+                            isAppointmentPast && app.status !== "pending"
+                          }
                         >
                           <SelectTrigger className="w-full sm:w-[150px] text-xs h-9">
                             <SelectValue placeholder="Alterar Status" />
                           </SelectTrigger>
                           <SelectContent>
                             {Object.entries(statusMap).map(([key, val]) => (
-                              <SelectItem key={key} value={key} className="text-xs">
+                              <SelectItem
+                                key={key}
+                                value={key}
+                                className="text-xs"
+                              >
                                 <div className="flex items-center">
                                   <val.icon
                                     className={cn("mr-2 h-4 w-4", val.color)}
@@ -277,10 +330,14 @@ export function AppointmentCalendarView({
                             title="Confirmar Exclusão"
                           >
                             <p className="text-sm">
-                              Tem certeza que deseja excluir este agendamento para {app.patientName} em {format(appDateTime, "dd/MM/yyyy 'às' HH:mm")}? 
+                              Tem certeza que deseja excluir este agendamento
+                              para {app.patientName} em{" "}
+                              {format(appDateTime, "dd/MM/yyyy 'às' HH:mm")}?
                             </p>
                             <div className="mt-4 flex justify-end gap-2">
-                              <Button onClick={() => setToDelete(null)}>Cancelar</Button>
+                              <Button onClick={() => setToDelete(null)}>
+                                Cancelar
+                              </Button>
                               <Button
                                 variant="destructive"
                                 onClick={() => {
@@ -297,8 +354,8 @@ export function AppointmentCalendarView({
 
                       {isAppointmentPast && app.status === "pending" && (
                         <p className="text-xs text-orange-600 mt-2 flex items-center">
-                          <AlertCircle className="h-3 w-3 mr-1" /> Este agendamento
-                          passado está pendente. Atualize o status.
+                          <AlertCircle className="h-3 w-3 mr-1" /> Este
+                          agendamento passado está pendente. Atualize o status.
                         </p>
                       )}
                     </li>
@@ -342,9 +399,9 @@ export function AppointmentCalendarView({
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground">
-            Lembretes automáticos por e-mail são enviados aos pacientes 24 horas e
-            30 minutos antes de cada sessão agendada.
-            (Funcionalidade ainda não implementada neste protótipo.)
+            Lembretes automáticos por e-mail são enviados aos pacientes 24 horas
+            e 30 minutos antes de cada sessão agendada. (Funcionalidade ainda
+            não implementada neste protótipo.)
           </p>
         </CardContent>
       </Card>
