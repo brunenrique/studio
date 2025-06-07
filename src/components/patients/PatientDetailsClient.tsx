@@ -6,16 +6,22 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, UserCircle, CalendarDays as CalendarIcon, Phone, Gift } from "lucide-react";
+import { WhatsappIcon } from "../icons/WhatsappIcon";
+import { useAuth } from "@/contexts/AuthContext";
 import Link from "next/link";
 import { SessionNotesSection } from "./SessionNotesSection";
 import { AIInsightsSection } from "./AIInsightsSection";
 import { PatientFormDialog } from "./PatientFormDialog";
 import { format, parseISO, differenceInYears } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
+import { useNotifications } from "@/contexts/NotificationContext";
 import { usePatientAssessments } from "@/hooks/usePatientAssessments";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import Image from "next/image";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertTriangle } from "lucide-react";
+import { useCriticalTerms } from "@/hooks/useCriticalTerms";
 
 interface PatientDetailsClientProps {
   patientId: string;
@@ -26,7 +32,11 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
   const [patient, setPatient] = useState<Patient | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
+const { user } = useAuth();
+const { addNotification } = useNotifications();
+
   const { data: assessments, loading: loadingAssessments } = usePatientAssessments(patientId);
+  const criticalTerms = useCriticalTerms(patient ? patient.sessionNotes : []);
 
   useEffect(() => {
     const foundPatient = getMockPatientById(patientId);
@@ -64,6 +74,7 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
       title: "Nota Adicionada",
       description: "A nova nota de sessão foi salva com sucesso.",
     });
+    addNotification(`Nota adicionada para ${patient.name}`);
   };
 
   const handleDeleteNote = async (noteId: string) => {
@@ -142,6 +153,17 @@ const handleSavePatient = (updatedPatient: Patient) => {
 
   return (
     <div className="space-y-6">
+      {criticalTerms.length > 0 && (
+        <Alert variant="destructive" className="flex items-start gap-2">
+          <AlertTriangle className="h-5 w-5 mt-0.5" />
+          <div>
+            <AlertTitle>Atenção</AlertTitle>
+            <AlertDescription>
+              Termos críticos detectados nas notas: {criticalTerms.join(', ')}.
+            </AlertDescription>
+          </div>
+        </Alert>
+      )}
       <div className="flex items-center justify-between mb-6">
         <Button asChild variant="outline" className="shadow-sm">
           <Link href="/patients">
@@ -175,8 +197,19 @@ const handleSavePatient = (updatedPatient: Patient) => {
             <CardContent className="p-0 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 text-sm">
               <div className="flex items-center">
                 <Phone className="h-5 w-5 mr-3 text-primary" />
-                <div>
+                <div className="flex items-center">
                   <span className="font-semibold">Contato:</span> {patient.contact}
+                  {user?.role === 'AGENDAMENTO' && /^\d{10,13}$/.test(patient.contact) && (
+                    <a
+                      href={`https://wa.me/${patient.contact}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="ml-2 text-green-600 hover:text-green-700"
+                    >
+                      <WhatsappIcon className="h-4 w-4" />
+                      <span className="sr-only">WhatsApp</span>
+                    </a>
+                  )}
                 </div>
               </div>
               {patient.cpf && (

@@ -177,3 +177,20 @@ export interface FormulationDiagram {
   sessionId: string;
   diagramJson: string;
 }
+
+// 🚫 Horário bloqueado pontual
+export interface BlockedTime {
+  id: string;
+  dateTime: string; // ISO 8601
+  durationMinutes: number;
+  reason?: string;
+}
+
+// 🔁 Bloqueio semanal recorrente
+export interface WeeklyBlockedTime {
+  id: string;
+  weekday: number; // 0 (domingo) - 6 (sábado)
+  start: string; // HH:MM
+  end: string; // HH:MM
+  reason?: string;
+}
