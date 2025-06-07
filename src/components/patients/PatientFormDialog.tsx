@@ -91,10 +91,24 @@ export function PatientFormDialog({ patient, onSave, children, isOpen: controlle
     setIsLoading(true);
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
-    
+
+    let encryptedCpf = values.cpf;
+    try {
+      const res = await fetch('/api/crypto', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'encrypt', data: values.cpf })
+      });
+      const json = await res.json();
+      if (json.result) encryptedCpf = json.result;
+    } catch (err) {
+      console.error('Failed to encrypt CPF', err);
+    }
+
     const patientData: Patient = {
       id: patient?.id || `patient-${Date.now()}`, // Generate new ID or use existing
       ...values,
+      cpf: encryptedCpf,
       dateOfBirth: format(values.dateOfBirth, "yyyy-MM-dd"),
       sessionNotes: patient?.sessionNotes || [],
       treatmentPlan: values.treatmentPlan || "",
