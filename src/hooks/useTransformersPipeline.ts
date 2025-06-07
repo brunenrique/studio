@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import type { Pipeline } from "@xenova/transformers";
+import type { TextGenerationPipeline } from "@xenova/transformers";
 
 export function useTransformersPipeline(open: boolean) {
-  const [generator, setGenerator] = useState<Pipeline | null>(null);
+  const [generator, setGenerator] = useState<TextGenerationPipeline | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -22,9 +22,11 @@ export function useTransformersPipeline(open: boolean) {
         setError(null);
         try {
           const mod = await import("@xenova/transformers");
-          const pipe = await mod.pipeline("text-generation", "Xenova/gpt2", {
-            quantized: true,
-          });
+          const pipe = (await mod.pipeline(
+            "text-generation",
+            "Xenova/gpt2",
+            { quantized: true }
+          )) as TextGenerationPipeline;
           if (!cancelled) {
             setGenerator(pipe);
           }
