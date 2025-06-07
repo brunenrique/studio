@@ -3,6 +3,7 @@
 
 // Placeholder for Registration Page
 import { useState } from 'react';
+import type { UserRole } from '@/lib/types';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -16,7 +17,7 @@ import { useAuth } from "@/contexts/AuthContext";
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('PSYCHOLOGIST'); // Default role
+  const [role, setRole] = useState<UserRole>('PSYCHOLOGIST'); // Default role
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
@@ -37,7 +38,7 @@ export default function RegisterPage() {
     }
 
     try {
-      await register(email, password, role as any);
+      await register(email, password, role);
       setSuccess(true);
       setTimeout(() => {
         router.push('/login');
