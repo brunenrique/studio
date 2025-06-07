@@ -194,38 +194,43 @@ export default function AppSidebar() {
           <Menu className="h-5 w-5" />
         </Button>
       </div>
-      <Sheet open={open} onOpenChange={setOpen}>
-        <SheetPortal>
-          <SheetOverlay className="fixed inset-0 z-50 bg-black/60 md:hidden backdrop-blur-sm" />
-          <SheetContent
-            side="left"
-            className="p-0 w-[72vw] max-w-xs md:w-56 lg:w-60 h-full overflow-y-auto shadow-xl bg-background"
-          >
-            <div className="flex justify-end p-4 lg:hidden">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setOpen(false)}
-                title="Fechar menu"
-              >
-                <Menu className="h-5 w-5 rotate-180" />
-              </Button>
-            </div>
-            <motion.div
-              ref={ref}
-              initial={{ x: -300, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: -300, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+      <div className="hidden lg:block h-screen">
+        <SidebarContent className="h-full" />
+      </div>
+      <div className="lg:hidden">
+        <Sheet open={open} onOpenChange={setOpen}>
+          <SheetPortal>
+            <SheetOverlay className="fixed inset-0 z-50 bg-black/60 md:hidden backdrop-blur-sm" />
+            <SheetContent
+              side="left"
+              className="p-0 w-[72vw] max-w-xs md:w-56 lg:w-60 h-full overflow-y-auto shadow-xl bg-background"
             >
-              <SidebarContent
-                className="h-full"
-                onNavigate={() => setTimeout(() => setOpen(false), 150)}
-              />
-            </motion.div>
-          </SheetContent>
-        </SheetPortal>
-      </Sheet>
+              <div className="flex justify-end p-4 lg:hidden">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setOpen(false)}
+                  title="Fechar menu"
+                >
+                  <Menu className="h-5 w-5 rotate-180" />
+                </Button>
+              </div>
+              <motion.div
+                ref={ref}
+                initial={{ x: -300, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: -300, opacity: 0 }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              >
+                <SidebarContent
+                  className="h-full"
+                  onNavigate={() => setTimeout(() => setOpen(false), 150)}
+                />
+              </motion.div>
+            </SheetContent>
+          </SheetPortal>
+        </Sheet>
+      </div>
     </>
   );
 }
