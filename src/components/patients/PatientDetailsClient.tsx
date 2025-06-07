@@ -16,12 +16,14 @@ import { format, parseISO, differenceInYears } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import { useNotifications } from "@/contexts/NotificationContext";
 import { usePatientAssessments } from "@/hooks/usePatientAssessments";
+import { usePatientAppointments } from "@/hooks/usePatientAppointments";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import Image from "next/image";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertTriangle } from "lucide-react";
 import { useCriticalTerms } from "@/hooks/useCriticalTerms";
+import { cn } from "@/lib/utils";
 
 interface PatientDetailsClientProps {
   patientId: string;
@@ -36,7 +38,16 @@ const { user } = useAuth();
 const { addNotification } = useNotifications();
 
   const { data: assessments, loading: loadingAssessments } = usePatientAssessments(patientId);
+  const { appointments, loading: loadingAppointments } = usePatientAppointments(patientId);
   const criticalTerms = useCriticalTerms(patient ? patient.sessionNotes : []);
+
+  const totalAppointments = appointments.length;
+  const absences = appointments.filter(a => a.status === 'absent').length;
+  const presences = appointments.filter(a => a.status === 'present').length;
+  const attendancePercentage = totalAppointments > 0 ? (presences / totalAppointments) * 100 : 0;
+  const lastPresenceDate = appointments
+    .filter(a => a.status === 'present')
+    .sort((a, b) => new Date(b.dateTime).getTime() - new Date(a.dateTime).getTime())[0]?.dateTime;
 
   useEffect(() => {
     const foundPatient = getMockPatientById(patientId);
@@ -244,6 +255,42 @@ const handleSavePatient = (updatedPatient: Patient) => {
           </div>
         </div>
       </Card>
+
+      {user?.role === 'PSYCHOLOGIST' && (
+        <Card
+          className={cn(
+            'shadow-lg',
+            totalAppointments > 0 && absences / totalAppointments > 0.5 &&
+              'border-destructive bg-destructive/10'
+          )}
+        >
+          <CardHeader>
+            <CardTitle>Relatório de Faltas</CardTitle>
+          </CardHeader>
+          <CardContent className="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <span className="font-semibold">Total de Sessões:</span>{' '}
+              {totalAppointments}
+            </div>
+            <div>
+              <span className="font-semibold">Faltas:</span>{' '}
+              <span className={absences / (totalAppointments || 1) > 0.5 ? 'text-destructive font-semibold' : ''}>{absences}</span>
+            </div>
+            <div>
+              <span className="font-semibold">Comparecimentos:</span>{' '}
+              {presences}
+            </div>
+            <div>
+              <span className="font-semibold">% Comparecimento:</span>{' '}
+              {attendancePercentage.toFixed(0)}%
+            </div>
+            <div className="col-span-2">
+              <span className="font-semibold">Última Presença:</span>{' '}
+              {lastPresenceDate ? format(parseISO(lastPresenceDate), 'dd/MM/yyyy') : '-'}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <SessionNotesSection
         patient={patient}
