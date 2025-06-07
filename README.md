@@ -57,7 +57,8 @@ CRYPTO_SECRET_KEY=REPLACE_ME_BASE64_32BYTES
 | `PUBLIC_URL` | URL pública usada nos links (requer HTTPS) | não |
 
 Se ocorrerem erros de login como "Could not reach Cloud Firestore backend" ou
-`auth/internal-error`, consulte [docs/troubleshooting.md](docs/troubleshooting.md)
+`auth/internal-error`, consulte a seção
+[Problemas de Login](docs/troubleshooting.md#problemas-de-login)
 para passos de correção.
 
 Todos os dados de pacientes são criptografados no cliente usando AES antes de serem manipulados.
