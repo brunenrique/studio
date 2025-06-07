@@ -42,7 +42,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             name: fbUser.displayName || '',
             email: fbUser.email || '',
             role: (data?.role as User['role']) || 'PSYCHOLOGIST',
-            isApproved: data?.isApproved ?? false,
+            // A aprovação automática está habilitada por padrão
+            isApproved: data?.isApproved ?? true,
             profileImage: fbUser.photoURL || undefined,
           };
           setUser(mappedUser);
@@ -104,7 +105,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const ref = doc(db, 'users', fbUser.uid);
       const snap = await getDoc(ref);
       if (!snap.exists()) {
-        data = { role: 'PSYCHOLOGIST', isApproved: false };
+        // Novo usuário é aprovado automaticamente
+        data = { role: 'PSYCHOLOGIST', isApproved: true };
         await setDoc(ref, data);
       } else {
         data = snap.data() as Partial<User>;
@@ -114,7 +116,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         name: fbUser.displayName || '',
         email: fbUser.email || '',
         role: (data?.role as User['role']) || 'PSYCHOLOGIST',
-        isApproved: data?.isApproved ?? false,
+        // A aprovação automática está habilitada por padrão
+        isApproved: data?.isApproved ?? true,
         profileImage: fbUser.photoURL || undefined,
       };
       setUser(mappedUser);

@@ -29,13 +29,8 @@ export default function AppLayout({
     );
   }
 
-  if (user && !user.isApproved) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <p>Aguardando aprovação do administrador...</p>
-      </div>
-    );
-  }
+  // A aprovação de administradores foi temporariamente desativada,
+  // portanto não bloqueamos o acesso de usuários não aprovados.
 
   return (
     <div className="flex min-h-screen w-full">
