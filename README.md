@@ -44,6 +44,8 @@ CRYPTO_SECRET_KEY=REPLACE_ME_BASE64_32BYTES
 | `TWILIO_SMS_FROM` | Número de origem para SMS | sim |
 | `TWILIO_WHATSAPP_FROM` | Número de origem para WhatsApp | sim |
 | `TASK_REMINDER_MINUTES` | Minutos antes do vencimento para disparar lembrete de tarefa (padrão 10) | sim |
+| `APPOINTMENT_REMINDER_CRON` | Cron de execução do lembrete de sessões (padrão `* * * * *`) | sim |
+| `TASK_REMINDER_CRON` | Cron de execução do lembrete de tarefas (padrão `* * * * *`) | sim |
 | `ASSESSMENT_REMINDER_HOURS` | Horas após a criação para lembrar inventários pendentes (padrão 24) | sim |
 | `PUBLIC_URL` | URL pública usada nos links enviados por e-mail ou WhatsApp | não |
 
