@@ -12,6 +12,11 @@ export function generateRecurringDates(start: Date | string, rule: RecurrenceRul
   const untilDate = rule.until ? (typeof rule.until === 'string' ? parseISO(rule.until) : rule.until) : null;
   const freqWeeks = rule.frequency === 'daily' ? 0 : rule.frequency === 'weekly' ? 1 : 2;
 
+  if (rule.count !== undefined && rule.count <= 0) return [];
+  if (untilDate && untilDate < startDate) return [];
+  const allowedWeekdays = rule.weekdays?.filter((d) => d >= 0 && d <= 6);
+  if (rule.weekdays && (!allowedWeekdays || allowedWeekdays.length === 0)) return [];
+
   let day = startOfWeek(startDate, { weekStartsOn: 0 });
   let added = 0;
   const maxIterations = 1000; // safety guard
@@ -22,7 +27,7 @@ export function generateRecurringDates(start: Date | string, rule: RecurrenceRul
     if (rule.count && added >= rule.count) break;
 
     if (current >= startDate) {
-      if (!rule.weekdays || rule.weekdays.includes(current.getDay())) {
+      if (!allowedWeekdays || allowedWeekdays.includes(current.getDay())) {
         if (
           freqWeeks === 0 ||
           differenceInCalendarWeeks(current, startDate, { weekStartsOn: 0 }) % freqWeeks === 0
