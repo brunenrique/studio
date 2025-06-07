@@ -38,8 +38,14 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { CalendarIcon, Loader2, Clock } from "lucide-react";
 import { cn, formatCPF, isValidCPF } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
 import { useSettings } from "@/contexts/SettingsContext";
-import { parseBlockedTimes, parseWeeklyBlockedTimes, isDateTimeBlocked } from "@/lib/availability";
+import {
+  parseBlockedTimes,
+  parseWeeklyBlockedTimes,
+  isDateTimeBlocked,
+} from "@/lib/availability";
+
 import { format, parseISO, setHours, setMinutes, addMinutes, isValid } from "date-fns";
 import type { Appointment, Patient, AttendanceStatus } from "@/lib/types";
 import { mockAppointments } from "@/lib/mock-data";
@@ -73,6 +79,7 @@ interface AppointmentFormDialogProps {
   defaultDate?: Date;
   isOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
+  appointments?: Appointment[];
 }
 
 export function AppointmentFormDialog({
@@ -83,13 +90,76 @@ export function AppointmentFormDialog({
   defaultDate,
   isOpen: controlledIsOpen,
   onOpenChange: controlledOnOpenChange,
+  appointments,
 }: AppointmentFormDialogProps) {
   const [internalOpen, setInternalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [patientQuery, setPatientQuery] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [phoneError, setPhoneError] = useState<string | null>(null);
-  const { system } = useSettings();
+"use client";
+
+import type { Appointment, Patient, AttendanceStatus } from "@/lib/types";
+import { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+  Calendar as CalendarIcon,
+  CheckCircle,
+  XCircle,
+  Ban,
+  Edit3,
+  Trash2,
+  Clock,
+  User,
+  AlertCircle,
+  Info,
+  Phone,
+  MessageCircle,
+  History,
+} from "lucide-react";
+import {
+  format,
+  parseISO,
+  isSameDay,
+  isPast,
+  isToday,
+  addMinutes,
+} from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { SmartModal } from "@/components/SmartModal";
+import { useToast } from "@/hooks/use-toast";
+import { Badge } from "@/components/ui/badge";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import Link from "next/link";
+import { useAuth } from "@/contexts/AuthContext";
+import { cn } from "@/lib/utils";
+import { useSettings } from "@/contexts/SettingsContext";
+import { BlockTimeDialog } from "@/components/BlockTimeDialog";
+import { AppointmentHistoryModal } from "@/components/AppointmentHistoryModal";
+
+const { system } = useSettings();
+const { toast } = useToast();
+
 
   const isOpen =
     controlledIsOpen !== undefined ? controlledIsOpen : internalOpen;
@@ -189,7 +259,32 @@ export function AppointmentFormDialog({
     await new Promise((resolve) => setTimeout(resolve, 1000));
     const [hours, minutes] = values.time.split(":").map(Number);
     const combinedDateTime = setMinutes(setHours(values.date, hours), minutes);
-    if (isDateTimeBlocked(combinedDateTime, blocked, weekly)) {
+const iso = combinedDateTime.toISOString();
+
+if (isDateTimeBlocked(combinedDateTime, blocked, weekly)) {
+  toast({
+    title: "Horário Bloqueado",
+    description: "Este horário está bloqueado na agenda.",
+    variant: "destructive",
+  });
+  setIsLoading(false);
+  return;
+}
+
+if (
+  appointments?.some(
+    (a) => a.id !== appointment?.id && a.dateTime === iso
+  )
+) {
+  toast({
+    title: "Horário Ocupado",
+    description: "Já existe um agendamento neste horário.",
+    variant: "destructive",
+  });
+  setIsLoading(false);
+  return;
+}
+
       setIsLoading(false);
       return;
     }
@@ -197,7 +292,7 @@ export function AppointmentFormDialog({
       id: appointment?.id || `appt-${Date.now()}`,
       patientId: values.patientId,
       patientName: patients.find((p) => p.id === values.patientId)?.name ?? "",
-      dateTime: combinedDateTime.toISOString(),
+      dateTime: iso,
       durationMinutes: values.durationMinutes,
       status: values.status as AttendanceStatus,
       notes: values.notes,

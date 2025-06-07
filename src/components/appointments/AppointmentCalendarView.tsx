@@ -17,6 +17,7 @@ import {
   Edit3,
   Trash2,
   Clock,
+  History,
 } from "lucide-react";
 import {
   format,
@@ -36,6 +37,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { SmartModal } from "@/components/SmartModal";
+import { AppointmentHistoryModal } from "./AppointmentHistoryModal";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -71,6 +73,7 @@ export function AppointmentCalendarView({
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isBlockOpen, setIsBlockOpen] = useState(false);
   const [toDelete, setToDelete] = useState<Appointment | null>(null);
+  const [historyFor, setHistoryFor] = useState<Appointment | null>(null);
   const { toast } = useToast();
   const { system, updateSystem } = useSettings();
 
@@ -225,14 +228,82 @@ export function AppointmentCalendarView({
                     <span className="font-medium">
                       {format(parseISO(item.block.dateTime), "HH:mm")} - Indisponível
                     </span>
-                  </li>
-                ) : (
-                  <li
-                    key={item.appt.id}
-                    className={cn(
-                      "flex items-center justify-between rounded-md border p-2",
-                      statusMap[item.appt.status].color
-                    )}
+</li>
+) : (
+  <li
+    key={app.id}
+    className={cn(
+      "flex items-center justify-between rounded-md border p-2",
+      statusMap[app.status].color
+    )}
+  >
+    <div>
+      <h3 className="text-sm font-semibold text-primary">
+        {app.patientName || "Paciente não encontrado"}
+      </h3>
+      <Badge
+        variant={getBadgeVariant(app.dateTime, app.status)}
+        className="w-max mt-1"
+      >
+        {statusMap[app.status].label}
+      </Badge>
+    </div>
+    <div className="flex gap-2">
+      <Button variant="ghost" size="icon" onClick={() => setHistoryFor(app)}>
+        <History className="h-4 w-4" />
+      </Button>
+      <Button variant="ghost" size="icon" onClick={() => handleEdit(app)}>
+        <Edit3 className="h-4 w-4" />
+      </Button>
+      <Button
+        variant="ghost"
+        size="icon"
+        className="text-destructive"
+        onClick={() => setToDelete(app)}
+      >
+        <Trash2 className="h-4 w-4" />
+      </Button>
+      <Select
+        value={app.status}
+        onValueChange={(v) => handleStatusChange(app.id, v as AttendanceStatus)}
+      >
+        <SelectTrigger className="w-[110px]">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="pending">Pendente</SelectItem>
+          <SelectItem value="present">Presente</SelectItem>
+          <SelectItem value="absent">Ausente</SelectItem>
+          <SelectItem value="rescheduled">Remarcado</SelectItem>
+          <SelectItem value="canceled">Cancelado</SelectItem>
+        </SelectContent>
+      </Select>
+    </div>
+    <SmartModal
+      id="delete-appt"
+      open={toDelete?.id === app.id}
+      onClose={() => setToDelete(null)}
+      title="Confirmar Exclusão"
+    >
+      <p className="text-sm">
+        Tem certeza que deseja excluir este agendamento para {app.patientName} em {format(parseISO(app.dateTime), "dd/MM/yyyy 'às' HH:mm")}?
+      </p>
+      <div className="mt-4 flex justify-end gap-2">
+        <Button onClick={() => setToDelete(null)}>Cancelar</Button>
+        <Button
+          variant="destructive"
+          onClick={() => {
+            handleDelete(app.id);
+            setToDelete(null);
+          }}
+        >
+          Excluir
+        </Button>
+      </div>
+    </SmartModal>
+  </li>
+)
+
                   >
                     <div className="flex flex-col">
                       <span className="font-medium">
@@ -307,6 +378,7 @@ export function AppointmentCalendarView({
       <AppointmentFormDialog
         appointment={editingAppointment}
         patients={patients}
+        appointments={appointments}
         onSave={(data) => {
           setEditingAppointment(null);
           onUpdateAppointment(data);
@@ -329,6 +401,15 @@ export function AppointmentCalendarView({
       >
         <button className="hidden" />
       </BlockTimeDialog>
+
+      <AppointmentHistoryModal
+        appointmentId={historyFor?.id ?? null}
+        open={historyFor !== null}
+        onOpenChange={(o) => {
+          if (!o) setHistoryFor(null);
+        }}
+      />
+
     </TooltipProvider>
   );
 }

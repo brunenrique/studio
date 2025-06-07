@@ -5,7 +5,7 @@
   "engines": {
     "node": "18"
   },
-  "main": "lib/sendAssessmentLink.js",
+  "main": "lib/index.js",
   "scripts": {
     "serve": "npm run build && firebase emulators:start --only functions",
     "build": "tsc",
