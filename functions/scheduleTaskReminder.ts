@@ -42,8 +42,10 @@ async function send(uid: string, taskId: string, title: string) {
   }
 }
 
+// A frequência de execução pode ser alterada pela variável de ambiente
+// `TASK_REMINDER_CRON` (padrão executa a cada minuto).
 export const scheduleTaskReminder = functions.pubsub
-  .schedule('* * * * *')
+  .schedule(process.env.TASK_REMINDER_CRON || '* * * * *')
   .onRun(async () => {
     const now = admin.firestore.Timestamp.now();
     const limit = admin.firestore.Timestamp.fromMillis(

@@ -49,8 +49,10 @@ async function processReminders(minutesBefore: number, flag: string) {
   }
 }
 
+// A frequência de execução pode ser alterada pela variável de ambiente
+// `APPOINTMENT_REMINDER_CRON` (padrão executa a cada minuto).
 export const scheduleAppointmentReminder = functions.pubsub
-  .schedule('* * * * *')
+  .schedule(process.env.APPOINTMENT_REMINDER_CRON || '* * * * *')
   .onRun(async () => {
     await processReminders(MINUTES_BEFORE_24H, 'reminder24hSent');
     await processReminders(MINUTES_BEFORE_30M, 'reminder30mSent');
