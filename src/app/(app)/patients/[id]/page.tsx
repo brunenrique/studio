@@ -13,6 +13,7 @@ import { db } from '@/lib/firebaseClient';
 import { addDoc, collection, updateDoc, doc, deleteDoc, serverTimestamp } from 'firebase/firestore';
 import type { Task } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
+import { useRequireRole } from '@/hooks/useRequireRole';
 
 interface PatientDetailPageProps {
   params: {
@@ -21,10 +22,27 @@ interface PatientDetailPageProps {
 }
 
 export default function PatientDetailPage({ params }: PatientDetailPageProps) {
+  const { isLoading, hasRole } = useRequireRole('Psicólogo');
   const { tasks } = useTasks(params.id);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editing, setEditing] = useState<Task | null>(null);
   const { toast } = useToast();
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <p>Carregando...</p>
+      </div>
+    );
+  }
+
+  if (!hasRole) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <p>Acesso restrito.</p>
+      </div>
+    );
+  }
 
   const handleSave = async (data: Omit<Task, 'id' | 'createdAt' | 'updatedAt' | 'createdBy' | 'patientId'>) => {
     if (editing) {

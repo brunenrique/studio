@@ -9,8 +9,8 @@ export function getCryptoKey(): Buffer {
   if (cachedKey) return cachedKey;
   const key = process.env.CRYPTO_SECRET_KEY;
   if (!key) {
-    if (process.env.NODE_ENV === "development") {
-      console.warn("[dev] Generated random CRYPTO_SECRET_KEY");
+    if (process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test") {
+      console.warn(`[${process.env.NODE_ENV}] Generated random CRYPTO_SECRET_KEY`);
       cachedKey = crypto.randomBytes(32);
       return cachedKey;
     }
@@ -42,4 +42,13 @@ export function encrypt(text: string): string {
 export function decrypt(ciphertext: string): string {
   const key = getCryptoKey().toString('base64');
   return CryptoJS.AES.decrypt(ciphertext, key).toString(CryptoJS.enc.Utf8);
+}
+
+export function tryDecrypt(value: string): string {
+  try {
+    const result = decrypt(value);
+    return result || value;
+  } catch {
+    return value;
+  }
 }

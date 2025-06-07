@@ -1,5 +1,6 @@
 
 import { format, addDays } from 'date-fns';
+import { encrypt, tryDecrypt } from './utils';
 import type {
   Patient,
   Appointment,
@@ -108,39 +109,50 @@ export let mockPatients: Patient[] = [
   },
 ];
 
-// --- Funções de criptografia mock ---
-const encryptMock = (data: string): string =>
-  data ? data.split('').reverse().join('') + '_encrypted' : '';
-
-const decryptMock = (data: string): string =>
-  data.endsWith('_encrypted') ? data.slice(0, -10).split('').reverse().join('') : data;
+// --- Funções de criptografia ---
+const encryptField = (data: string): string => encrypt(data);
+const decryptField = (data: string): string => tryDecrypt(data);
 
 // 🔓 Retorna lista descriptografada
 export const getMockPatientsList = (): Patient[] =>
   mockPatients.map((patient) => ({
     ...patient,
-    name: decryptMock(patient.name),
-    contact: decryptMock(patient.contact),
-    dateOfBirth: decryptMock(patient.dateOfBirth),
+    name: decryptField(patient.name),
+    contact: decryptField(patient.contact),
+    dateOfBirth: decryptField(patient.dateOfBirth),
+    sessionNotes: patient.sessionNotes.map(n => ({
+      ...n,
+      notes: decryptField(n.notes),
+      patientHistorySummaryForAI: n.patientHistorySummaryForAI
+        ? decryptField(n.patientHistorySummaryForAI)
+        : undefined,
+    })),
   }));
 
 // 🔒 Atualiza um paciente mock
-export const updateMockPatient = (updatedPatient: Patient): Patient => {
-  const index = mockPatients.findIndex((p) => p.id === updatedPatient.id);
-  if (index === -1) {
-    console.error(`Paciente com ID ${updatedPatient.id} não encontrado.`);
-    return updatedPatient;
-  }
-
+export const saveMockPatient = (patient: Patient): Patient => {
+  const index = mockPatients.findIndex((p) => p.id === patient.id);
   const encryptedPatient: Patient = {
-    ...updatedPatient,
-    name: encryptMock(updatedPatient.name),
-    contact: encryptMock(updatedPatient.contact),
-    dateOfBirth: encryptMock(updatedPatient.dateOfBirth),
+    ...patient,
+    name: encryptField(patient.name),
+    contact: encryptField(patient.contact),
+    dateOfBirth: encryptField(patient.dateOfBirth),
+    sessionNotes: patient.sessionNotes.map(n => ({
+      ...n,
+      notes: encryptField(n.notes),
+      patientHistorySummaryForAI: n.patientHistorySummaryForAI
+        ? encryptField(n.patientHistorySummaryForAI)
+        : undefined,
+    })),
   };
 
-  mockPatients[index] = encryptedPatient;
-  return updatedPatient;
+  if (index === -1) {
+    mockPatients.push(encryptedPatient);
+  } else {
+    mockPatients[index] = encryptedPatient;
+  }
+
+  return patient;
 };
 
 // 🔍 Busca paciente pelo ID
@@ -149,9 +161,16 @@ export const getMockPatientById = (id: string): Patient | null => {
   if (!patient) return null;
   return {
     ...patient,
-    name: decryptMock(patient.name),
-    contact: decryptMock(patient.contact),
-    dateOfBirth: decryptMock(patient.dateOfBirth),
+    name: decryptField(patient.name),
+    contact: decryptField(patient.contact),
+    dateOfBirth: decryptField(patient.dateOfBirth),
+    sessionNotes: patient.sessionNotes.map(n => ({
+      ...n,
+      notes: decryptField(n.notes),
+      patientHistorySummaryForAI: n.patientHistorySummaryForAI
+        ? decryptField(n.patientHistorySummaryForAI)
+        : undefined,
+    })),
   };
 };
 

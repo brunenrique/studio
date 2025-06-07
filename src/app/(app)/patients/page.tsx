@@ -2,18 +2,36 @@
 
 import { useState, useEffect } from 'react';
 import type { Patient } from '@/lib/types';
-import { getMockPatientsList, updateMockPatient } from '@/lib/mock-data';
+import { getMockPatientsList, saveMockPatient } from '@/lib/mock-data';
 import { PatientTable } from '@/components/patients/PatientTable';
 import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
 import { PatientFormDialog } from '@/components/patients/PatientFormDialog';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from "@/hooks/use-toast";
+import { useRequireRole } from '@/hooks/useRequireRole';
 
 export default function PatientsPage() {
+  const { isLoading, hasRole } = useRequireRole('Psicólogo');
   const [patients, setPatients] = useState<Patient[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const { toast } = useToast();
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <p>Carregando...</p>
+      </div>
+    );
+  }
+
+  if (!hasRole) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <p>Acesso restrito.</p>
+      </div>
+    );
+  }
 
   useEffect(() => {
     // Carrega lista de pacientes de exemplo
@@ -34,6 +52,8 @@ export default function PatientsPage() {
       }
     });
 
+    saveMockPatient(patientData);
+
     toast({
       title: patientData.id.startsWith("patient-") && patients.find(p => p.id === patientData.id)
         ? "Paciente Atualizado"
@@ -44,12 +64,6 @@ export default function PatientsPage() {
     setIsFormOpen(false);
   };
 
-  const handleUpdatePatient = (updatedPatient: Patient) => {
-    // Simula o salvamento com criptografia
-    updateMockPatient(updatedPatient);
-    // Atualiza a lista localmente buscando novamente os dados mock (agora com o paciente atualizado)
-    setPatients(getMockPatientsList());
-  };
 
   const handleDeletePatient = (patientId: string) => {
     setPatients(prevPatients => prevPatients.filter(p => p.id !== patientId));

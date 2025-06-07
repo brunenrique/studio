@@ -1,7 +1,7 @@
 "use client";
 
 import type { Patient, SessionNote } from "@/lib/types";
-import { getMockPatientById, updateMockPatient } from "@/lib/mock-data";
+import { getMockPatientById, saveMockPatient } from "@/lib/mock-data";
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -56,7 +56,7 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
         ...prev,
         sessionNotes: [...prev.sessionNotes, newNote],
       };
-      updateMockPatient(updated);
+      saveMockPatient(updated);
       return updated;
     });
 
@@ -75,7 +75,7 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
         ...prev,
         sessionNotes: prev.sessionNotes.filter(note => note.id !== noteId),
       };
-      updateMockPatient(updated);
+      saveMockPatient(updated);
       return updated;
     });
 
@@ -102,7 +102,7 @@ const handleEditNote = async (
         note.id === noteId ? { ...note, notes: content, date } : note,
       ),
     };
-    updateMockPatient(updated);
+    saveMockPatient(updated);
     return updated;
   });
 
@@ -114,7 +114,7 @@ const handleEditNote = async (
 
 const handleSavePatient = (updatedPatient: Patient) => {
   setPatient(updatedPatient);
-  updateMockPatient(updatedPatient);
+  saveMockPatient(updatedPatient);
   toast({
     title: "Paciente Atualizado",
     description: "Os dados do paciente foram salvos com sucesso.",
