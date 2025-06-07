@@ -40,7 +40,7 @@ import { SmartModal } from "@/components/SmartModal";
 import { AppointmentHistoryModal } from "./AppointmentHistoryModal";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import { TooltipProvider } from "@radix-ui/react-tooltip";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import type { Appointment, Patient, AttendanceStatus, BlockedTime } from "@/lib/types";
@@ -219,7 +219,7 @@ export function AppointmentCalendarView({
               <p className="text-sm text-muted-foreground mt-4">Nenhum agendamento encontrado.</p>
             )}
             <ul className="space-y-2">
-              {combined.map((item) => (
+              {combined.map((item) =>
                 item.type === "block" ? (
                   <li
                     key={item.block.id}
@@ -228,92 +228,30 @@ export function AppointmentCalendarView({
                     <span className="font-medium">
                       {format(parseISO(item.block.dateTime), "HH:mm")} - Indisponível
                     </span>
-</li>
-) : (
-  <li
-    key={app.id}
-    className={cn(
-      "flex items-center justify-between rounded-md border p-2",
-      statusMap[app.status].color
-    )}
-  >
-    <div>
-      <h3 className="text-sm font-semibold text-primary">
-        {app.patientName || "Paciente não encontrado"}
-      </h3>
-      <Badge
-        variant={getBadgeVariant(app.dateTime, app.status)}
-        className="w-max mt-1"
-      >
-        {statusMap[app.status].label}
-      </Badge>
-    </div>
-    <div className="flex gap-2">
-      <Button variant="ghost" size="icon" onClick={() => setHistoryFor(app)}>
-        <History className="h-4 w-4" />
-      </Button>
-      <Button variant="ghost" size="icon" onClick={() => handleEdit(app)}>
-        <Edit3 className="h-4 w-4" />
-      </Button>
-      <Button
-        variant="ghost"
-        size="icon"
-        className="text-destructive"
-        onClick={() => setToDelete(app)}
-      >
-        <Trash2 className="h-4 w-4" />
-      </Button>
-      <Select
-        value={app.status}
-        onValueChange={(v) => handleStatusChange(app.id, v as AttendanceStatus)}
-      >
-        <SelectTrigger className="w-[110px]">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="pending">Pendente</SelectItem>
-          <SelectItem value="present">Presente</SelectItem>
-          <SelectItem value="absent">Ausente</SelectItem>
-          <SelectItem value="rescheduled">Remarcado</SelectItem>
-          <SelectItem value="canceled">Cancelado</SelectItem>
-        </SelectContent>
-      </Select>
-    </div>
-    <SmartModal
-      id="delete-appt"
-      open={toDelete?.id === app.id}
-      onClose={() => setToDelete(null)}
-      title="Confirmar Exclusão"
-    >
-      <p className="text-sm">
-        Tem certeza que deseja excluir este agendamento para {app.patientName} em {format(parseISO(app.dateTime), "dd/MM/yyyy 'às' HH:mm")}?
-      </p>
-      <div className="mt-4 flex justify-end gap-2">
-        <Button onClick={() => setToDelete(null)}>Cancelar</Button>
-        <Button
-          variant="destructive"
-          onClick={() => {
-            handleDelete(app.id);
-            setToDelete(null);
-          }}
-        >
-          Excluir
-        </Button>
-      </div>
-    </SmartModal>
-  </li>
-)
-
+                  </li>
+                ) : (
+                  <li
+                    key={item.appt.id}
+                    className={cn(
+                      "flex items-center justify-between rounded-md border p-2",
+                      statusMap[item.appt.status].color
+                    )}
                   >
                     <div className="flex flex-col">
                       <span className="font-medium">
                         {format(parseISO(item.appt.dateTime), "HH:mm")} - {item.appt.patientName}
                       </span>
-                      <Badge variant={getBadgeVariant(item.appt.dateTime, item.appt.status)} className="w-max mt-1">
+                      <Badge
+                        variant={getBadgeVariant(item.appt.dateTime, item.appt.status)}
+                        className="w-max mt-1"
+                      >
                         {statusMap[item.appt.status].label}
                       </Badge>
                     </div>
                     <div className="flex gap-2">
+                      <Button variant="ghost" size="icon" onClick={() => setHistoryFor(item.appt)}>
+                        <History className="h-4 w-4" />
+                      </Button>
                       <Button variant="ghost" size="icon" onClick={() => handleEdit(item.appt)}>
                         <Edit3 className="h-4 w-4" />
                       </Button>
@@ -363,7 +301,7 @@ export function AppointmentCalendarView({
                     </SmartModal>
                   </li>
                 )
-              ))}
+              )}
             </ul>
             <div className="flex flex-wrap gap-2 pt-4">
               {Object.entries(statusMap).map(([key, val]) => (
