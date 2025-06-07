@@ -6,6 +6,8 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, UserCircle, CalendarDays as CalendarIcon, Phone, Gift } from "lucide-react";
+import { WhatsappIcon } from "../icons/WhatsappIcon";
+import { useAuth } from "@/contexts/AuthContext";
 import Link from "next/link";
 import { SessionNotesSection } from "./SessionNotesSection";
 import { AIInsightsSection } from "./AIInsightsSection";
@@ -30,7 +32,9 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
   const [patient, setPatient] = useState<Patient | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
-  const { addNotification } = useNotifications();
+const { user } = useAuth();
+const { addNotification } = useNotifications();
+
   const { data: assessments, loading: loadingAssessments } = usePatientAssessments(patientId);
   const criticalTerms = useCriticalTerms(patient ? patient.sessionNotes : []);
 
@@ -193,8 +197,19 @@ const handleSavePatient = (updatedPatient: Patient) => {
             <CardContent className="p-0 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 text-sm">
               <div className="flex items-center">
                 <Phone className="h-5 w-5 mr-3 text-primary" />
-                <div>
+                <div className="flex items-center">
                   <span className="font-semibold">Contato:</span> {patient.contact}
+                  {user?.role === 'AGENDAMENTO' && /^\d{10,13}$/.test(patient.contact) && (
+                    <a
+                      href={`https://wa.me/${patient.contact}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="ml-2 text-green-600 hover:text-green-700"
+                    >
+                      <WhatsappIcon className="h-4 w-4" />
+                      <span className="sr-only">WhatsApp</span>
+                    </a>
+                  )}
                 </div>
               </div>
               {patient.cpf && (
