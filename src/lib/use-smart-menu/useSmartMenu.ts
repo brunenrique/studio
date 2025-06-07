@@ -4,11 +4,15 @@ import type { SmartMenuConfig } from './types';
 
 export function useSmartMenu(config: SmartMenuConfig) {
   const { id, animation, restoreFocus = true, persistFocus = true } = config;
-  const [open, setOpen] = useState(() => {
-    if (typeof window === 'undefined') return false
-    return localStorage.getItem(`menu:${id}`) === 'true'
-  })
+  const [open, setOpen] = useState(false)
   const ref = useRef<HTMLElement>(null);
+
+  // Restore state on mount without breaking SSR
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setOpen(localStorage.getItem(`menu:${id}`) === 'true');
+    }
+  }, []);
 
   const toggle = () => {
     setOpen(prev => {
