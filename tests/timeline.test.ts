@@ -1,3 +1,4 @@
+process.env.CRYPTO_SECRET_KEY = Buffer.alloc(32).toString('base64');
 import { generateTimelineEvents } from '../src/lib/timeline';
 import { mockAppointments, getMockPatientsList } from '../src/lib/mock-data';
 
