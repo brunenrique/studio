@@ -17,6 +17,7 @@ export interface User {
   role: UserRole;
   isApproved: boolean;
   profileImage?: string;
+  sessionId?: string;
 }
 
 // 📝 Nota de sessão (com histórico opcional usado para IA)
