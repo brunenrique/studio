@@ -1,3 +1,4 @@
+"use client";
 import { useAuth } from '@/contexts/AuthContext';
 import type { UserRole } from '@/lib/types';
 import React from 'react';

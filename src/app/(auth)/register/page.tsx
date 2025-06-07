@@ -1,6 +1,5 @@
-
-// src/app/(auth)/register/page.tsx
 "use client";
+// src/app/(auth)/register/page.tsx
 
 // Placeholder for Registration Page
 import { useState } from 'react';

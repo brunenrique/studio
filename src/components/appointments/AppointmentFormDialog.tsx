@@ -97,66 +97,6 @@ export function AppointmentFormDialog({
   const [patientQuery, setPatientQuery] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [phoneError, setPhoneError] = useState<string | null>(null);
-"use client";
-
-import type { Appointment, Patient, AttendanceStatus } from "@/lib/types";
-import { useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import {
-  Calendar as CalendarIcon,
-  CheckCircle,
-  XCircle,
-  Ban,
-  Edit3,
-  Trash2,
-  Clock,
-  User,
-  AlertCircle,
-  Info,
-  Phone,
-  MessageCircle,
-  History,
-} from "lucide-react";
-import {
-  format,
-  parseISO,
-  isSameDay,
-  isPast,
-  isToday,
-  addMinutes,
-} from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { SmartModal } from "@/components/SmartModal";
-import { useToast } from "@/hooks/use-toast";
-import { Badge } from "@/components/ui/badge";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import Link from "next/link";
-import { useAuth } from "@/contexts/AuthContext";
-import { cn } from "@/lib/utils";
-import { useSettings } from "@/contexts/SettingsContext";
-import { BlockTimeDialog } from "@/components/BlockTimeDialog";
-import { AppointmentHistoryModal } from "@/components/AppointmentHistoryModal";
-
 const { system } = useSettings();
 const { toast } = useToast();
 
