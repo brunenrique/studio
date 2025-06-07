@@ -35,6 +35,7 @@ const patientFormSchema = z.object({
   contact: z.string().min(5, { message: "Contato inválido." }), // Can be email or phone
   cpf: z.string().length(11, { message: "CPF deve ter 11 dígitos." }),
   dateOfBirth: z.date({ required_error: "Data de nascimento é obrigatória." }),
+  treatmentPlan: z.string().optional(),
 });
 
 type PatientFormValues = z.infer<typeof patientFormSchema>;
@@ -57,15 +58,30 @@ export function PatientFormDialog({ patient, onSave, children, isOpen: controlle
   const form = useForm<PatientFormValues>({
     resolver: zodResolver(patientFormSchema),
     defaultValues: patient
-      ? { ...patient, dateOfBirth: patient.dateOfBirth ? parseISO(patient.dateOfBirth) : new Date() }
-      : { name: "", contact: "", cpf: "", dateOfBirth: undefined },
+      ? {
+          ...patient,
+          dateOfBirth: patient.dateOfBirth
+            ? parseISO(patient.dateOfBirth)
+            : new Date(),
+        }
+      : {
+          name: "",
+          contact: "",
+          cpf: "",
+          dateOfBirth: undefined,
+          treatmentPlan: "",
+        },
   });
   
   React.useEffect(() => {
     if (patient) {
-      form.reset({ ...patient, dateOfBirth: patient.dateOfBirth ? parseISO(patient.dateOfBirth) : new Date() });
+      form.reset({
+        ...patient,
+        dateOfBirth: patient.dateOfBirth ? parseISO(patient.dateOfBirth) : new Date(),
+        treatmentPlan: patient.treatmentPlan || "",
+      });
     } else {
-      form.reset({ name: "", contact: "", cpf: "", dateOfBirth: undefined });
+      form.reset({ name: "", contact: "", cpf: "", dateOfBirth: undefined, treatmentPlan: "" });
     }
   }, [patient, form, isOpen]);
 
@@ -80,6 +96,7 @@ export function PatientFormDialog({ patient, onSave, children, isOpen: controlle
       ...values,
       dateOfBirth: format(values.dateOfBirth, "yyyy-MM-dd"),
       sessionNotes: patient?.sessionNotes || [],
+      treatmentPlan: values.treatmentPlan || "",
     };
     onSave(patientData);
     setIsLoading(false);
@@ -178,6 +195,23 @@ export function PatientFormDialog({ patient, onSave, children, isOpen: controlle
                       />
                     </PopoverContent>
                   </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="treatmentPlan"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Plano Terapêutico</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      rows={4}
+                      placeholder="Objetivos e etapas do tratamento"
+                      {...field}
+                    />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}

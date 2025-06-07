@@ -12,6 +12,7 @@ import Link from "next/link";
 import { SessionNotesSection } from "./SessionNotesSection";
 import { AIInsightsSection } from "./AIInsightsSection";
 import { PatientFormDialog } from "./PatientFormDialog";
+import { TreatmentPlanSection } from "./TreatmentPlanSection";
 import { format, parseISO, differenceInYears } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -127,6 +128,20 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
     });
   };
 
+  const handleSaveTreatmentPlan = async (plan: string) => {
+    if (!patient) return;
+    setPatient(prev => {
+      if (!prev) return null;
+      const updated = { ...prev, treatmentPlan: plan };
+      updateMockPatient(updated);
+      return updated;
+    });
+    toast({
+      title: "Plano Atualizado",
+      description: "O plano terapêutico foi salvo com sucesso.",
+    });
+  };
+
   const handleSavePatient = (updatedPatient: Patient) => {
     setPatient(updatedPatient);
     updateMockPatient(updatedPatient);
@@ -163,6 +178,21 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
       </TabsList>
       <TabsContent value="details">
         {/* conteúdo completo mantido */}
+        <TreatmentPlanSection patient={patient} onSave={handleSaveTreatmentPlan} />
+        <SessionNotesSection
+          patient={patient}
+          onAddNote={handleAddNote}
+          onDeleteNote={handleDeleteNote}
+          onEditNote={handleEditNote}
+        />
+        <AIInsightsSection
+          patient={patient}
+          latestSessionNote={
+            patient.sessionNotes.length > 0
+              ? patient.sessionNotes[patient.sessionNotes.length - 1]
+              : undefined
+          }
+        />
       </TabsContent>
       <TabsContent value="audio">
         <VoiceSessionRecorder patient={patient} />

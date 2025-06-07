@@ -38,6 +38,7 @@ export interface Patient {
   cpf?: string;
   dateOfBirth: string; // ISO 8601
   sessionNotes: SessionNote[];
+  treatmentPlan?: string;
   psychologistId?: string;
 }
 

@@ -95,6 +95,7 @@ export let mockPatients: Patient[] = [
     cpf: "12345678901",
     dateOfBirth: "1990-05-15",
     sessionNotes: initialSessionNotesP1,
+    treatmentPlan: "Reduzir episódios de ansiedade em 3 meses.",
     psychologistId: mockUser.id,
   }),
   encryptPatient({
@@ -104,6 +105,7 @@ export let mockPatients: Patient[] = [
     cpf: "98765432100",
     dateOfBirth: "1985-11-20",
     sessionNotes: initialSessionNotesP2,
+    treatmentPlan: "Melhorar habilidades de enfrentamento em 6 meses.",
     psychologistId: mockUser.id,
   }),
   encryptPatient({
@@ -113,6 +115,7 @@ export let mockPatients: Patient[] = [
     cpf: "11122233344",
     dateOfBirth: "2000-02-10",
     sessionNotes: [],
+    treatmentPlan: "Aumentar autoestima e confiança em 4 meses.",
     psychologistId: mockUser.id,
   }),
   encryptPatient({
@@ -122,6 +125,7 @@ export let mockPatients: Patient[] = [
     cpf: "22233344455",
     dateOfBirth: "1974-02-23",
     sessionNotes: initialSessionNotesP3,
+    treatmentPlan: "Trabalhar traumas passados em 5 meses.",
     psychologistId: mockUser.id,
   }),
 ];
