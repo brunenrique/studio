@@ -97,6 +97,13 @@ npx ts-node src/scripts/seed-demo-data.ts
 
 Isso criará coleções como `patients`, `appointments`, `tasks` e outras com registros de demonstração.
 
+Lembre-se de iniciar os emuladores do Firebase para que as regras de segurança
+`docs/firestore.rules` sejam aplicadas:
+
+```bash
+firebase emulators:start
+```
+
 ## Controle de notificações
 
 Cada documento em `patients` pode conter o campo opcional `notificationsOptOut`:

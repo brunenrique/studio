@@ -17,3 +17,4 @@ Esses erros normalmente indicam que as variáveis de ambiente do Firebase não f
    firebase emulators:start
    ```
 5. Reinicie o servidor de desenvolvimento (`npm run dev`).
+
