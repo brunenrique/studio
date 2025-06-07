@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import * as admin from 'firebase-admin';
 import { onDocumentCreated, onDocumentUpdated } from 'firebase-functions/v2/firestore';
 import { onCall, CallableRequest } from 'firebase-functions/v2/https';

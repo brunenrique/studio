@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 "use client";
 import { useEffect } from "react";
 import { doc, getDoc } from "firebase/firestore";

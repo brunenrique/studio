@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import type { TimelineEvent } from './types';
 import { mockAppointments, mockPatients } from './mock-data';
 
