@@ -32,7 +32,7 @@ const mockRegisterUser = async (
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('Psicólogo'); // Default role matches UserRole
+  const [role, setRole] = useState('PSYCHOLOGIST'); // Default role
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
@@ -93,7 +93,7 @@ export default function RegisterPage() {
                 <SelectValue placeholder="Selecione o tipo de usuário" />
               </SelectTrigger>
               <SelectContent>
-              <SelectItem value="Psicólogo">Psicólogo</SelectItem>
+              <SelectItem value="PSYCHOLOGIST">Psicólogo</SelectItem>
                 {/* Add other roles as needed in the future */}
                 {/* <SelectItem value="admin_global">Admin Global</SelectItem> */}
                 {/* <SelectItem value="admin_secretario">Admin/Secretário</SelectItem> */}

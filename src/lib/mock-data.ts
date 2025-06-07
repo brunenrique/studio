@@ -20,7 +20,8 @@ import type {
 export const mockUser: User = {
   id: 'user-psychologist-01',
   email: 'doctor.jane@psiguard.com',
-  role: 'Psicólogo',
+  role: 'PSYCHOLOGIST',
+  isApproved: true,
   name: 'Dr. Jane Doe',
   profileImage: 'https://placehold.co/100x100?text=JD',
 };

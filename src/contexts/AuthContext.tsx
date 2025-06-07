@@ -6,7 +6,8 @@ import { mockUser } from '@/lib/mock-data';
 import { useRouter } from 'next/navigation';
 import type { ReactNode } from 'react';
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { auth } from '@/lib/firebaseClient';
+import { auth, db } from '@/lib/firebaseClient';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import {
   GoogleAuthProvider,
   signInWithPopup,
@@ -31,16 +32,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (fbUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
       if (fbUser) {
-        const mappedUser: User = {
-          id: fbUser.uid,
-          name: fbUser.displayName || '',
-          email: fbUser.email || '',
-          role: 'Psicólogo',
-        };
-        setUser(mappedUser);
-        localStorage.setItem('psiguard_user', JSON.stringify(mappedUser));
+        try {
+          const snap = await getDoc(doc(db, 'users', fbUser.uid));
+          const data = snap.data() as Partial<User> | undefined;
+          const mappedUser: User = {
+            id: fbUser.uid,
+            name: fbUser.displayName || '',
+            email: fbUser.email || '',
+            role: (data?.role as User['role']) || 'PSYCHOLOGIST',
+            isApproved: data?.isApproved ?? false,
+            profileImage: fbUser.photoURL || undefined,
+          };
+          setUser(mappedUser);
+          localStorage.setItem('psiguard_user', JSON.stringify(mappedUser));
+        } catch (err) {
+          console.error('Failed to load user profile', err);
+          setUser(null);
+        }
       } else {
         const storedUser = localStorage.getItem('psiguard_user');
         if (storedUser) {
@@ -63,6 +73,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (email === mockUser.email) {
       setUser(mockUser);
       localStorage.setItem('psiguard_user', JSON.stringify(mockUser));
+      try {
+        await setDoc(doc(db, 'users', mockUser.id), {
+          role: mockUser.role,
+          isApproved: true,
+          name: mockUser.name,
+          email: mockUser.email,
+        }, { merge: true });
+      } catch (err) {
+        console.error('Failed to save mock user', err);
+      }
       router.push('/dashboard');
     } else {
       // Basic error handling - in a real app, show a toast or error message
@@ -80,11 +100,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
       const fbUser = result.user;
+      let data: Partial<User> | undefined;
+      const ref = doc(db, 'users', fbUser.uid);
+      const snap = await getDoc(ref);
+      if (!snap.exists()) {
+        data = { role: 'PSYCHOLOGIST', isApproved: false };
+        await setDoc(ref, data);
+      } else {
+        data = snap.data() as Partial<User>;
+      }
       const mappedUser: User = {
         id: fbUser.uid,
         name: fbUser.displayName || '',
         email: fbUser.email || '',
-        role: 'Psicólogo',
+        role: (data?.role as User['role']) || 'PSYCHOLOGIST',
+        isApproved: data?.isApproved ?? false,
+        profileImage: fbUser.photoURL || undefined,
       };
       setUser(mappedUser);
       localStorage.setItem('psiguard_user', JSON.stringify(mappedUser));

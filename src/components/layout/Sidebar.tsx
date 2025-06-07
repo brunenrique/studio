@@ -26,37 +26,41 @@ import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { useSmartMenu } from '@/lib/use-smart-menu';
 
-const sections = [
-  {
-    title: 'Consultório',
-    items: [
-      { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-      { href: '/patients', label: 'Pacientes', icon: Users },
-      { href: '/appointments', label: 'Agendamentos', icon: CalendarDays },
-      { href: '/waiting-list', label: 'Lista de Espera', icon: ListChecks },
-    ],
-  },
-  {
-    title: 'Ferramentas',
-    items: [
-      { href: '/templates', label: 'Modelos', icon: FileText },
-      { href: '/medications', label: 'Guia Rápido', icon: Pill },
-      { href: '/self-care', label: 'Saúde Mental', icon: HeartPulse },
-      { href: '/knowledge-base', label: 'Base de Conhecimento', icon: BookOpenCheck },
-      { href: '/analytics', label: 'Tendências', icon: LineChart },
-    ],
-  },
-  {
-    title: 'Sistema',
-    items: [
-      { href: '/settings', label: 'Configurações', icon: Settings },
-    ],
-  },
-];
-
 function SidebarContent({ className, onNavigate }: { className?: string; onNavigate?: () => void }) {
   const pathname = usePathname();
   const { logout, user } = useAuth();
+
+  const sections = [
+    {
+      title: 'Consultório',
+      items: [
+        { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+        { href: '/patients', label: 'Pacientes', icon: Users },
+        { href: '/appointments', label: 'Agendamentos', icon: CalendarDays },
+        { href: '/waiting-list', label: 'Lista de Espera', icon: ListChecks },
+      ],
+    },
+    {
+      title: 'Ferramentas',
+      items: [
+        { href: '/templates', label: 'Modelos', icon: FileText },
+        { href: '/medications', label: 'Guia Rápido', icon: Pill },
+        { href: '/self-care', label: 'Saúde Mental', icon: HeartPulse },
+        { href: '/knowledge-base', label: 'Base de Conhecimento', icon: BookOpenCheck },
+        { href: '/analytics', label: 'Tendências', icon: LineChart },
+      ],
+    },
+    {
+      title: 'Sistema',
+      items: [
+        { href: '/settings', label: 'Configurações', icon: Settings },
+        ...(user?.role === 'ADMIN'
+          ? [{ href: '/user-approvals', label: 'Aprovar Usuários', icon: Users }]
+          : []),
+      ],
+    },
+  ];
+
   const [openSections, setOpenSections] = useState<Record<string, boolean>>(() =>
     sections.reduce((acc, s) => {
       acc[s.title] = true;
