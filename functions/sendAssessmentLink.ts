@@ -34,7 +34,7 @@ async function logNotification(
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
 const twilioClient = twilio(process.env.TWILIO_SID as string, process.env.TWILIO_AUTH_TOKEN as string);
-const TOKEN_SECRET = process.env.ASSESSMENT_TOKEN_SECRET;
+const TOKEN_SECRET = process.env.ASSESSMENT_TOKEN_SECRET as string;
 if (!TOKEN_SECRET) {
   throw new Error('ASSESSMENT_TOKEN_SECRET environment variable is required');
 }
