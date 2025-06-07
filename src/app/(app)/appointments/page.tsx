@@ -193,6 +193,7 @@ export default function AppointmentsPage() {
             onOpenChange={setIsFormOpen}
             onSave={handleAddOrUpdateAppointment}
             patients={patients}
+            appointments={appointments}
             appointment={null}
           >
             <Button onClick={() => setIsFormOpen(true)} className="shadow-md">
