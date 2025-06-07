@@ -1,6 +1,9 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { collection, onSnapshot, addDoc, doc, updateDoc, orderBy, query, serverTimestamp } from 'firebase/firestore';
+import { db } from '@/lib/firebaseClient';
+import { useAuth } from './AuthContext';
 
 export interface Notification {
   id: string;
@@ -11,34 +14,56 @@ export interface Notification {
 interface NotificationContextType {
   notifications: Notification[];
   unreadCount: number;
-  markAsRead: (id: string) => void;
-  markAllAsRead: () => void;
+  markAsRead: (id: string) => Promise<void>;
+  markAllAsRead: () => Promise<void>;
+  addNotification: (message: string) => Promise<void>;
 }
 
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
 
-const defaultNotifications: Notification[] = [
-  { id: '1', message: 'Novo paciente adicionado \u00e0 lista de espera: Diana Prince', read: false },
-  { id: '2', message: 'Consulta amanh\u00e3 com Alice Wonderland \u00e0s 10:00', read: false },
-  { id: '3', message: 'Entre em contato com Clark Kent - aguardando h\u00e1 3 dias', read: false },
-  { id: '4', message: 'Revisar tarefas administrativas pendentes', read: false },
-];
+const defaultNotifications: Notification[] = [];
 
 export const NotificationProvider = ({ children }: { children: ReactNode }) => {
+  const { user } = useAuth();
   const [notifications, setNotifications] = useState<Notification[]>(defaultNotifications);
 
-  const markAsRead = (id: string) => {
-    setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
+  useEffect(() => {
+    if (!user) return;
+    const q = query(collection(db, 'notifications', user.id, 'items'), orderBy('createdAt', 'desc'));
+    const unsub = onSnapshot(q, (snap) => {
+      const data = snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) })) as Notification[];
+      setNotifications(data);
+    });
+    return () => unsub();
+  }, [user]);
+
+  const addNotification = async (message: string) => {
+    if (!user) return;
+    await addDoc(collection(db, 'notifications', user.id, 'items'), {
+      message,
+      read: false,
+      createdAt: serverTimestamp(),
+    });
   };
 
-  const markAllAsRead = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+  const markAsRead = async (id: string) => {
+    if (!user) return;
+    await updateDoc(doc(db, 'notifications', user.id, 'items', id), { read: true });
+  };
+
+  const markAllAsRead = async () => {
+    if (!user) return;
+    await Promise.all(
+      notifications
+        .filter((n) => !n.read)
+        .map((n) => updateDoc(doc(db, 'notifications', user.id, 'items', n.id), { read: true }))
+    );
   };
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   return (
-    <NotificationContext.Provider value={{ notifications, unreadCount, markAsRead, markAllAsRead }}>
+    <NotificationContext.Provider value={{ notifications, unreadCount, markAsRead, markAllAsRead, addNotification }}>
       {children}
     </NotificationContext.Provider>
   );

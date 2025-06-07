@@ -8,6 +8,7 @@ import { PlusCircle } from 'lucide-react';
 import { AppointmentFormDialog } from '@/components/appointments/AppointmentFormDialog';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
+import { useNotifications } from '@/contexts/NotificationContext';
 import { db } from '@/lib/firebaseClient';
 import { addDoc, collection, updateDoc, doc, deleteDoc, serverTimestamp } from 'firebase/firestore';
 import { useAppointments } from '@/hooks/useAppointments';
@@ -20,6 +21,7 @@ export default function AppointmentsPage() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
+  const { addNotification } = useNotifications();
 
   useEffect(() => {
     setPatients(mockPatients);
@@ -43,6 +45,7 @@ export default function AppointmentsPage() {
         timestamp: serverTimestamp(),
       });
       toast({ title: 'Agendamento Atualizado' });
+      addNotification(`Agendamento de ${appointmentData.patientName} atualizado`);
     } else {
       const { id, ...data } = appointmentData;
       await addDoc(collection(db, 'appointments'), data);

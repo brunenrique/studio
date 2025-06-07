@@ -12,10 +12,14 @@ import { AIInsightsSection } from "./AIInsightsSection";
 import { PatientFormDialog } from "./PatientFormDialog";
 import { format, parseISO, differenceInYears } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
+import { useNotifications } from "@/contexts/NotificationContext";
 import { usePatientAssessments } from "@/hooks/usePatientAssessments";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import Image from "next/image";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertTriangle } from "lucide-react";
+import { useCriticalTerms } from "@/hooks/useCriticalTerms";
 
 interface PatientDetailsClientProps {
   patientId: string;
@@ -26,7 +30,9 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
   const [patient, setPatient] = useState<Patient | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
+  const { addNotification } = useNotifications();
   const { data: assessments, loading: loadingAssessments } = usePatientAssessments(patientId);
+  const criticalTerms = useCriticalTerms(patient ? patient.sessionNotes : []);
 
   useEffect(() => {
     const foundPatient = getMockPatientById(patientId);
@@ -64,6 +70,7 @@ export function PatientDetailsClient({ patientId }: PatientDetailsClientProps) {
       title: "Nota Adicionada",
       description: "A nova nota de sessão foi salva com sucesso.",
     });
+    addNotification(`Nota adicionada para ${patient.name}`);
   };
 
   const handleDeleteNote = async (noteId: string) => {
@@ -142,6 +149,17 @@ const handleSavePatient = (updatedPatient: Patient) => {
 
   return (
     <div className="space-y-6">
+      {criticalTerms.length > 0 && (
+        <Alert variant="destructive" className="flex items-start gap-2">
+          <AlertTriangle className="h-5 w-5 mt-0.5" />
+          <div>
+            <AlertTitle>Atenção</AlertTitle>
+            <AlertDescription>
+              Termos críticos detectados nas notas: {criticalTerms.join(', ')}.
+            </AlertDescription>
+          </div>
+        </Alert>
+      )}
       <div className="flex items-center justify-between mb-6">
         <Button asChild variant="outline" className="shadow-sm">
           <Link href="/patients">
