@@ -51,7 +51,20 @@ export interface Appointment {
   durationMinutes: number;
   status: AttendanceStatus;
   notes?: string;
+  /** Identifier linking appointments generated from a recurrence */
+  recurrenceId?: string;
   psychologistId?: string;
+}
+
+export interface RecurrenceRule {
+  /** recurrence frequency */
+  frequency: "daily" | "weekly" | "biweekly";
+  /** allowed weekdays (0=Sunday..6=Saturday) */
+  weekdays?: number[];
+  /** number of occurrences */
+  count?: number;
+  /** ISO date string indicating end of recurrence */
+  until?: string | Date;
 }
 
 // ⏳ Entrada da lista de espera
