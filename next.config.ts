@@ -1,9 +1,16 @@
 import type {NextConfig} from 'next';
 
+const csp = [
+  "default-src 'self'",
+  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+  "font-src 'self' https://fonts.gstatic.com",
+  "script-src 'self' 'unsafe-inline'",
+].join('; ') + ';';
+
 const securityHeaders = [
   {
     key: 'Content-Security-Policy',
-    value: "default-src 'self'"
+    value: csp,
   },
   {
     key: 'X-Content-Type-Options',
