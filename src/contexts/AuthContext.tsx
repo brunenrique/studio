@@ -82,16 +82,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           console.error('Failed to load user profile', err);
           setUser(null);
         }
-      } else {
-        const storedUser = localStorage.getItem('psiguard_user');
-        if (storedUser) {
-          setUser(JSON.parse(storedUser));
         } else {
-          setUser(null);
+          const storedUser = localStorage.getItem('psiguard_user');
+          if (storedUser) {
+            setUser(JSON.parse(storedUser));
+          } else {
+            const autoUser = { ...mockUser, sessionId: crypto.randomUUID() };
+            setUser(autoUser);
+            localStorage.setItem('psiguard_user', JSON.stringify(autoUser));
+            localStorage.setItem(SESSION_KEY, autoUser.sessionId);
+          }
         }
-      }
-      setIsLoading(false);
-    });
+        setIsLoading(false);
+      });
     return () => unsubscribe();
   }, []);
 
