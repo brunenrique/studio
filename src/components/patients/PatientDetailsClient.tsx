@@ -179,6 +179,14 @@ const handleSavePatient = (updatedPatient: Patient) => {
                   <span className="font-semibold">Contato:</span> {patient.contact}
                 </div>
               </div>
+              {patient.cpf && (
+                <div className="flex items-center">
+                  <UserCircle className="h-5 w-5 mr-3 text-primary" />
+                  <div>
+                    <span className="font-semibold">CPF:</span> {patient.cpf}
+                  </div>
+                </div>
+              )}
               <div className="flex items-center">
                 <Gift className="h-5 w-5 mr-3 text-primary" />
                 <div>
@@ -258,8 +266,7 @@ const handleSavePatient = (updatedPatient: Patient) => {
               (LGPD/GDPR).
             </li>
             <li data-ai-hint="encryption reminder">
-              A criptografia client-side para campos sensíveis é uma prioridade de segurança (não
-              implementada neste protótipo).
+              Todos os dados de pacientes são criptografados localmente antes do armazenamento.
             </li>
             <li data-ai-hint="notification reminder">
               Notificações de sessão automáticas (24h e 30min antes) são funcionalidades planejadas.

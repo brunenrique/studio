@@ -22,3 +22,6 @@ NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
 # 🔐 Chave de criptografia AES-256-GCM (32 bytes base64). 
 # NÃO use esta chave em produção!
 CRYPTO_SECRET_KEY=REPLACE_ME_BASE64_32BYTES
+```
+
+Todos os dados de pacientes são criptografados no cliente usando AES antes de serem manipulados.
