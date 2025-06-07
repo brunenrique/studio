@@ -2,6 +2,7 @@ import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import sgMail from '@sendgrid/mail';
 import twilio from 'twilio';
+import { logSendResult } from './src/logger';
 
 admin.initializeApp();
 const db = admin.firestore();
@@ -22,9 +23,19 @@ async function notifyPatient(patientId: string, message: string) {
   const contact = patient.contact;
   if (contact) {
     if (contact.includes('@')) {
-      await sgMail.send({ to: contact, from: SENDGRID_FROM, subject: 'Lembrete de Sessão', text: message });
+      try {
+        const res = await sgMail.send({ to: contact, from: SENDGRID_FROM, subject: 'Lembrete de Sessão', text: message });
+        logSendResult('email', patientId, 'success', res[0].statusCode);
+      } catch (e) {
+        logSendResult('email', patientId, 'error', e);
+      }
     } else if (TWILIO_SMS_FROM) {
-      await twilioClient.messages.create({ from: TWILIO_SMS_FROM, to: contact, body: message });
+      try {
+        const m = await twilioClient.messages.create({ from: TWILIO_SMS_FROM, to: contact, body: message });
+        logSendResult('sms', patientId, 'success', m.sid);
+      } catch (e) {
+        logSendResult('sms', patientId, 'error', e);
+      }
     }
   }
 }
@@ -52,6 +63,8 @@ async function processReminders(minutesBefore: number, flag: string) {
 export const scheduleAppointmentReminder = functions.pubsub
   .schedule('* * * * *')
   .onRun(async () => {
+    console.info('scheduleAppointmentReminder start');
     await processReminders(MINUTES_BEFORE_24H, 'reminder24hSent');
     await processReminders(MINUTES_BEFORE_30M, 'reminder30mSent');
+    console.info('scheduleAppointmentReminder end');
   });

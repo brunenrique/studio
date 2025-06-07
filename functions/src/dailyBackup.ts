@@ -6,6 +6,7 @@ const db = admin.firestore();
 const storage = admin.storage();
 
 export const dailyBackup = onSchedule('0 3 * * *', async () => {
+    console.info('dailyBackup start');
     const [apptSnap, patientSnap] = await Promise.all([
       db.collection('appointments').get(),
       db.collection('patients').get(),
@@ -21,4 +22,5 @@ export const dailyBackup = onSchedule('0 3 * * *', async () => {
     await bucket.file(filePath).save(JSON.stringify(data, null, 2), {
       contentType: 'application/json',
     });
+    console.info('dailyBackup end');
   });

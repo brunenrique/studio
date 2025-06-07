@@ -2,6 +2,7 @@ import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import sgMail from '@sendgrid/mail';
 import twilio from 'twilio';
+import { logSendResult } from './src/logger';
 import jwt from 'jsonwebtoken';
 
 admin.initializeApp();
@@ -27,20 +28,30 @@ async function internalSend(patientId: string, assessmentId: string, channels: s
   if (!patient) return;
 
   if (channels.includes('email')) {
-    await sgMail.send({
-      to: patient.contact,
-      from: process.env.SENDGRID_FROM_EMAIL as string,
-      subject: 'Novo Inventário',
-      text: `Por favor, preencha: ${link}`,
-    });
+    try {
+      const r = await sgMail.send({
+        to: patient.contact,
+        from: process.env.SENDGRID_FROM_EMAIL as string,
+        subject: 'Novo Inventário',
+        text: `Por favor, preencha: ${link}`,
+      });
+      logSendResult('email', patientId, 'success', r[0].statusCode);
+    } catch (e) {
+      logSendResult('email', patientId, 'error', e);
+    }
   }
 
   if (channels.includes('whatsapp') && process.env.TWILIO_WHATSAPP_FROM) {
-    await twilioClient.messages.create({
-      from: process.env.TWILIO_WHATSAPP_FROM,
-      to: `whatsapp:${patient.contact}`,
-      body: `Preencha: ${link}`,
-    });
+    try {
+      const m = await twilioClient.messages.create({
+        from: process.env.TWILIO_WHATSAPP_FROM,
+        to: `whatsapp:${patient.contact}`,
+        body: `Preencha: ${link}`,
+      });
+      logSendResult('whatsapp', patientId, 'success', m.sid);
+    } catch (e) {
+      logSendResult('whatsapp', patientId, 'error', e);
+    }
   }
 }
 

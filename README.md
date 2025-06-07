@@ -68,3 +68,11 @@ processado em `src/app/(app)/layout.tsx`.
 
 Se a sidebar não aparecer, verifique se a autenticação está funcionando
 e se o CSS foi construído corretamente pelo Tailwind.
+
+## Logs das Functions
+
+Para acompanhar a saída de logs das Cloud Functions, utilize o comando abaixo:
+
+```bash
+firebase functions:log
+```

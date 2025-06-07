@@ -2,6 +2,7 @@ import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import sgMail from '@sendgrid/mail';
 import twilio from 'twilio';
+import { logSendResult } from './src/logger';
 
 admin.initializeApp();
 const db = admin.firestore();
@@ -21,9 +22,19 @@ async function notify(patientId: string, message: string) {
   const contact = patient.contact;
   if (contact) {
     if (contact.includes('@')) {
-      await sgMail.send({ to: contact, from: SENDGRID_FROM, subject: 'Lembrete de Inventário', text: message });
+      try {
+        const res = await sgMail.send({ to: contact, from: SENDGRID_FROM, subject: 'Lembrete de Inventário', text: message });
+        logSendResult('email', patientId, 'success', res[0].statusCode);
+      } catch (e) {
+        logSendResult('email', patientId, 'error', e);
+      }
     } else if (TWILIO_SMS_FROM) {
-      await twilioClient.messages.create({ from: TWILIO_SMS_FROM, to: contact, body: message });
+      try {
+        const m = await twilioClient.messages.create({ from: TWILIO_SMS_FROM, to: contact, body: message });
+        logSendResult('sms', patientId, 'success', m.sid);
+      } catch (e) {
+        logSendResult('sms', patientId, 'error', e);
+      }
     }
   }
 }
@@ -31,6 +42,7 @@ async function notify(patientId: string, message: string) {
 export const scheduleAssessmentReminder = functions.pubsub
   .schedule('every 60 minutes')
   .onRun(async () => {
+    console.info('scheduleAssessmentReminder start');
     const cutoff = admin.firestore.Timestamp.fromMillis(Date.now() - HOURS_AFTER * 60 * 60 * 1000);
     const snap = await db
       .collectionGroup('assessments')
@@ -43,4 +55,5 @@ export const scheduleAssessmentReminder = functions.pubsub
       if (!patientId) continue;
       await notify(patientId, 'Você possui um inventário pendente para preenchimento.');
     }
+    console.info('scheduleAssessmentReminder end');
   });

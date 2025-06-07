@@ -2,6 +2,7 @@ import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import sgMail from '@sendgrid/mail';
 import twilio from 'twilio';
+import { logSendResult } from './src/logger';
 
 admin.initializeApp();
 const db = admin.firestore();
@@ -14,37 +15,53 @@ const TWILIO_SMS_FROM = process.env.TWILIO_SMS_FROM;
 const MINUTES_BEFORE = parseInt(process.env.TASK_REMINDER_MINUTES || '10');
 
 async function send(uid: string, taskId: string, title: string) {
-  await admin.messaging().send({
-    topic: uid,
-    notification: { title: 'Tarefa próxima', body: title },
-    data: { taskId },
-  });
+  try {
+    const r = await admin.messaging().send({
+      topic: uid,
+      notification: { title: 'Tarefa próxima', body: title },
+      data: { taskId },
+    });
+    logSendResult('push', uid, 'success', r);
+  } catch (e) {
+    logSendResult('push', uid, 'error', e);
+  }
 
   try {
     const user = await admin.auth().getUser(uid);
     if (user.email) {
-      await sgMail.send({
-        to: user.email,
-        from: SENDGRID_FROM,
-        subject: 'Lembrete de Tarefa',
-        text: `Você possui a tarefa "${title}" com vencimento em breve.`,
-      });
+      try {
+        const res = await sgMail.send({
+          to: user.email,
+          from: SENDGRID_FROM,
+          subject: 'Lembrete de Tarefa',
+          text: `Você possui a tarefa "${title}" com vencimento em breve.`,
+        });
+        logSendResult('email', uid, 'success', res[0].statusCode);
+      } catch (e) {
+        logSendResult('email', uid, 'error', e);
+      }
     }
     if (user.phoneNumber && TWILIO_SMS_FROM) {
-      await twilioClient.messages.create({
-        from: TWILIO_SMS_FROM,
-        to: user.phoneNumber,
-        body: `Tarefa pendente: ${title}`,
-      });
+      try {
+        const m = await twilioClient.messages.create({
+          from: TWILIO_SMS_FROM,
+          to: user.phoneNumber,
+          body: `Tarefa pendente: ${title}`,
+        });
+        logSendResult('sms', uid, 'success', m.sid);
+      } catch (e) {
+        logSendResult('sms', uid, 'error', e);
+      }
     }
   } catch (e) {
-    console.error('Erro ao enviar email/SMS', e);
+    logSendResult('user', uid, 'error', e);
   }
 }
 
 export const scheduleTaskReminder = functions.pubsub
   .schedule('* * * * *')
   .onRun(async () => {
+    console.info('scheduleTaskReminder start');
     const now = admin.firestore.Timestamp.now();
     const limit = admin.firestore.Timestamp.fromMillis(
       now.toMillis() + MINUTES_BEFORE * 60 * 1000,
@@ -60,4 +77,5 @@ export const scheduleTaskReminder = functions.pubsub
       const data = docSnap.data() as any;
       await send(data.createdBy, docSnap.id, data.title);
     }
+    console.info('scheduleTaskReminder end');
   });
