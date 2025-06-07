@@ -1,54 +1,69 @@
-import CryptoJS from 'crypto-js'
-import { NextResponse } from 'next/server'
+// Caminho: src/app/api/crypto/route.ts
 
-export async function POST(request: Request) {
-  if (request.method !== 'POST') {
-    return NextResponse.json(
-      { error: 'Method not allowed' },
-      { status: 405 }
-    )
+import { NextRequest, NextResponse } from 'next/server';
+// 1. CORREÇÃO: Importa do seu arquivo 'patientCrypto.ts'
+import { encrypt, decrypt } from '@/lib/patientCrypto'; 
+// 2. IMPORTANTE: Estes arquivos precisam ser criados como discutido anteriormente
+import { getCurrentUser } from '@/lib/session';
+import { logAuditEvent } from '@/lib/audit';
+
+export async function POST(req: NextRequest) {
+  // --- ETAPA DE SEGURANÇA: AUTENTICAÇÃO E AUTORIZAÇÃO ---
+  const user = await getCurrentUser();
+
+  if (!user) {
+    // Se não houver usuário logado, nega o acesso imediatamente.
+    return NextResponse.json({ error: 'Acesso não autorizado' }, { status: 401 });
   }
 
-  let body: any
+  // Opcional: Adicionar verificação de papel (role) se necessário
+  // if (user.role !== 'psychologist') {
+  //   return NextResponse.json({ error: 'Permissão negada' }, { status: 403 });
+  // }
+  
   try {
-    body = await request.json()
-  } catch {
-    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 })
-  }
+    const { action, data } = await req.json();
 
-  const { action, data } = body ?? {}
-  if (typeof action !== 'string' || typeof data !== 'string') {
-    return NextResponse.json(
-      { error: 'Missing action or data' },
-      { status: 400 }
-    )
-  }
-
-  const key = process.env.CRYPTO_SECRET_KEY
-  if (!key) {
-    return NextResponse.json(
-      { error: 'CRYPTO_SECRET_KEY not configured' },
-      { status: 500 }
-    )
-  }
-
-  try {
-    let result: string
-    if (action === 'encrypt') {
-      result = CryptoJS.AES.encrypt(data, key).toString()
-    } else if (action === 'decrypt') {
-      const bytes = CryptoJS.AES.decrypt(data, key)
-      result = bytes.toString(CryptoJS.enc.Utf8)
-    } else {
-      return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
+    // --- ETAPA DE VALIDAÇÃO ---
+    if (!action || typeof data !== 'string' || data.length === 0) {
+      return NextResponse.json({ error: 'Requisição inválida: "action" e "data" (não vazia) são obrigatórios.' }, { status: 400 });
     }
 
-    return NextResponse.json({ result }, { status: 200 })
-  } catch (err) {
-    return NextResponse.json(
-      { error: 'Failed to process data' },
-      { status: 500 }
-    )
-  }
-}
+    // Limite de tamanho para evitar abuso (ex: 1MB de dados por requisição)
+    if (data.length > 1024 * 1024) {
+        return NextResponse.json({ error: 'Os dados excedem o limite de tamanho.' }, { status: 413 });
+    }
 
+    let result: string;
+
+    // --- ETAPA DE EXECUÇÃO ---
+    if (action === 'encrypt') {
+      result = encrypt(data);
+      await logAuditEvent({ userId: user.id, action: 'DATA_ENCRYPT' });
+    } else if (action === 'decrypt') {
+      result = decrypt(data);
+      await logAuditEvent({ userId: user.id, action: 'DATA_DECRYPT_SUCCESS' });
+    } else {
+      return NextResponse.json({ error: 'Ação inválida: use "encrypt" ou "decrypt".' }, { status: 400 });
+    }
+
+    return NextResponse.json({ result }, { status: 200 });
+
+  } catch (error) {
+    // Captura erros, especialmente a falha de descriptografia da nossa biblioteca
+    if (error instanceof Error && error.message.includes("Não foi possível descriptografar")) {
+      // Falha de integridade! Este é um evento de segurança sério.
+      const user = await getCurrentUser(); // Tenta obter o usuário novamente para o log
+      await logAuditEvent({ 
+          userId: user?.id ?? 'unknown_user_on_fail', 
+          action: 'DATA_DECRYPT_FAILURE', 
+          details: 'Possível violação de integridade de dados.' 
+      });
+      // Retorna uma mensagem genérica para o cliente, mas o log detalha o problema no servidor.
+      return NextResponse.json({ error: 'Falha na verificação de segurança dos dados.' }, { status: 400 });
+    }
+    
+    // Tratamento para outros erros inesperados
+    console.error("Erro inesperado na API de criptografia:", error);
+    return NextResponse.json({ error: 'Erro interno do servidor.' }, { status: 500 });
+  }
