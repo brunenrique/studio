@@ -2,9 +2,7 @@ import { verifyAssessmentToken, adminDb } from '@/lib/firebaseAdmin';
 import AssessmentForm from '@/components/assessments/AssessmentForm';
 import { notFound } from 'next/navigation';
 
-interface PageProps { params: { token: string } }
-
-export default async function AssessmentFillPage({ params }: PageProps) {
+export default async function AssessmentFillPage({ params }: any) {
   let payload: { assessmentId: string; patientId: string };
   try {
     payload = verifyAssessmentToken(params.token);

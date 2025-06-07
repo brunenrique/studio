@@ -19,7 +19,7 @@ export default function PatientsPage() {
   const { toast } = useToast();
   const { addNotification } = useNotifications();
 
-  if (!user || user.role !== 'Psicólogo') {
+  if (!user || user.role !== 'PSYCHOLOGIST') {
     return <p className="p-4">Acesso restrito aos psicólogos.</p>;
   }
 

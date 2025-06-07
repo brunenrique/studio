@@ -1,3 +1,5 @@
+"use client";
+
 import dynamic from 'next/dynamic';
 import { mockSymptomEntries } from '@/lib/mock-data';
 import type { SymptomHeatmapEntry } from '@/lib/types';

@@ -1,3 +1,5 @@
+"use client";
+
 import dynamic from 'next/dynamic';
 import { mockFormulations } from '@/lib/mock-data';
 import type { FormulationDiagram } from '@/lib/types';

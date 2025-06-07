@@ -1,14 +1,12 @@
-import * as functions from 'firebase-functions';
+import { onDocumentUpdated } from 'firebase-functions/v2/firestore';
 import * as admin from 'firebase-admin';
 
-admin.initializeApp();
+if (!admin.apps.length) admin.initializeApp();
 const db = admin.firestore();
 
-export const onSessionNoteUpdate = functions.firestore
-  .document('patients/{patientId}/sessionNotes/{noteId}')
-  .onUpdate(async (change, context) => {
-    const before = change.before.data() as any;
-    const after = change.after.data() as any;
+export const onSessionNoteUpdate = onDocumentUpdated('patients/{patientId}/sessionNotes/{noteId}', async (event) => {
+    const before = event.data?.before.data() as any;
+    const after = event.data?.after.data() as any;
 
     // Only create a version if notes were modified
     if (before.notes === after.notes && before.date === after.date) {
@@ -17,9 +15,9 @@ export const onSessionNoteUpdate = functions.firestore
 
     const versionsCol = db
       .collection('patients')
-      .doc(context.params.patientId)
+      .doc(event.params.patientId)
       .collection('sessionNotes')
-      .doc(context.params.noteId)
+      .doc(event.params.noteId)
       .collection('versions');
 
     await versionsCol.add({

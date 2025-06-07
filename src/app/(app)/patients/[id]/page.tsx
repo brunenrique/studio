@@ -15,20 +15,14 @@ import type { Task } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 
-interface PatientDetailPageProps {
-  params: {
-    id: string;
-  };
-}
-
-export default function PatientDetailPage({ params }: PatientDetailPageProps) {
+export default function PatientDetailPage({ params }: any) {
   const { user } = useAuth();
   const { tasks } = useTasks(params.id);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editing, setEditing] = useState<Task | null>(null);
   const { toast } = useToast();
 
-  if (!user || user.role !== 'Psicólogo') {
+  if (!user || user.role !== 'PSYCHOLOGIST') {
     return <p className="p-4">Acesso restrito aos psicólogos.</p>;
   }
 
