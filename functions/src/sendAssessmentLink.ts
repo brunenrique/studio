@@ -16,25 +16,27 @@ function signToken(data: { patientId: string; assessmentId: string }) {
   return jwt.sign(data, TOKEN_SECRET, { expiresIn: '7d' });
 }
 
-async function withRetry(
-  action: () => Promise<void>,
+async function withRetry<T>(
+  action: () => Promise<T>,
   message: string,
   patientId: string,
   retries = 1,
   delayMs = 1000
-) {
+): Promise<T> {
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
-      await action();
-      return;
+      return await action();
     } catch (error) {
       if (attempt === retries) {
         console.error({ message, patientId, error });
+        throw error;
       } else {
         await new Promise((res) => setTimeout(res, delayMs));
       }
     }
   }
+  // should never reach here
+  throw new Error('Retry loop exited unexpectedly');
 }
 
 async function internalSend(patientId: string, assessmentId: string, channels: string[]) {

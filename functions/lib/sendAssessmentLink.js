@@ -41,6 +41,24 @@ const TOKEN_SECRET = process.env.ASSESSMENT_TOKEN_SECRET;
 function signToken(data) {
     return jsonwebtoken_1.default.sign(data, TOKEN_SECRET, { expiresIn: '7d' });
 }
+async function withRetry(action, message, patientId, retries = 1, delayMs = 1000) {
+    for (let attempt = 0; attempt <= retries; attempt++) {
+        try {
+            return await action();
+        }
+        catch (error) {
+            if (attempt === retries) {
+                console.error({ message, patientId, error });
+                throw error;
+            }
+            else {
+                await new Promise((res) => setTimeout(res, delayMs));
+            }
+        }
+    }
+    // should never reach here
+    throw new Error('Retry loop exited unexpectedly');
+}
 async function internalSend(patientId, assessmentId, channels) {
     const token = signToken({ patientId, assessmentId });
     const link = `${process.env.PUBLIC_URL}/assessments/fill/${token}`;
@@ -50,19 +68,19 @@ async function internalSend(patientId, assessmentId, channels) {
     if (!patient)
         return;
     if (channels.includes('email')) {
-        await mail_1.default.send({
+        await withRetry(() => mail_1.default.send({
             to: patient.contact,
             from: process.env.SENDGRID_FROM_EMAIL,
             subject: 'Novo Inventário',
             text: `Por favor, preencha: ${link}`,
-        });
+        }), 'Failed to send email', patientId);
     }
     if (channels.includes('whatsapp') && process.env.TWILIO_WHATSAPP_FROM) {
-        await twilioClient.messages.create({
+        await withRetry(() => twilioClient.messages.create({
             from: process.env.TWILIO_WHATSAPP_FROM,
             to: `whatsapp:${patient.contact}`,
             body: `Preencha: ${link}`,
-        });
+        }), 'Failed to send WhatsApp message', patientId);
     }
 }
 exports.sendAssessmentLink = (0, https_1.onCall)(async (request) => {
