@@ -160,8 +160,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const fbUser = result.user;
       const newSession = crypto.randomUUID();
       const uid = fbUser.uid;
+      // New users require admin approval before accessing the system
       await setDoc(doc(db, 'users', uid), {
         role,
+        // mark account as pending approval
         isApproved: false,
         email,
         sessionId: newSession,
