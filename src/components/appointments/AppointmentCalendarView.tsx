@@ -251,6 +251,7 @@ export function AppointmentCalendarView({
       <AppointmentFormDialog
         appointment={editingAppointment}
         patients={patients}
+        appointments={appointments}
         onSave={(data) => {
           setEditingAppointment(null);
           onUpdateAppointment(data);
