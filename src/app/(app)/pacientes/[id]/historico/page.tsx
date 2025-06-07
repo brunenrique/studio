@@ -6,16 +6,12 @@ import { useTimeline } from "@/hooks/useTimeline";
 import { usePatientAssessments } from "@/hooks/usePatientAssessments";
 import type { TimelineEvent } from "@/lib/types";
 
-interface Props {
-  params: { id: string };
-}
-
-export default function PatientHistoryPage({ params }: Props) {
+export default function PatientHistoryPage({ params }: any) {
   const { user } = useAuth();
   const { events } = useTimeline(params.id);
   const { data: assessments } = usePatientAssessments(params.id);
 
-  if (!user || user.role !== "Psicólogo") {
+  if (!user || user.role !== "PSYCHOLOGIST") {
     return <p className="p-4">Acesso restrito aos psicólogos.</p>;
   }
 

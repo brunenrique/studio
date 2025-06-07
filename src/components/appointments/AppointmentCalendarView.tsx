@@ -130,8 +130,8 @@ export function AppointmentCalendarView({
   if (selectedDate) {
     weekly.forEach((w) => {
       if (selectedDate.getDay() === w.weekday) {
-        const [sh, sm] = w.start.split(":").map(Number);
-        const [eh, em] = w.end.split(":").map(Number);
+        const [sh, sm] = w.start.split(":" ).map(Number);
+        const [eh, em] = w.end.split(":" ).map(Number);
         const start = new Date(selectedDate);
         start.setHours(sh, sm, 0, 0);
         const duration = eh * 60 + em - (sh * 60 + sm);
@@ -147,8 +147,8 @@ export function AppointmentCalendarView({
 
   type CombinedItem = { type: "appt"; appt: Appointment } | { type: "block"; block: BlockedTime };
   const combined: CombinedItem[] = [
-    ...filtered.map((a) => ({ type: "appt", appt: a })),
-    ...dailyBlocks.map((b) => ({ type: "block", block: b })),
+    ...filtered.map((a) => ({ type: "appt", appt: a } as const)),
+    ...dailyBlocks.map((b) => ({ type: "block", block: b } as const)),
   ].sort((a, b) => {
     const da = a.type === "appt" ? parseISO(a.appt.dateTime) : parseISO(a.block.dateTime);
     const db = b.type === "appt" ? parseISO(b.appt.dateTime) : parseISO(b.block.dateTime);
@@ -215,94 +215,89 @@ export function AppointmentCalendarView({
                 Bloquear Horário
               </Button>
             </div>
-            {combined.length === 0 && (
+            {combined.length === 0 ? (
               <p className="text-sm text-muted-foreground mt-4">Nenhum agendamento encontrado.</p>
-            )}
-            <ul className="space-y-2">
-              {combined.map((item) =>
-                item.type === "block" ? (
-                  <li
-                    key={item.block.id}
-                    className="flex items-center justify-between rounded-md border p-2 bg-gray-200 text-gray-500 line-through"
-                  >
-                    <span className="font-medium">
-                      {format(parseISO(item.block.dateTime), "HH:mm")} - Indisponível
-                    </span>
-                  </li>
-                ) : (
-                  <li
-                    key={item.appt.id}
-                    className={cn(
-                      "flex items-center justify-between rounded-md border p-2",
-                      statusMap[item.appt.status].color
-                    )}
-                  >
-                    <div className="flex flex-col">
-                      <span className="font-medium">
-                        {format(parseISO(item.appt.dateTime), "HH:mm")} - {item.appt.patientName}
-                      </span>
-                      <Badge
-                        variant={getBadgeVariant(item.appt.dateTime, item.appt.status)}
-                        className="w-max mt-1"
-                      >
-                        {statusMap[item.appt.status].label}
-                      </Badge>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button variant="ghost" size="icon" onClick={() => setHistoryFor(item.appt)}>
-                        <History className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon" onClick={() => handleEdit(item.appt)}>
-                        <Edit3 className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="text-destructive"
-                        onClick={() => setToDelete(item.appt)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                      <Select
-                        value={item.appt.status}
-                        onValueChange={(v) => handleStatusChange(item.appt.id, v as AttendanceStatus)}
-                      >
-                        <SelectTrigger className="w-[110px]">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="pending">Pendente</SelectItem>
-                          <SelectItem value="present">Presente</SelectItem>
-                          <SelectItem value="absent">Ausente</SelectItem>
-                          <SelectItem value="rescheduled">Remarcado</SelectItem>
-                          <SelectItem value="canceled">Cancelado</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <SmartModal
-                      id="delete-appt"
-                      open={toDelete?.id === item.appt.id}
-                      onClose={() => setToDelete(null)}
-                      title="Confirmar Exclusão"
+            ) : (
+              <ul className="space-y-2">
+                {combined.map((item) => (
+                  item.type === "block" ? (
+                    <li
+                      key={item.block.id}
+                      className="flex items-center justify-between rounded-md border p-2 bg-gray-200 text-gray-500 line-through"
                     >
-                      <p className="text-sm">Deseja excluir este agendamento?</p>
-                      <div className="mt-4 flex justify-end gap-2">
-                        <Button onClick={() => setToDelete(null)}>Cancelar</Button>
-                        <Button
-                          variant="destructive"
-                          onClick={() => {
-                            handleDelete(item.appt.id);
-                            setToDelete(null);
-                          }}
-                        >
-                          Excluir
-                        </Button>
+                      <span className="font-medium">
+                        {format(parseISO(item.block.dateTime), "HH:mm")} - Indisponível
+                      </span>
+                    </li>
+                  ) : (
+                    <li
+                      key={item.appt.id}
+                      className={cn("flex items-center justify-between rounded-md border p-2", statusMap[item.appt.status].color)}
+                    >
+                      <div className="flex flex-col">
+                        <span className="font-medium">
+                          {format(parseISO(item.appt.dateTime), "HH:mm")} - {item.appt.patientName}
+                        </span>
+                        <Badge variant={getBadgeVariant(item.appt.dateTime, item.appt.status)} className="w-max mt-1">
+                          {statusMap[item.appt.status].label}
+                        </Badge>
                       </div>
-                    </SmartModal>
-                  </li>
-                )
-              )}
-            </ul>
+                      <div className="flex gap-2">
+                        <Button variant="ghost" size="icon" onClick={() => setHistoryFor(item.appt)}>
+                          <History className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" onClick={() => handleEdit(item.appt)}>
+                          <Edit3 className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="text-destructive"
+                          onClick={() => setToDelete(item.appt)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                        <Select
+                          value={item.appt.status}
+                          onValueChange={v => handleStatusChange(item.appt.id, v as AttendanceStatus)}
+                        >
+                          <SelectTrigger className="w-[110px]">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="pending">Pendente</SelectItem>
+                            <SelectItem value="present">Presente</SelectItem>
+                            <SelectItem value="absent">Ausente</SelectItem>
+                            <SelectItem value="rescheduled">Remarcado</SelectItem>
+                            <SelectItem value="canceled">Cancelado</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <SmartModal
+                        id="delete-appt"
+                        open={toDelete?.id === item.appt.id}
+                        onClose={() => setToDelete(null)}
+                        title="Confirmar Exclusão"
+                      >
+                        <p className="text-sm">Deseja excluir este agendamento?</p>
+                        <div className="mt-4 flex justify-end gap-2">
+                          <Button onClick={() => setToDelete(null)}>Cancelar</Button>
+                          <Button
+                            variant="destructive"
+                            onClick={() => {
+                              handleDelete(item.appt.id);
+                              setToDelete(null);
+                            }}
+                          >
+                            Excluir
+                          </Button>
+                        </div>
+                      </SmartModal>
+                    </li>
+                  )
+                ))}
+              </ul>
+            )}
             <div className="flex flex-wrap gap-2 pt-4">
               {Object.entries(statusMap).map(([key, val]) => (
                 <Badge key={key} className={val.color} variant="outline">
@@ -339,7 +334,6 @@ export function AppointmentCalendarView({
       >
         <button className="hidden" />
       </BlockTimeDialog>
-
       <AppointmentHistoryModal
         appointmentId={historyFor?.id ?? null}
         open={historyFor !== null}
@@ -347,7 +341,6 @@ export function AppointmentCalendarView({
           if (!o) setHistoryFor(null);
         }}
       />
-
     </TooltipProvider>
   );
 }
