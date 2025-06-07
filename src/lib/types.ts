@@ -37,6 +37,7 @@ export interface Appointment {
   id: string;
   patientId: string;
   patientName: string;
+  contact?: string;
   dateTime: string; // ISO 8601
   durationMinutes: number;
   status: AttendanceStatus;

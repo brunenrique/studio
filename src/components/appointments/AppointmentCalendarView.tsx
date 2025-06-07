@@ -24,7 +24,7 @@ import {
   addMinutes,
 } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { AppointmentFormDialog } from "./AppointmentFormDialog";
+import { EditAppointmentDialog } from "./EditAppointmentDialog";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Select,
@@ -177,8 +177,9 @@ export function AppointmentCalendarView({
                   return (
                     <li
                       key={app.id}
+                      onClick={() => handleEdit(app)}
                       className={cn(
-                        "p-4 border rounded-lg shadow-sm hover:shadow-md transition-all",
+                        "p-4 border rounded-lg shadow-sm hover:shadow-md transition-all cursor-pointer",
                         isAppointmentPast ? "bg-muted/50 opacity-80" : "bg-card"
                       )}
                     >
@@ -251,7 +252,7 @@ export function AppointmentCalendarView({
                               <Button
                                 variant="outline"
                                 size="icon"
-                                onClick={() => handleEdit(app)}
+                                onClick={(e) => { e.stopPropagation(); handleEdit(app); }}
                                 className="h-9 w-9"
                               >
                                 <Edit3 className="h-4 w-4" />
@@ -266,7 +267,7 @@ export function AppointmentCalendarView({
                             variant="destructive"
                             size="icon"
                             className="h-9 w-9"
-                            onClick={() => setToDelete(app)}
+                            onClick={(e) => { e.stopPropagation(); setToDelete(app); }}
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -310,19 +311,17 @@ export function AppointmentCalendarView({
         </Card>
       </div>
 
-      <AppointmentFormDialog
+      <EditAppointmentDialog
         appointment={editingAppointment}
-        patients={patients}
         onSave={(data) => {
           onUpdateAppointment(data);
-          toast({
-            title: editingAppointment
-              ? "Agendamento Atualizado"
-              : "Agendamento Criado",
-            description: `Agendamento para ${data.patientName} salvo.`,
-          });
+          toast({ title: 'Agendamento Atualizado' });
           setIsFormOpen(false);
           setEditingAppointment(null);
+        }}
+        onDelete={(id) => {
+          handleDelete(id);
+          setIsFormOpen(false);
         }}
         isOpen={isFormOpen}
         onOpenChange={(open) => {
@@ -331,7 +330,7 @@ export function AppointmentCalendarView({
         }}
       >
         <button className="hidden" />
-      </AppointmentFormDialog>
+      </EditAppointmentDialog>
 
       <Card className="mt-6 shadow-md">
         <CardHeader>

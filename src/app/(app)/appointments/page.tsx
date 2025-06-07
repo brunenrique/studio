@@ -2,51 +2,50 @@
 
 import { useEffect, useState } from 'react';
 import type { Appointment, Patient } from '@/lib/types';
-import { mockAppointments, mockPatients } from '@/lib/mock-data';
 import { AppointmentCalendarView } from '@/components/appointments/AppointmentCalendarView';
 import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
 import { AppointmentFormDialog } from '@/components/appointments/AppointmentFormDialog';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
+import { db } from '@/lib/firebaseClient';
+import { addDoc, collection, updateDoc, doc, deleteDoc } from 'firebase/firestore';
+import { useAppointments } from '@/hooks/useAppointments';
+import { mockPatients } from '@/lib/mock-data';
 
 export default function AppointmentsPage() {
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const { appointments } = useAppointments();
   const [patients, setPatients] = useState<Patient[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
-    setAppointments(mockAppointments);
     setPatients(mockPatients);
   }, []);
 
-  const handleAddOrUpdateAppointment = (appointmentData: Appointment) => {
-    setAppointments(prevAppointments => {
-      const existingIndex = prevAppointments.findIndex(a => a.id === appointmentData.id);
-      if (existingIndex > -1) {
-        const updated = [...prevAppointments];
-        updated[existingIndex] = appointmentData;
-        return updated;
-      } else {
-        return [...prevAppointments, appointmentData];
-      }
-    });
-
-    toast({
-      title:
-        appointmentData.id.startsWith("appt-") &&
-        appointments.find(a => a.id === appointmentData.id)
-          ? "Agendamento Atualizado"
-          : "Novo Agendamento",
-      description: `Agendamento para ${appointmentData.patientName} salvo com sucesso.`,
-    });
-
+  const handleAddOrUpdateAppointment = async (appointmentData: Appointment) => {
+    const exists = appointments.find((a) => a.id === appointmentData.id);
+    if (exists) {
+      await updateDoc(doc(db, 'appointments', appointmentData.id), {
+        patientName: appointmentData.patientName,
+        contact: appointmentData.contact || '',
+        dateTime: appointmentData.dateTime,
+        durationMinutes: appointmentData.durationMinutes,
+        status: appointmentData.status,
+        notes: appointmentData.notes || '',
+      });
+      toast({ title: 'Agendamento Atualizado' });
+    } else {
+      const { id, ...data } = appointmentData;
+      await addDoc(collection(db, 'appointments'), data);
+      toast({ title: 'Novo Agendamento' });
+    }
     setIsFormOpen(false);
   };
 
-  const handleDeleteAppointment = (appointmentId: string) => {
-    setAppointments(prev => prev.filter(a => a.id !== appointmentId));
+  const handleDeleteAppointment = async (appointmentId: string) => {
+    await deleteDoc(doc(db, 'appointments', appointmentId));
+    toast({ title: 'Agendamento Cancelado', variant: 'destructive' });
   };
 
   return (
