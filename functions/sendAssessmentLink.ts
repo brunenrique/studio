@@ -7,9 +7,16 @@ import jwt from 'jsonwebtoken';
 admin.initializeApp();
 const db = admin.firestore();
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
-const twilioClient = twilio(process.env.TWILIO_SID as string, process.env.TWILIO_AUTH_TOKEN as string);
-const TOKEN_SECRET = process.env.ASSESSMENT_TOKEN_SECRET;
+const secrets = functions.config().secrets || {};
+sgMail.setApiKey(secrets.sendgrid_api_key || (process.env.SENDGRID_API_KEY as string));
+const twilioClient = twilio(
+  secrets.twilio_sid || (process.env.TWILIO_SID as string),
+  secrets.twilio_auth_token || (process.env.TWILIO_AUTH_TOKEN as string),
+);
+const TOKEN_SECRET = secrets.assessment_token_secret || process.env.ASSESSMENT_TOKEN_SECRET;
+const FROM_EMAIL = secrets.sendgrid_from_email || process.env.SENDGRID_FROM_EMAIL;
+const WHATSAPP_FROM = secrets.twilio_whatsapp_from || process.env.TWILIO_WHATSAPP_FROM;
+const PUBLIC_URL = secrets.public_url || process.env.PUBLIC_URL;
 if (!TOKEN_SECRET) {
   throw new Error('ASSESSMENT_TOKEN_SECRET environment variable is required');
 }
@@ -20,7 +27,7 @@ function signToken(data: { patientId: string; assessmentId: string }) {
 
 async function internalSend(patientId: string, assessmentId: string, channels: string[]) {
   const token = signToken({ patientId, assessmentId });
-  const link = `${process.env.PUBLIC_URL}/assessments/fill/${token}`;
+  const link = `${PUBLIC_URL}/assessments/fill/${token}`;
   await db.doc(`patients/${patientId}/assessments/${assessmentId}`).update({ linkToken: token });
   const patientSnap = await db.doc(`patients/${patientId}`).get();
   const patient = patientSnap.data();
@@ -29,15 +36,15 @@ async function internalSend(patientId: string, assessmentId: string, channels: s
   if (channels.includes('email')) {
     await sgMail.send({
       to: patient.contact,
-      from: process.env.SENDGRID_FROM_EMAIL as string,
+      from: FROM_EMAIL as string,
       subject: 'Novo Inventário',
       text: `Por favor, preencha: ${link}`,
     });
   }
 
-  if (channels.includes('whatsapp') && process.env.TWILIO_WHATSAPP_FROM) {
+  if (channels.includes('whatsapp') && WHATSAPP_FROM) {
     await twilioClient.messages.create({
-      from: process.env.TWILIO_WHATSAPP_FROM,
+      from: WHATSAPP_FROM,
       to: `whatsapp:${patient.contact}`,
       body: `Preencha: ${link}`,
     });

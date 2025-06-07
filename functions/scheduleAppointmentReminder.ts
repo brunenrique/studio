@@ -6,11 +6,15 @@ import twilio from 'twilio';
 admin.initializeApp();
 const db = admin.firestore();
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
-const twilioClient = twilio(process.env.TWILIO_SID as string, process.env.TWILIO_AUTH_TOKEN as string);
+const secrets = functions.config().secrets || {};
+sgMail.setApiKey(secrets.sendgrid_api_key || (process.env.SENDGRID_API_KEY as string));
+const twilioClient = twilio(
+  secrets.twilio_sid || (process.env.TWILIO_SID as string),
+  secrets.twilio_auth_token || (process.env.TWILIO_AUTH_TOKEN as string),
+);
 
-const SENDGRID_FROM = process.env.SENDGRID_FROM_EMAIL as string;
-const TWILIO_SMS_FROM = process.env.TWILIO_SMS_FROM;
+const SENDGRID_FROM = secrets.sendgrid_from_email || (process.env.SENDGRID_FROM_EMAIL as string);
+const TWILIO_SMS_FROM = secrets.twilio_sms_from || process.env.TWILIO_SMS_FROM;
 
 const MINUTES_BEFORE_24H = 24 * 60; // 24 hours
 const MINUTES_BEFORE_30M = 30; // 30 minutes
