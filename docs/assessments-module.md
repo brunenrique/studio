@@ -19,6 +19,7 @@
 - **Next.js App Router** consome o Firestore diretamente pelo SDK web.
 - **Firebase Admin SDK** é usado em server components e funções para gerar tokens JWT dos formulários.
 - **Cloud Functions** enviam links por e-mail/WhatsApp via SendGrid e Twilio.
+- Em caso de erro ao enviar, a função registra `{ message, patientId, error }` e tenta novamente após 1s.
 - Regras de segurança limitam o acesso à biblioteca de testes e permitem que o formulário público atualize apenas o documento vinculado ao token.
 - Tokens expiram após sete dias.
 

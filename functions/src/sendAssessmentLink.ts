@@ -16,6 +16,27 @@ function signToken(data: { patientId: string; assessmentId: string }) {
   return jwt.sign(data, TOKEN_SECRET, { expiresIn: '7d' });
 }
 
+async function withRetry(
+  action: () => Promise<void>,
+  message: string,
+  patientId: string,
+  retries = 1,
+  delayMs = 1000
+) {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      await action();
+      return;
+    } catch (error) {
+      if (attempt === retries) {
+        console.error({ message, patientId, error });
+      } else {
+        await new Promise((res) => setTimeout(res, delayMs));
+      }
+    }
+  }
+}
+
 async function internalSend(patientId: string, assessmentId: string, channels: string[]) {
   const token = signToken({ patientId, assessmentId });
   const link = `${process.env.PUBLIC_URL}/assessments/fill/${token}`;
@@ -25,20 +46,30 @@ async function internalSend(patientId: string, assessmentId: string, channels: s
   if (!patient) return;
 
   if (channels.includes('email')) {
-    await sgMail.send({
-      to: patient.contact,
-      from: process.env.SENDGRID_FROM_EMAIL as string,
-      subject: 'Novo Inventário',
-      text: `Por favor, preencha: ${link}`,
-    });
+    await withRetry(
+      () =>
+        sgMail.send({
+          to: patient.contact,
+          from: process.env.SENDGRID_FROM_EMAIL as string,
+          subject: 'Novo Inventário',
+          text: `Por favor, preencha: ${link}`,
+        }),
+      'Failed to send email',
+      patientId
+    );
   }
 
   if (channels.includes('whatsapp') && process.env.TWILIO_WHATSAPP_FROM) {
-    await twilioClient.messages.create({
-      from: process.env.TWILIO_WHATSAPP_FROM,
-      to: `whatsapp:${patient.contact}`,
-      body: `Preencha: ${link}`,
-    });
+    await withRetry(
+      () =>
+        twilioClient.messages.create({
+          from: process.env.TWILIO_WHATSAPP_FROM as string,
+          to: `whatsapp:${patient.contact}`,
+          body: `Preencha: ${link}`,
+        }),
+      'Failed to send WhatsApp message',
+      patientId
+    );
   }
 }
 
