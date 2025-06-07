@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useAuth } from "@/contexts/AuthContext";
+import { RoleGate } from "@/components/auth/RoleGate";
 import { db } from "@/lib/firebaseClient";
 import { collection, onSnapshot, query, where, updateDoc, doc } from "firebase/firestore";
 import { User } from "@/lib/types";
@@ -10,7 +10,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useToast } from "@/hooks/use-toast";
 
 export default function UserApprovalsPage() {
-  const { user } = useAuth();
   const [pending, setPending] = useState<User[]>([]);
   const { toast } = useToast();
 
@@ -28,22 +27,20 @@ export default function UserApprovalsPage() {
     toast({ title: "Usuário aprovado" });
   };
 
-  if (!user || user.role !== "ADMIN") {
-    return <p className="p-8">Sem acesso.</p>;
-  }
-
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold font-headline">Aprovar Usuários</h1>
-      <Card className="shadow-lg rounded-lg">
-        <CardHeader>
-          <CardTitle>Pendentes</CardTitle>
-          <CardDescription>{pending.length} usuário(s) aguardando aprovação.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <UserApprovalTable users={pending} onApprove={handleApprove} />
-        </CardContent>
-      </Card>
-    </div>
+    <RoleGate allowed={["ADMIN"]}>
+      <div className="space-y-6">
+        <h1 className="text-3xl font-bold font-headline">Aprovar Usuários</h1>
+        <Card className="shadow-lg rounded-lg">
+          <CardHeader>
+            <CardTitle>Pendentes</CardTitle>
+            <CardDescription>{pending.length} usuário(s) aguardando aprovação.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <UserApprovalTable users={pending} onApprove={handleApprove} />
+          </CardContent>
+        </Card>
+      </div>
+    </RoleGate>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useAuditLogs } from '@/hooks/useAuditLogs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { RoleGate } from '@/components/auth/RoleGate';
 import {
   Table,
   TableBody,
@@ -15,16 +16,17 @@ export default function AuditLogPage() {
   const { logs } = useAuditLogs();
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold font-headline">Audit Trail</h1>
-      <Card className="shadow-lg rounded-lg">
-        <CardHeader>
-          <CardTitle>Logs Registrados</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
+    <RoleGate allowed={["ADMIN"]}>
+      <div className="space-y-6">
+        <h1 className="text-3xl font-bold font-headline">Audit Trail</h1>
+        <Card className="shadow-lg rounded-lg">
+          <CardHeader>
+            <CardTitle>Logs Registrados</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
                 <TableHead>Ação</TableHead>
                 <TableHead>Usuário</TableHead>
                 <TableHead>Quando</TableHead>
@@ -51,5 +53,6 @@ export default function AuditLogPage() {
         </CardContent>
       </Card>
     </div>
+    </RoleGate>
   );
 }

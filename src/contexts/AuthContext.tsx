@@ -12,6 +12,7 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   onAuthStateChanged,
+  signOut,
 } from 'firebase/auth';
 
 interface AuthContextType {
@@ -42,10 +43,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             name: fbUser.displayName || '',
             email: fbUser.email || '',
             role: (data?.role as User['role']) || 'PSYCHOLOGIST',
-            // A aprovação automática está habilitada por padrão
             isApproved: data?.isApproved ?? true,
             profileImage: fbUser.photoURL || undefined,
           };
+
+          if (!mappedUser.isApproved) {
+            alert('Seu acesso ainda n\u00e3o foi aprovado.');
+            await signOut(auth);
+            setUser(null);
+            localStorage.removeItem('psiguard_user');
+            router.push('/pending-approval');
+            return;
+          }
+
           setUser(mappedUser);
           localStorage.setItem('psiguard_user', JSON.stringify(mappedUser));
         } catch (err) {
@@ -72,19 +82,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     // In a real app, you'd validate credentials against a backend.
     // For this mock, we'll use a hardcoded psychologist user if email matches.
     if (email === mockUser.email) {
-      setUser(mockUser);
-      localStorage.setItem('psiguard_user', JSON.stringify(mockUser));
       try {
-        await setDoc(doc(db, 'users', mockUser.id), {
+        const ref = doc(db, 'users', mockUser.id);
+        const snap = await getDoc(ref);
+        const data = snap.exists() ? (snap.data() as Partial<User>) : undefined;
+        if (data && data.isApproved === false) {
+          alert('Seu acesso ainda n\u00e3o foi aprovado.');
+          setIsLoading(false);
+          return;
+        }
+        await setDoc(ref, {
           role: mockUser.role,
-          isApproved: true,
+          isApproved: data?.isApproved ?? true,
           name: mockUser.name,
           email: mockUser.email,
         }, { merge: true });
+        const finalUser = { ...mockUser, isApproved: data?.isApproved ?? true };
+        setUser(finalUser);
+        localStorage.setItem('psiguard_user', JSON.stringify(finalUser));
+        router.push('/dashboard');
       } catch (err) {
         console.error('Failed to save mock user', err);
       }
-      router.push('/dashboard');
     } else {
       // Basic error handling - in a real app, show a toast or error message
       console.error("Login failed: Invalid credentials");
@@ -116,10 +135,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         name: fbUser.displayName || '',
         email: fbUser.email || '',
         role: (data?.role as User['role']) || 'PSYCHOLOGIST',
-        // A aprovação automática está habilitada por padrão
         isApproved: data?.isApproved ?? true,
         profileImage: fbUser.photoURL || undefined,
       };
+
+      if (!mappedUser.isApproved) {
+        alert('Seu acesso ainda n\u00e3o foi aprovado.');
+        await signOut(auth);
+        setIsLoading(false);
+        return;
+      }
+
       setUser(mappedUser);
       localStorage.setItem('psiguard_user', JSON.stringify(mappedUser));
       router.push('/dashboard');
