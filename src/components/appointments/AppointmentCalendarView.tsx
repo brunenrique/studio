@@ -14,6 +14,8 @@ import {
   User,
   AlertCircle,
   Info,
+  Phone,
+  MessageCircle,
 } from "lucide-react";
 import {
   format,
@@ -42,6 +44,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import Link from "next/link";
+import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 
 interface AppointmentCalendarViewProps {
@@ -62,6 +66,7 @@ export function AppointmentCalendarView({
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [toDelete, setToDelete] = useState<Appointment | null>(null);
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const handleEdit = (appointment: Appointment) => {
     setEditingAppointment(appointment);
@@ -173,6 +178,8 @@ export function AppointmentCalendarView({
                   const statusInfo = statusMap[app.status];
                   const appDateTime = parseISO(app.dateTime);
                   const isAppointmentPast = isPast(appDateTime) && !isToday(appDateTime);
+                  const patientInfo = patients.find((p) => p.id === app.patientId);
+                  const contact = patientInfo?.contact;
 
                   return (
                     <li
@@ -196,6 +203,22 @@ export function AppointmentCalendarView({
                             )}{" "}
                             ({app.durationMinutes} min)
                           </p>
+                          {contact && (
+                            <p className="text-sm flex items-center gap-1 mt-1">
+                              <Phone className="h-4 w-4 text-primary" /> {contact}
+                              {user?.role === 'AGENDAMENTO' && (
+                                <Link
+                                  href={`https://wa.me/${contact}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="ml-1 text-green-600 hover:text-green-700"
+                                >
+                                  <MessageCircle className="h-4 w-4" />
+                                  <span className="sr-only">WhatsApp</span>
+                                </Link>
+                              )}
+                            </p>
+                          )}
                         </div>
                         <Badge
                           variant={getAppointmentBadgeVariant(
