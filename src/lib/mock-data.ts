@@ -97,6 +97,7 @@ export let mockPatients: Patient[] = [
     sessionNotes: initialSessionNotesP1,
     treatmentPlan: "Reduzir episódios de ansiedade em 3 meses.",
     psychologistId: mockUser.id,
+    notificationsOptOut: { email: false, sms: false },
   }),
   encryptPatient({
     id: "patient-002",
@@ -107,6 +108,7 @@ export let mockPatients: Patient[] = [
     sessionNotes: initialSessionNotesP2,
     treatmentPlan: "Melhorar habilidades de enfrentamento em 6 meses.",
     psychologistId: mockUser.id,
+    notificationsOptOut: { email: false, sms: false },
   }),
   encryptPatient({
     id: "patient-003",
@@ -117,6 +119,7 @@ export let mockPatients: Patient[] = [
     sessionNotes: [],
     treatmentPlan: "Aumentar autoestima e confiança em 4 meses.",
     psychologistId: mockUser.id,
+    notificationsOptOut: { email: false, sms: false },
   }),
   encryptPatient({
     id: "patient-004",
@@ -127,6 +130,7 @@ export let mockPatients: Patient[] = [
     sessionNotes: initialSessionNotesP3,
     treatmentPlan: "Trabalhar traumas passados em 5 meses.",
     psychologistId: mockUser.id,
+    notificationsOptOut: { email: false, sms: false },
   }),
 ];
 

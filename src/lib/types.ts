@@ -40,6 +40,10 @@ export interface Patient {
   sessionNotes: SessionNote[];
   treatmentPlan?: string;
   psychologistId?: string;
+  notificationsOptOut?: {
+    email: boolean;
+    sms: boolean;
+  };
 }
 
 // 📅 Agendamento de sessão

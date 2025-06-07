@@ -26,6 +26,7 @@ const patient: Patient = {
     },
   ],
   treatmentPlan: 'Plano inicial',
+  notificationsOptOut: { email: false, sms: false },
 };
 
 test('encryptPatient/decryptPatient roundtrip', () => {
