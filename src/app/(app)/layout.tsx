@@ -16,13 +16,14 @@ export default function AppLayout({
   const { isAuthenticated, isLoading, user } = useAuth();
   const router = useRouter();
 
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      router.push('/login');
-    }
-  }, [isAuthenticated, isLoading, router]);
+  // Temporariamente não redirecionamos usuários não autenticados
+  // useEffect(() => {
+  //   if (!isLoading && !isAuthenticated) {
+  //     router.push('/login');
+  //   }
+  // }, [isAuthenticated, isLoading, router]);
 
-  if (isLoading || !isAuthenticated) {
+  if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <p>Carregando...</p>

@@ -9,15 +9,12 @@ interface RoleGateProps {
 }
 
 export function RoleGate({ allowed, children }: RoleGateProps) {
-  const { user, isLoading } = useAuth();
+  const { isLoading } = useAuth();
 
   if (isLoading) {
     return <div className="p-8">Carregando...</div>;
   }
 
-  if (!user || !allowed.includes(user.role)) {
-    return <p className="p-8">Sem acesso.</p>;
-  }
-
+  // Temporariamente, não aplicamos validação de função/permissão
   return <>{children}</>;
 }
