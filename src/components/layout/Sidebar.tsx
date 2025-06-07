@@ -26,10 +26,11 @@ import {
   LogOut,
   ChevronDown,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { useSmartMenu } from "@/lib/use-smart-menu";
+import { navigation, NavItem } from "@/lib/navigation";
 
 function SidebarContent({
   className,
@@ -41,61 +42,45 @@ function SidebarContent({
   const pathname = usePathname();
   const { logout, user } = useAuth();
 
-  const sections = [
-    {
-      title: "Consultório",
-      items: [
-        { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-        { href: "/patients", label: "Pacientes", icon: Users },
-        { href: "/appointments", label: "Agendamentos", icon: CalendarDays },
-        { href: "/waiting-list", label: "Lista de Espera", icon: ListChecks },
-      ],
+  const icons: Record<string, React.ComponentType<{ className?: string }>> = {
+    '/dashboard': LayoutDashboard,
+    '/patients': Users,
+    '/appointments': CalendarDays,
+    '/waiting-list': ListChecks,
+    '/templates': FileText,
+    '/medications': Pill,
+    '/self-care': HeartPulse,
+    '/knowledge-base': BookOpenCheck,
+    '/analytics': LineChart,
+    '/analytics/psychologist': LineChart,
+    '/settings': Settings,
+    '/user-approvals': Users,
+  };
+
+  const items = navigation.filter(
+    (item) => item.href !== '/user-approvals' || user?.role === 'ADMIN',
+  );
+
+  const sections = items.reduce(
+    (acc: Record<string, NavItem[]>, item) => {
+      acc[item.category] = acc[item.category] || [];
+      acc[item.category].push(item);
+      return acc;
     },
-    {
-      title: "Ferramentas",
-      items: [
-        { href: "/templates", label: "Modelos", icon: FileText },
-        { href: "/medications", label: "Guia Rápido", icon: Pill },
-        { href: "/self-care", label: "Saúde Mental", icon: HeartPulse },
-        {
-          href: "/knowledge-base",
-          label: "Base de Conhecimento",
-          icon: BookOpenCheck,
-        },
-        { href: "/analytics", label: "Tendências", icon: LineChart },
-        {
-          href: "/analytics/psychologist",
-          label: "Indicadores",
-          icon: LineChart,
-        },
-      ],
-    },
-    {
-      title: "Sistema",
-      items: [
-        { href: "/settings", label: "Configurações", icon: Settings },
-        ...(user?.role === "ADMIN"
-          ? [
-              {
-                href: "/user-approvals",
-                label: "Aprovar Usuários",
-                icon: Users,
-              },
-            ]
-          : []),
-      ],
-    },
-  ];
+    {},
+  );
+
+  const sectionEntries = Object.entries(sections).map(([title, items]) => ({
+    title,
+    items,
+  }));
 
   const [openSections, setOpenSections] = useState<Record<string, boolean>>(
     () =>
-      sections.reduce(
-        (acc, s) => {
-          acc[s.title] = true;
-          return acc;
-        },
-        {} as Record<string, boolean>,
-      ),
+      sectionEntries.reduce((acc, s) => {
+        acc[s.title] = true;
+        return acc;
+      }, {} as Record<string, boolean>),
   );
 
   const toggleSection = (title: string) =>
@@ -114,7 +99,7 @@ function SidebarContent({
         </Link>
       </div>
       <nav className="flex-1 overflow-y-auto px-2 space-y-6 text-sm">
-        {sections.map((section, i) => (
+        {sectionEntries.map((section, i) => (
           <div
             key={section.title}
             className={cn(
@@ -136,23 +121,26 @@ function SidebarContent({
             </button>
             {openSections[section.title] && (
               <ul className="space-y-1">
-                {section.items.map((item) => (
-                  <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      onClick={() => {
-                        onNavigate?.();
-                      }}
-                      className={cn(
-                        "flex items-center gap-2 rounded-md px-4 py-2 hover:bg-primary/15 focus:outline focus:outline-2 focus:outline-primary/70",
-                        pathname === item.href && "bg-primary/15 font-semibold",
-                      )}
-                    >
-                      <item.icon className="h-[18px] w-[18px]" />
-                      <span>{item.label}</span>
-                    </Link>
-                  </li>
-                ))}
+                {section.items.map((item) => {
+                  const Icon = icons[item.href];
+                  return (
+                    <li key={item.href}>
+                      <Link
+                        href={item.href}
+                        onClick={() => {
+                          onNavigate?.();
+                        }}
+                        className={cn(
+                          "flex items-center gap-2 rounded-md px-4 py-2 hover:bg-primary/15 focus:outline focus:outline-2 focus:outline-primary/70",
+                          pathname === item.href && "bg-primary/15 font-semibold",
+                        )}
+                      >
+                        {Icon && <Icon className="h-[18px] w-[18px]" />}
+                        <span>{item.label}</span>
+                      </Link>
+                    </li>
+                  );
+                })}
               </ul>
             )}
           </div>
