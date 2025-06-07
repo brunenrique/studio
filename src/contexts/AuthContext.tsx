@@ -141,7 +141,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     } else {
       // Basic error handling - in a real app, show a toast or error message
       console.error("Login failed: Invalid credentials");
-      alert("Login failed. Use 'doctor.jane@psiguard.com' and any password.");
       setUser(null);
       localStorage.removeItem('psiguard_user');
     }
