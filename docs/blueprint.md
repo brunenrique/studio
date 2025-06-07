@@ -13,10 +13,10 @@
 
 ## Style Guidelines:
 
-- Primary color: Dark petrol blue (#014F86) for a sophisticated feel.
+- Primary color: Deep navy (#013A5E) for a more modern look.
 - Background color: Soft off-white (#F5F7FA) to keep pages light and uncluttered.
-- Accent color: Metallic gold (#CBA135) for subtle highlights.
-- Body font: 'PT Sans', sans-serif. Use 'Playfair Display', serif for headlines to add elegance.
+- Accent color: Turquoise (#1ABC9C) for a fresh highlight.
+- Body font: 'Inter', sans-serif. Use 'Montserrat', sans-serif for headlines to keep it clean.
 - Use simple, professional icons that align with a clean user interface and are related to appointments and health records.
 - Maintain a clean, spacious, and organized layout that prioritizes information clarity and is accessible. Minimize visual clutter.
 - Subtle transitions and animations should be used sparingly to enhance user interaction without being distracting.
