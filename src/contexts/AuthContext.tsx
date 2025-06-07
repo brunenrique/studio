@@ -5,6 +5,7 @@ import { mockUser } from '@/lib/mock-data';
 import { useRouter } from 'next/navigation';
 import type { ReactNode } from 'react';
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useSessionValidation } from '@/hooks/useSessionValidation';
 import { auth, db } from '@/lib/firebaseClient';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import {
@@ -30,6 +31,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
+  const SESSION_KEY = 'psiguard_session_id';
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
@@ -44,6 +46,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             role: (data?.role as User['role']) || 'PSYCHOLOGIST',
             isApproved: data?.isApproved ?? true,
             profileImage: fbUser.photoURL || undefined,
+            sessionId: data?.sessionId,
           };
 
           if (!mappedUser.isApproved) {
@@ -55,8 +58,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             return;
           }
 
+          const localSession = localStorage.getItem(SESSION_KEY);
+          if (
+            mappedUser.sessionId &&
+            localSession &&
+            mappedUser.sessionId !== localSession
+          ) {
+            alert('Voc\u00ea foi desconectado por login em outro dispositivo.');
+            await signOut(auth);
+            setUser(null);
+            localStorage.removeItem('psiguard_user');
+            localStorage.removeItem(SESSION_KEY);
+            router.push('/login');
+            return;
+          }
+
           setUser(mappedUser);
           localStorage.setItem('psiguard_user', JSON.stringify(mappedUser));
+          if (mappedUser.sessionId) {
+            localStorage.setItem(SESSION_KEY, mappedUser.sessionId);
+          }
         } catch (err) {
           console.error('Failed to load user profile', err);
           setUser(null);
@@ -90,15 +111,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setIsLoading(false);
           return;
         }
-        await setDoc(ref, {
-          role: mockUser.role,
+        const newSession = crypto.randomUUID();
+        await setDoc(
+          ref,
+          {
+            role: mockUser.role,
+            isApproved: data?.isApproved ?? true,
+            name: mockUser.name,
+            email: mockUser.email,
+            sessionId: newSession,
+          },
+          { merge: true }
+        );
+        const finalUser = {
+          ...mockUser,
           isApproved: data?.isApproved ?? true,
-          name: mockUser.name,
-          email: mockUser.email,
-        }, { merge: true });
-        const finalUser = { ...mockUser, isApproved: data?.isApproved ?? true };
+          sessionId: newSession,
+        };
         setUser(finalUser);
         localStorage.setItem('psiguard_user', JSON.stringify(finalUser));
+        localStorage.setItem(SESSION_KEY, newSession);
         router.push('/dashboard');
       } catch (err) {
         console.error('Failed to save mock user', err);
@@ -129,6 +161,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       } else {
         data = snap.data() as Partial<User>;
       }
+      const newSession = crypto.randomUUID();
       const mappedUser: User = {
         id: fbUser.uid,
         name: fbUser.displayName || '',
@@ -136,6 +169,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         role: (data?.role as User['role']) || 'PSYCHOLOGIST',
         isApproved: data?.isApproved ?? true,
         profileImage: fbUser.photoURL || undefined,
+        sessionId: newSession,
       };
 
       if (!mappedUser.isApproved) {
@@ -144,9 +178,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setIsLoading(false);
         return;
       }
+      await setDoc(
+        ref,
+        {
+          role: mappedUser.role,
+          isApproved: mappedUser.isApproved,
+          name: mappedUser.name,
+          email: mappedUser.email,
+          sessionId: newSession,
+        },
+        { merge: true }
+      );
 
       setUser(mappedUser);
       localStorage.setItem('psiguard_user', JSON.stringify(mappedUser));
+      localStorage.setItem(SESSION_KEY, newSession);
       router.push('/dashboard');
     } catch (err) {
       console.error('Google login failed', err);
@@ -158,8 +204,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = () => {
     setUser(null);
     localStorage.removeItem('psiguard_user');
+    localStorage.removeItem(SESSION_KEY);
+    signOut(auth).catch(() => {});
     router.push('/login');
   };
+
+  useSessionValidation(user, logout);
 
   return (
     <AuthContext.Provider value={{ user, isAuthenticated: !!user, isLoading, login, loginWithGoogle, logout }}>
