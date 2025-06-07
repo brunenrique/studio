@@ -1,8 +1,13 @@
 // 🔐 Papéis disponíveis no sistema
-export type UserRole = 'ADMIN' | 'PSYCHOLOGIST' | 'RECEPCAO' | 'AGENDAMENTO';
+export type UserRole = "ADMIN" | "PSYCHOLOGIST" | "RECEPCAO" | "AGENDAMENTO";
 
 // 🩺 Status possíveis de um agendamento
-export type AttendanceStatus = 'pending' | 'present' | 'absent' | 'rescheduled';
+export type AttendanceStatus =
+  | "pending"
+  | "present"
+  | "absent"
+  | "rescheduled"
+  | "canceled";
 
 // 👤 Representação de um usuário (psicólogo ou administrativo)
 export interface User {
@@ -55,10 +60,7 @@ export interface WaitingListItem {
 }
 
 // 📑 Modelo reutilizável (anotação, email, plano de tratamento, etc.)
-export type TemplateCategory =
-  | 'session-note'
-  | 'email'
-  | 'treatment-plan';
+export type TemplateCategory = "session-note" | "email" | "treatment-plan";
 
 export interface Template {
   id: string;
@@ -105,7 +107,7 @@ export interface TestMeta {
 export interface Assessment {
   id: string;
   testId: string;
-  status: 'pending' | 'completed' | 'expired';
+  status: "pending" | "completed" | "expired";
   linkToken: string;
   createdAt: string; // ISO 8601
   completedAt?: string;
@@ -122,11 +124,11 @@ export interface AssessmentResult extends Assessment {
 export type PartialPatient = Partial<Patient>;
 
 // 🗒️ Tarefa profissional
-export type TaskPriority = 'low' | 'medium' | 'high';
+export type TaskPriority = "low" | "medium" | "high";
 
-export type TaskStatus = 'pending' | 'done';
+export type TaskStatus = "pending" | "done";
 
-export type TaskType = 'session' | 'report' | 'admin';
+export type TaskType = "session" | "report" | "admin";
 
 export interface Task {
   id: string;
@@ -173,4 +175,3 @@ export interface FormulationDiagram {
   sessionId: string;
   diagramJson: string;
 }
-
