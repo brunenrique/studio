@@ -37,6 +37,7 @@ CRYPTO_SECRET_KEY=REPLACE_ME_BASE64_32BYTES
 | `CRYPTO_SECRET_KEY` | Chave AES para criptografar dados sensíveis | não |
 | `FIREBASE_SERVICE_ACCOUNT` | JSON da conta de serviço para o Admin SDK | não |
 | `ASSESSMENT_TOKEN_SECRET` | Segredo para assinar links de inventários | não |
+| `ASSESSMENT_TOKEN_EXPIRY` | Validade dos links de inventário (padrão 7d) | sim |
 | `SENDGRID_API_KEY` | Chave da API SendGrid para envio de e-mails | não |
 | `SENDGRID_FROM_EMAIL` | Endereço remetente usado pelo SendGrid | não |
 | `TWILIO_SID` | SID da conta Twilio | não |
@@ -47,7 +48,7 @@ CRYPTO_SECRET_KEY=REPLACE_ME_BASE64_32BYTES
 | `APPOINTMENT_REMINDER_CRON` | Cron de execução do lembrete de sessões (padrão `* * * * *`) | sim |
 | `TASK_REMINDER_CRON` | Cron de execução do lembrete de tarefas (padrão `* * * * *`) | sim |
 | `ASSESSMENT_REMINDER_HOURS` | Horas após a criação para lembrar inventários pendentes (padrão 24) | sim |
-| `PUBLIC_URL` | URL pública usada nos links enviados por e-mail ou WhatsApp | não |
+| `PUBLIC_URL` | URL pública usada nos links (requer HTTPS) | não |
 
 Todos os dados de pacientes são criptografados no cliente usando AES antes de serem manipulados.
 

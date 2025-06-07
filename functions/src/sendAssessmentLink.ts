@@ -39,14 +39,19 @@ async function logNotification(
 sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
 const twilioClient = twilio(process.env.TWILIO_SID as string, process.env.TWILIO_AUTH_TOKEN as string);
 const TOKEN_SECRET = process.env.ASSESSMENT_TOKEN_SECRET as string;
+const TOKEN_EXPIRY = process.env.ASSESSMENT_TOKEN_EXPIRY || '7d';
+const PUBLIC_URL = process.env.PUBLIC_URL as string;
+if (PUBLIC_URL && !PUBLIC_URL.startsWith('https://')) {
+  console.warn('PUBLIC_URL should use HTTPS');
+}
 
-function signToken(data: { patientId: string; assessmentId: string }) {
-  return jwt.sign(data, TOKEN_SECRET, { expiresIn: '7d' });
+export function signToken(data: { patientId: string; assessmentId: string }) {
+  return jwt.sign(data, TOKEN_SECRET, { expiresIn: TOKEN_EXPIRY });
 }
 
 async function internalSend(patientId: string, assessmentId: string, channels: string[]) {
   const token = signToken({ patientId, assessmentId });
-  const link = `${process.env.PUBLIC_URL}/assessments/fill/${token}`;
+  const link = `${PUBLIC_URL}/assessments/fill/${token}`;
   await db.doc(`patients/${patientId}/assessments/${assessmentId}`).update({ linkToken: token });
   const patientSnap = await db.doc(`patients/${patientId}`).get();
   const patient = patientSnap.data();
