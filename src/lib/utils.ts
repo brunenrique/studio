@@ -1,6 +1,5 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
-import CryptoJS from 'crypto-js';
 import crypto from 'crypto';
 
 let cachedKey: Buffer | undefined;
@@ -30,8 +29,11 @@ export function cn(...inputs: ClassValue[]) {
  * @returns The encrypted string.
  */
 export function encrypt(text: string): string {
-  const key = getCryptoKey().toString('base64');
-  return CryptoJS.AES.encrypt(text, key).toString();
+  const iv = crypto.randomBytes(12);
+  const cipher = crypto.createCipheriv('aes-256-gcm', getCryptoKey(), iv);
+  const encrypted = Buffer.concat([cipher.update(text, 'utf8'), cipher.final()]);
+  const tag = cipher.getAuthTag();
+  return Buffer.concat([iv, tag, encrypted]).toString('base64');
 }
 
 /**
@@ -40,8 +42,14 @@ export function encrypt(text: string): string {
  * @returns The decrypted string.
  */
 export function decrypt(ciphertext: string): string {
-  const key = getCryptoKey().toString('base64');
-  return CryptoJS.AES.decrypt(ciphertext, key).toString(CryptoJS.enc.Utf8);
+  const data = Buffer.from(ciphertext, 'base64');
+  const iv = data.subarray(0, 12);
+  const tag = data.subarray(12, 28);
+  const text = data.subarray(28);
+  const decipher = crypto.createDecipheriv('aes-256-gcm', getCryptoKey(), iv);
+  decipher.setAuthTag(tag);
+  const decrypted = Buffer.concat([decipher.update(text), decipher.final()]);
+  return decrypted.toString('utf8');
 }
 
 // 🆔 Formata um CPF aplicando máscara 000.000.000-00

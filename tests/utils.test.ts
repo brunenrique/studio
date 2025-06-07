@@ -17,6 +17,12 @@ describe('encrypt/decrypt', () => {
     expect(cipher).not.toBe(plaintext);
   });
 
+  it('encrypt uses a random IV, producing different ciphertext each time', () => {
+    const c1 = encrypt(plaintext);
+    const c2 = encrypt(plaintext);
+    expect(c1).not.toBe(c2);
+  });
+
   it('decrypt(encrypt(text)) returns the original plaintext', () => {
     const cipher = encrypt(plaintext);
     const decrypted = decrypt(cipher);
