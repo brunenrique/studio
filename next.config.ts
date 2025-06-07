@@ -11,30 +11,12 @@ const csp = [
 ].join('; ') + ';';
 
 const securityHeaders = [
-  {
-    key: 'Content-Security-Policy',
-    value: csp,
-  },
-  {
-    key: 'X-Content-Type-Options',
-    value: 'nosniff'
-  },
-  {
-    key: 'X-Frame-Options',
-    value: 'DENY'
-  },
-  {
-    key: 'Referrer-Policy',
-    value: 'strict-origin-when-cross-origin'
-  },
-  {
-    key: 'X-XSS-Protection',
-    value: '1; mode=block'
-  },
-  {
-    key: 'Strict-Transport-Security',
-    value: 'max-age=63072000; includeSubDomains; preload'
-  }
+  { key: 'Content-Security-Policy', value: csp },
+  { key: 'X-Content-Type-Options', value: 'nosniff' },
+  { key: 'X-Frame-Options', value: 'DENY' },
+  { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+  { key: 'X-XSS-Protection', value: '1; mode=block' },
+  { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' }
 ];
 
 /** @type {import('next').NextConfig} */
@@ -64,15 +46,11 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-
-  // --- NOVA CONFIGURAÇÃO ADICIONADA AQUI ---
-  experimental: {
-    allowedDevOrigins: [
-      // Adicione a URL do seu Cloud Workstation aqui para resolver o aviso
-      'https://9003-firebase-studio2-1749148598567.cluster-qhrn7lb3szcfcud6uanedbkjnm.cloudworkstations.dev'
-    ],
-  },
-  // -----------------------------------------
+  
+  // NOTA: A configuração 'allowedDevOrigins' foi removida porque
+  // a versão atual do Next.js (15.3.3) não a reconhece.
+  // O aviso de 'Cross origin request' pode aparecer no terminal,
+  // mas não impede o funcionamento da aplicação em desenvolvimento.
 };
 
 export default nextConfig;
