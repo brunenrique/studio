@@ -10,7 +10,7 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "test": "jest"
+    "test": "jest --coverage"
   },
   "dependencies": {
     "@genkit-ai/googleai": "^1.8.0",
