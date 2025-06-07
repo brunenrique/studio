@@ -26,7 +26,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.onAssessmentCreate = exports.sendAssessmentLink = void 0;
+exports.onAppointmentUpdate = exports.onAssessmentCreate = exports.sendAssessmentLink = void 0;
 const admin = __importStar(require("firebase-admin"));
 const firestore_1 = require("firebase-functions/v2/firestore");
 const https_1 = require("firebase-functions/v2/https");
@@ -75,5 +75,21 @@ exports.onAssessmentCreate = (0, firestore_1.onDocumentCreated)('patients/{patie
     const patientId = event.params.patientId;
     const assessmentId = event.params.assessmentId;
     await internalSend(patientId, assessmentId, ['email']);
+});
+exports.onAppointmentUpdate = (0, firestore_1.onDocumentUpdated)('appointments/{appointmentId}', async (event) => {
+    var _a, _b;
+    const before = (_a = event.data) === null || _a === void 0 ? void 0 : _a.before.data();
+    const after = (_b = event.data) === null || _b === void 0 ? void 0 : _b.after.data();
+    if (!before || !after)
+        return;
+    const historyRef = db
+        .collection('appointments')
+        .doc(event.params.appointmentId)
+        .collection('history');
+    await historyRef.add({
+        before,
+        after,
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
 });
 //# sourceMappingURL=sendAssessmentLink.js.map

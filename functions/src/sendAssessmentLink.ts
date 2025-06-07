@@ -1,5 +1,5 @@
 import * as admin from 'firebase-admin';
-import { onDocumentCreated } from 'firebase-functions/v2/firestore';
+import { onDocumentCreated, onDocumentUpdated } from 'firebase-functions/v2/firestore';
 import { onCall, CallableRequest } from 'firebase-functions/v2/https';
 import sgMail from '@sendgrid/mail';
 import twilio from 'twilio';
@@ -53,4 +53,21 @@ export const onAssessmentCreate = onDocumentCreated('patients/{patientId}/assess
   const patientId = event.params.patientId;
   const assessmentId = event.params.assessmentId;
   await internalSend(patientId, assessmentId, ['email']);
+});
+
+export const onAppointmentUpdate = onDocumentUpdated('appointments/{appointmentId}', async (event) => {
+  const before = event.data?.before.data();
+  const after = event.data?.after.data();
+  if (!before || !after) return;
+
+  const historyRef = db
+    .collection('appointments')
+    .doc(event.params.appointmentId)
+    .collection('history');
+
+  await historyRef.add({
+    before,
+    after,
+    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+  });
 });
