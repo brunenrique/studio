@@ -18,13 +18,3 @@ Esses erros normalmente indicam que as variáveis de ambiente do Firebase não f
    ```
 5. Reinicie o servidor de desenvolvimento (`npm run dev`).
 
-## Erro: `Missing or insufficient permissions`
-
-Esse erro indica que as regras do Firestore bloquearam a leitura ou escrita do
-documento. Para fins de desenvolvimento, certifique-se de que as regras
-`docs/firestore.rules` estejam importadas pelo emulador e que a função
-`isPsychologist` utilize o claim `role` configurado no usuário mock.
-
-Caso tenha alterado as regras, execute `firebase emulators:start` novamente para
-recarregá‑las. Com as regras atualizadas, as operações de login e leitura devem
-funcionar normalmente.
