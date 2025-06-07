@@ -126,7 +126,7 @@ export function SessionNotesSection({
           <div className="mb-6 p-4 border rounded-md bg-card shadow">
             <h3 className="text-lg font-semibold mb-2">Nova Nota de Sessão</h3>
             <Textarea
-              placeholder="Digite as notas da sessão aqui... (Lembre-se da criptografia para dados sensíveis - não implementada no protótipo)"
+              placeholder="Digite as notas da sessão aqui..."
               value={newNote}
               onChange={(e) => setNewNote(e.target.value)}
               rows={5}

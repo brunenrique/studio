@@ -13,6 +13,7 @@ import { db } from '@/lib/firebaseClient';
 import { addDoc, collection, updateDoc, doc, deleteDoc, serverTimestamp } from 'firebase/firestore';
 import type { Task } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface PatientDetailPageProps {
   params: {
@@ -21,10 +22,15 @@ interface PatientDetailPageProps {
 }
 
 export default function PatientDetailPage({ params }: PatientDetailPageProps) {
+  const { user } = useAuth();
   const { tasks } = useTasks(params.id);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editing, setEditing] = useState<Task | null>(null);
   const { toast } = useToast();
+
+  if (!user || user.role !== 'Psicólogo') {
+    return <p className="p-4">Acesso restrito aos psicólogos.</p>;
+  }
 
   const handleSave = async (data: Omit<Task, 'id' | 'createdAt' | 'updatedAt' | 'createdBy' | 'patientId'>) => {
     if (editing) {

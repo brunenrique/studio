@@ -33,6 +33,7 @@ import React from 'react';
 const patientFormSchema = z.object({
   name: z.string().min(2, { message: "O nome deve ter pelo menos 2 caracteres." }),
   contact: z.string().min(5, { message: "Contato inválido." }), // Can be email or phone
+  cpf: z.string().length(11, { message: "CPF deve ter 11 dígitos." }),
   dateOfBirth: z.date({ required_error: "Data de nascimento é obrigatória." }),
 });
 
@@ -57,14 +58,14 @@ export function PatientFormDialog({ patient, onSave, children, isOpen: controlle
     resolver: zodResolver(patientFormSchema),
     defaultValues: patient
       ? { ...patient, dateOfBirth: patient.dateOfBirth ? parseISO(patient.dateOfBirth) : new Date() }
-      : { name: "", contact: "", dateOfBirth: undefined },
+      : { name: "", contact: "", cpf: "", dateOfBirth: undefined },
   });
   
   React.useEffect(() => {
     if (patient) {
       form.reset({ ...patient, dateOfBirth: patient.dateOfBirth ? parseISO(patient.dateOfBirth) : new Date() });
     } else {
-      form.reset({ name: "", contact: "", dateOfBirth: undefined });
+      form.reset({ name: "", contact: "", cpf: "", dateOfBirth: undefined });
     }
   }, [patient, form, isOpen]);
 
@@ -119,6 +120,19 @@ export function PatientFormDialog({ patient, onSave, children, isOpen: controlle
                   <FormLabel>Contato (Email/Telefone)</FormLabel>
                   <FormControl>
                     <Input placeholder="email@exemplo.com ou (XX) XXXXX-XXXX" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="cpf"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>CPF</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Somente números" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

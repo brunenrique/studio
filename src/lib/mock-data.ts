@@ -14,6 +14,7 @@ import type {
   FormulationDiagram,
   // outros tipos aqui
 } from '@/lib/types';
+import { encryptPatient, decryptPatient } from './patientCrypto';
 
 
 // 👤 Usuário mock
@@ -79,51 +80,43 @@ const initialSessionNotesP3: SessionNote[] = [
 
 // 👩‍⚕️ Pacientes mock
 export let mockPatients: Patient[] = [
-  {
+  encryptPatient({
     id: 'patient-001',
     name: 'Alice Wonderland',
-    contact: 'alice@example.com',
+    contact: '11999990001',
+    cpf: '12345678901',
     dateOfBirth: '1990-05-15',
     sessionNotes: initialSessionNotesP1,
-  },
-  {
+  }),
+  encryptPatient({
     id: 'patient-002',
     name: 'Bob The Builder',
-    contact: 'bob@example.com',
+    contact: '11999990002',
+    cpf: '98765432100',
     dateOfBirth: '1985-11-20',
     sessionNotes: initialSessionNotesP2,
-  },
-  {
+  }),
+  encryptPatient({
     id: 'patient-003',
     name: 'Charlie Brown',
-    contact: 'charlie@example.com',
+    contact: '11999990003',
+    cpf: '11122233344',
     dateOfBirth: '2000-02-10',
     sessionNotes: [],
-  },
-  {
+  }),
+  encryptPatient({
     id: 'patient-004',
     name: 'Dana Scully',
-    contact: 'dana@example.com',
+    contact: '11999990004',
+    cpf: '22233344455',
     dateOfBirth: '1974-02-23',
     sessionNotes: initialSessionNotesP3,
-  },
+  }),
 ];
-
-// --- Funções de criptografia mock ---
-const encryptMock = (data: string): string =>
-  data ? data.split('').reverse().join('') + '_encrypted' : '';
-
-const decryptMock = (data: string): string =>
-  data.endsWith('_encrypted') ? data.slice(0, -10).split('').reverse().join('') : data;
 
 // 🔓 Retorna lista descriptografada
 export const getMockPatientsList = (): Patient[] =>
-  mockPatients.map((patient) => ({
-    ...patient,
-    name: decryptMock(patient.name),
-    contact: decryptMock(patient.contact),
-    dateOfBirth: decryptMock(patient.dateOfBirth),
-  }));
+  mockPatients.map(decryptPatient);
 
 // 🔒 Atualiza um paciente mock
 export const updateMockPatient = (updatedPatient: Patient): Patient => {
@@ -133,12 +126,7 @@ export const updateMockPatient = (updatedPatient: Patient): Patient => {
     return updatedPatient;
   }
 
-  const encryptedPatient: Patient = {
-    ...updatedPatient,
-    name: encryptMock(updatedPatient.name),
-    contact: encryptMock(updatedPatient.contact),
-    dateOfBirth: encryptMock(updatedPatient.dateOfBirth),
-  };
+  const encryptedPatient = encryptPatient(updatedPatient);
 
   mockPatients[index] = encryptedPatient;
   return updatedPatient;
@@ -148,12 +136,7 @@ export const updateMockPatient = (updatedPatient: Patient): Patient => {
 export const getMockPatientById = (id: string): Patient | null => {
   const patient = mockPatients.find((p) => p.id === id);
   if (!patient) return null;
-  return {
-    ...patient,
-    name: decryptMock(patient.name),
-    contact: decryptMock(patient.contact),
-    dateOfBirth: decryptMock(patient.dateOfBirth),
-  };
+  return decryptPatient(patient);
 };
 
 // 📆 Agendamentos mock

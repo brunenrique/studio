@@ -9,11 +9,17 @@ import { PlusCircle } from 'lucide-react';
 import { PatientFormDialog } from '@/components/patients/PatientFormDialog';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function PatientsPage() {
+  const { user } = useAuth();
   const [patients, setPatients] = useState<Patient[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const { toast } = useToast();
+
+  if (!user || user.role !== 'Psicólogo') {
+    return <p className="p-4">Acesso restrito aos psicólogos.</p>;
+  }
 
   useEffect(() => {
     // Carrega lista de pacientes de exemplo

@@ -27,6 +27,7 @@ export interface Patient {
   id: string;
   name: string;
   contact: string;
+  cpf?: string;
   dateOfBirth: string; // ISO 8601
   sessionNotes: SessionNote[];
 }
