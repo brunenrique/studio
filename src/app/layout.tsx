@@ -5,6 +5,7 @@ import { NotificationProvider } from '@/contexts/NotificationContext';
 import { SettingsProvider } from '@/contexts/SettingsContext';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { Toaster } from "@/components/ui/toaster";
+import AssistantWidget from "@/components/AssistantWidget";
 import { TooltipProvider } from '@radix-ui/react-tooltip';
 
 export const metadata: Metadata = {
@@ -41,6 +42,7 @@ export default function RootLayout({
                 <NotificationProvider>
                   {children}
                   <Toaster />
+                  <AssistantWidget />
                 </NotificationProvider>
               </SettingsProvider>
             </AuthProvider>
