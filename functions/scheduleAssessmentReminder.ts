@@ -6,13 +6,17 @@ import twilio from 'twilio';
 admin.initializeApp();
 const db = admin.firestore();
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
-const twilioClient = twilio(process.env.TWILIO_SID as string, process.env.TWILIO_AUTH_TOKEN as string);
+const secrets = functions.config().secrets || {};
+sgMail.setApiKey(secrets.sendgrid_api_key || (process.env.SENDGRID_API_KEY as string));
+const twilioClient = twilio(
+  secrets.twilio_sid || (process.env.TWILIO_SID as string),
+  secrets.twilio_auth_token || (process.env.TWILIO_AUTH_TOKEN as string),
+);
 
-const SENDGRID_FROM = process.env.SENDGRID_FROM_EMAIL as string;
-const TWILIO_SMS_FROM = process.env.TWILIO_SMS_FROM;
+const SENDGRID_FROM = secrets.sendgrid_from_email || (process.env.SENDGRID_FROM_EMAIL as string);
+const TWILIO_SMS_FROM = secrets.twilio_sms_from || process.env.TWILIO_SMS_FROM;
 
-const HOURS_AFTER = parseInt(process.env.ASSESSMENT_REMINDER_HOURS || '24');
+const HOURS_AFTER = parseInt(secrets.assessment_reminder_hours || process.env.ASSESSMENT_REMINDER_HOURS || '24');
 
 async function notify(patientId: string, message: string) {
   const snap = await db.doc(`patients/${patientId}`).get();

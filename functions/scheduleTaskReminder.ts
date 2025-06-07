@@ -6,12 +6,16 @@ import twilio from 'twilio';
 admin.initializeApp();
 const db = admin.firestore();
 
-sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
-const twilioClient = twilio(process.env.TWILIO_SID as string, process.env.TWILIO_AUTH_TOKEN as string);
-const SENDGRID_FROM = process.env.SENDGRID_FROM_EMAIL as string;
-const TWILIO_SMS_FROM = process.env.TWILIO_SMS_FROM;
+const secrets = functions.config().secrets || {};
+sgMail.setApiKey(secrets.sendgrid_api_key || (process.env.SENDGRID_API_KEY as string));
+const twilioClient = twilio(
+  secrets.twilio_sid || (process.env.TWILIO_SID as string),
+  secrets.twilio_auth_token || (process.env.TWILIO_AUTH_TOKEN as string),
+);
+const SENDGRID_FROM = secrets.sendgrid_from_email || (process.env.SENDGRID_FROM_EMAIL as string);
+const TWILIO_SMS_FROM = secrets.twilio_sms_from || process.env.TWILIO_SMS_FROM;
 
-const MINUTES_BEFORE = parseInt(process.env.TASK_REMINDER_MINUTES || '10');
+const MINUTES_BEFORE = parseInt(secrets.task_reminder_minutes || process.env.TASK_REMINDER_MINUTES || '10');
 
 async function send(uid: string, taskId: string, title: string) {
   await admin.messaging().send({
