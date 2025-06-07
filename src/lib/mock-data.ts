@@ -11,6 +11,7 @@ import type {
   Medication,
   SymptomHeatmapEntry,
   FormulationDiagram,
+  Task,
   // outros tipos aqui
 } from "@/lib/types";
 import { encryptPatient, decryptPatient } from "./patientCrypto";
@@ -452,5 +453,48 @@ export const mockFormulations: FormulationDiagram[] = [
         { label: "Comportamentos", children: [{ label: "Isolamento" }] },
       ],
     }),
+  },
+];
+
+// ✅ Tarefas exemplo
+export const mockTasks: Task[] = [
+  {
+    id: "task-001",
+    patientId: "patient-001",
+    title: "Preparar relatório inicial",
+    description: "Resumo das primeiras sessões",
+    priority: "high",
+    taskType: "report",
+    dueDate: new Date(addDays(today, 2)).toISOString(),
+    status: "pending",
+    createdAt: today.toISOString(),
+    updatedAt: today.toISOString(),
+    createdBy: mockUser.id,
+  },
+  {
+    id: "task-002",
+    patientId: "patient-002",
+    title: "Enviar exercício de respiração",
+    description: "Compartilhar PDF por e-mail",
+    priority: "medium",
+    taskType: "session",
+    dueDate: new Date(addDays(today, 1)).toISOString(),
+    status: "pending",
+    createdAt: today.toISOString(),
+    updatedAt: today.toISOString(),
+    createdBy: mockUser.id,
+  },
+  {
+    id: "task-003",
+    patientId: null,
+    title: "Revisar políticas da clínica",
+    description: "Atualizar documentos de privacidade",
+    priority: "low",
+    taskType: "admin",
+    dueDate: new Date(addDays(today, 7)).toISOString(),
+    status: "pending",
+    createdAt: today.toISOString(),
+    updatedAt: today.toISOString(),
+    createdBy: mockUser.id,
   },
 ];
