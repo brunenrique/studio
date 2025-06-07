@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import Sidebar from '@/components/layout/Sidebar';
 import { AppHeader } from '@/components/layout/Header';
-import { SidebarProvider } from '@/components/ui/sidebar';
 
 
 export default function AppLayout({
@@ -23,7 +22,6 @@ export default function AppLayout({
   }, [isAuthenticated, isLoading, router]);
 
   if (isLoading || !isAuthenticated) {
-    // You can render a loading spinner here
     return (
       <div className="flex min-h-screen items-center justify-center">
         <p>Carregando...</p>
@@ -40,9 +38,6 @@ export default function AppLayout({
           {children}
         </main>
       </div>
-      <SidebarProvider defaultOpen={true}>
-        {/* Assuming RightSidebar content will be handled within the main content or a different component */}
-      </SidebarProvider>
     </div>
   );
 }
