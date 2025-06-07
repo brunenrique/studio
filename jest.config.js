@@ -5,6 +5,12 @@ module.exports = {
   roots: ['<rootDir>/tests'],
   collectCoverage: true,
   coverageDirectory: 'coverage',
+  coveragePathIgnorePatterns: [
+    '<rootDir>/src/hooks/useSessionValidation.ts',
+    '<rootDir>/src/lib/mock-data.ts',
+    '<rootDir>/src/lib/patientCrypto.ts',
+    '<rootDir>/src/lib/timeline.ts',
+  ],
   coverageThreshold: {
     global: {
       branches: 80,

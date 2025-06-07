@@ -6,7 +6,7 @@ import { renderHook, act } from '@testing-library/react';
 import { AuthProvider, useAuth } from '../src/contexts/AuthContext';
 import { mockUser } from '../src/lib/mock-data';
 import { getDoc, setDoc, doc } from 'firebase/firestore';
-import { signOut } from 'firebase/auth';
+import { signOut, signInWithEmailAndPassword } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 
 jest.mock('next/navigation', () => ({ useRouter: jest.fn() }));
@@ -19,6 +19,14 @@ beforeEach(() => {
   localStorage.clear();
   jest.clearAllMocks();
   (useRouter as jest.Mock).mockReturnValue({ push: jest.fn() });
+  (signInWithEmailAndPassword as jest.Mock).mockResolvedValue({
+    user: {
+      uid: mockUser.id,
+      displayName: mockUser.name,
+      email: mockUser.email,
+      photoURL: mockUser.profileImage,
+    },
+  });
 });
 
 const mockSnap = (data?: any) => ({

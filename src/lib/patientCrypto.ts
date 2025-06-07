@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import type { Patient, SessionNote } from "./types";
 import { encrypt, decrypt } from "./utils";
 

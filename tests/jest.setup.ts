@@ -6,6 +6,7 @@ jest.mock('firebase/auth', () => {
   return {
     GoogleAuthProvider: jest.fn().mockImplementation(() => ({})),
     signInWithPopup: jest.fn(),
+    signInWithEmailAndPassword: jest.fn(),
     signOut: jest.fn().mockResolvedValue(undefined),
     onAuthStateChanged: jest.fn(() => () => {}),
   };
