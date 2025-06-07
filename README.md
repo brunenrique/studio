@@ -8,7 +8,13 @@ Para começar, abra `src/app/page.tsx` e siga a estrutura do App Router.
 
 ## Environment Variables
 
-Crie um arquivo **`.env.local`** na raiz do projeto com suas credenciais do Firebase.  
+Crie um arquivo **`.env.local`** na raiz do projeto com suas credenciais do Firebase.
+Você pode copiar o arquivo `\.env.local.example` e preenchê-lo com suas chaves:
+
+```bash
+cp .env.local.example .env.local
+```
+
 Use o template abaixo como guia:
 
 ```dotenv
@@ -49,6 +55,10 @@ CRYPTO_SECRET_KEY=REPLACE_ME_BASE64_32BYTES
 | `TASK_REMINDER_CRON` | Cron de execução do lembrete de tarefas (padrão `* * * * *`) | sim |
 | `ASSESSMENT_REMINDER_HOURS` | Horas após a criação para lembrar inventários pendentes (padrão 24) | sim |
 | `PUBLIC_URL` | URL pública usada nos links (requer HTTPS) | não |
+
+Se ocorrerem erros de login como "Could not reach Cloud Firestore backend" ou
+`auth/internal-error`, consulte [docs/troubleshooting.md](docs/troubleshooting.md)
+para passos de correção.
 
 Todos os dados de pacientes são criptografados no cliente usando AES antes de serem manipulados.
 
