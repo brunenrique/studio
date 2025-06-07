@@ -17,6 +17,7 @@ import {
   Edit3,
   Trash2,
   Clock,
+  History,
 } from "lucide-react";
 import {
   format,
@@ -35,6 +36,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { SmartModal } from "@/components/SmartModal";
+import { AppointmentHistoryModal } from "./AppointmentHistoryModal";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -64,6 +66,7 @@ export function AppointmentCalendarView({
   const [editingAppointment, setEditingAppointment] = useState<Appointment | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [toDelete, setToDelete] = useState<Appointment | null>(null);
+  const [historyFor, setHistoryFor] = useState<Appointment | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -188,6 +191,9 @@ export function AppointmentCalendarView({
                     </Badge>
                   </div>
                   <div className="flex gap-2">
+                    <Button variant="ghost" size="icon" onClick={() => setHistoryFor(app)}>
+                      <History className="h-4 w-4" />
+                    </Button>
                     <Button variant="ghost" size="icon" onClick={() => handleEdit(app)}>
                       <Edit3 className="h-4 w-4" />
                     </Button>
@@ -260,6 +266,13 @@ export function AppointmentCalendarView({
       >
         <button className="hidden" />
       </AppointmentFormDialog>
+      <AppointmentHistoryModal
+        appointmentId={historyFor?.id ?? null}
+        open={historyFor !== null}
+        onOpenChange={(o) => {
+          if (!o) setHistoryFor(null);
+        }}
+      />
     </TooltipProvider>
   );
 }

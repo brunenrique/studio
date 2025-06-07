@@ -9,7 +9,7 @@ import { AppointmentFormDialog } from '@/components/appointments/AppointmentForm
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { db } from '@/lib/firebaseClient';
-import { addDoc, collection, updateDoc, doc, deleteDoc, serverTimestamp } from 'firebase/firestore';
+import { addDoc, collection, updateDoc, doc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { useAppointments } from '@/hooks/useAppointments';
 import { mockPatients } from '@/lib/mock-data';
 import { useAuth } from '@/contexts/AuthContext';
@@ -39,20 +39,43 @@ export default function AppointmentsPage() {
       await addDoc(collection(db, 'appointments', appointmentData.id, 'history'), {
         before: exists,
         after: appointmentData,
+        action: 'updated',
         userId: user?.id || 'unknown',
         timestamp: serverTimestamp(),
       });
       toast({ title: 'Agendamento Atualizado' });
     } else {
       const { id, ...data } = appointmentData;
-      await addDoc(collection(db, 'appointments'), data);
+      const docRef = await addDoc(collection(db, 'appointments'), {
+        ...data,
+        createdBy: user?.id || 'unknown',
+      });
+      await addDoc(collection(db, 'appointments', docRef.id, 'history'), {
+        before: null,
+        after: { id: docRef.id, ...data, createdBy: user?.id || 'unknown' },
+        action: 'created',
+        userId: user?.id || 'unknown',
+        timestamp: serverTimestamp(),
+      });
       toast({ title: 'Novo Agendamento' });
     }
     setIsFormOpen(false);
   };
 
   const handleDeleteAppointment = async (appointmentId: string) => {
-    await deleteDoc(doc(db, 'appointments', appointmentId));
+    const ref = doc(db, 'appointments', appointmentId);
+    const snap = await getDoc(ref);
+    if (!snap.exists()) return;
+    const before = snap.data() as Appointment;
+    const after = { ...before, status: 'canceled' } as Appointment;
+    await updateDoc(ref, { status: 'canceled' });
+    await addDoc(collection(ref, 'history'), {
+      before,
+      after,
+      action: 'canceled',
+      userId: user?.id || 'unknown',
+      timestamp: serverTimestamp(),
+    });
     toast({ title: 'Agendamento Cancelado', variant: 'destructive' });
   };
 
