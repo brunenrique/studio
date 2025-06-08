@@ -2,7 +2,7 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import type { FirebaseOptions } from "firebase/app";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 // Your web app's Firebase configuration
@@ -46,6 +46,16 @@ if (!getApps().length) {
 
 import { collection, getDocs } from 'firebase/firestore/lite';
 
+const auth = getAuth(app);
+const db = getFirestore(app);
+const storage = getStorage(app);
+
+// Connect to Firebase emulators in development mode
+if (process.env.NODE_ENV === 'development') {
+  connectAuthEmulator(auth, `http://127.0.0.1:9100`); // Use the port you configured in firebase.json
+  connectFirestoreEmulator(db, '127.0.0.1', 8081); // Use the host and port you configured in firebase.json
+}
+
 const dbLite = getFirestore(app);
 
 // Get a list of cities from your database
@@ -55,8 +65,4 @@ async function getCities(db) {
   const cityList = citySnapshot.docs.map(doc => doc.data());
   return cityList;
 }
-
-export const auth = getAuth(app);
-export const db = getFirestore(app);
-export const storage = getStorage(app);
 // export { app }; // Descomente se precisar da instância 'app' diretamente
