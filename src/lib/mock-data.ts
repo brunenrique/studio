@@ -15,7 +15,12 @@ import type {
   Task,
   // outros tipos aqui
 } from "@/lib/types";
-import { encryptPatient, decryptPatient } from "./patientCrypto";
+
+// --- LINHA CORRIGIDA ---
+// Importa 'encrypt' e a renomeia para 'encryptPatient' dentro deste arquivo.
+// Importa 'decrypt' e a renomeia para 'decryptPatient' dentro deste arquivo.
+import { encrypt as encryptPatient, decrypt as decryptPatient } from "./patientCrypto";
+// ---------------------
 
 // 👤 Usuário mock
 export const mockUser: User = {
