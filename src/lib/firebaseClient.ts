@@ -1,7 +1,7 @@
 // src/lib/firebaseClient.ts
 import { initializeApp, getApps, getApp } from "firebase/app";
 import type { FirebaseOptions } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
@@ -42,6 +42,18 @@ if (!getApps().length) {
   app = initializeApp(firebaseConfig);
 } else {
   app = getApp();
+}
+
+import { collection, getDocs } from 'firebase/firestore/lite';
+
+const dbLite = getFirestore(app);
+
+// Get a list of cities from your database
+async function getCities(db) {
+  const citiesCol = collection(db, 'cities');
+  const citySnapshot = await getDocs(citiesCol);
+  const cityList = citySnapshot.docs.map(doc => doc.data());
+  return cityList;
 }
 
 export const auth = getAuth(app);
