@@ -57,10 +57,10 @@ CRYPTO_SECRET_KEY=REPLACE_ME_BASE64_32BYTES
 | `SESSION_VALIDATION_MS` | Intervalo em ms para validar a sessão do usuário (padrão 60000) | sim |
 | `PUBLIC_URL` | URL pública usada nos links (requer HTTPS) | não |
 
-Se ocorrerem erros de login como "Could not reach Cloud Firestore backend" ou
-`auth/internal-error`, consulte a seção
-[Problemas de Login](docs/troubleshooting.md#problemas-de-login)
-para passos de correção.
+Esta versão do projeto não exige autenticação para acessar as páginas.
+Caso encontre erros relacionados à infraestrutura do Firebase, consulte a seção
+[Problemas de Implantação](docs/troubleshooting.md#problemas-de-login)
+para possíveis correções.
 
 Todos os dados de pacientes são criptografados no cliente usando AES antes de serem manipulados.
 
@@ -129,8 +129,7 @@ mensagens para os canais desativados. Todo envio é registrado na subcoleção
 ## Sidebar
 
 O botão que alterna a sidebar (ícone de menu) só aparece em telas pequenas graças à classe `lg:hidden`.
-Em monitores maiores a sidebar permanece aberta por padrão e somente é renderizada após o login com sucesso,
-processado em `src/app/(app)/layout.tsx`.
+Em monitores maiores a sidebar permanece aberta por padrão e é renderizada diretamente pelo layout em
+`src/app/(app)/layout.tsx`.
 
-Se a sidebar não aparecer, verifique se a autenticação está funcionando
-e se o CSS foi construído corretamente pelo Tailwind.
+Se a sidebar não aparecer, verifique se o CSS foi construído corretamente pelo Tailwind.
