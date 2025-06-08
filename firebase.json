@@ -6,38 +6,39 @@
     "rules": "docs/firestore.rules"
   },
   "emulators": {
+    "ui": {
+      "host": "127.0.0.1",
+      "port": 4001
+    },
+    "auth": {
+      "host": "127.0.0.1",
+      "port": 9100
+    },
+    "firestore": {
+      "host": "127.0.0.1",
+      "port": 8081
+    },
     "apphosting": {
-      "port": 5002,
+      "host": "127.0.0.1",
+      "port": 5003,
       "rootDirectory": "./",
       "startCommand": "npm run dev"
     },
-    "auth": {
-      "port": 9099
-    },
-    "functions": {
+    "hosting": {
+      "host": "127.0.0.1",
       "port": 5001
     },
-    "firestore": {
-      "port": 8080
+    "hub": {
+      "host": "127.0.0.1",
+      "port": 4402
     },
-    "ui": {
-      "enabled": true,
-      "port": 4000
+     "logging": {
+      "host": "127.0.0.1",
+      "port": 4502
     },
-    "singleProjectMode": true
-  },
-  "hosting": {
-    "public": "out",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
-    ]
+     "firestore.websocket": {
+      "host": "127.0.0.1",
+      "port": 9152
+    }
   }
 }
