@@ -21,7 +21,7 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (email: string, pass: string) => Promise<void>; // Simplified login
+  login: (email: string, pass: string) => Promise<void>;
   loginWithGoogle: () => Promise<void>;
   logout: () => void;
   register: (
@@ -88,19 +88,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           console.error('Failed to load user profile', err);
           setUser(null);
         }
-        } else {
-          const storedUser = localStorage.getItem('psiguard_user');
-          if (storedUser) {
-            setUser(JSON.parse(storedUser));
-          }
+      } else {
+        const storedUser = localStorage.getItem('psiguard_user');
+        if (storedUser) {
+          setUser(JSON.parse(storedUser));
         }
-        setIsLoading(false);
-      });
+      }
+      setIsLoading(false);
+    });
     return () => unsubscribe();
-  }, []);
+  }, [router]); // Adicionado `router` ao array de dependências
 
   const login = async (email: string, pass: string) => {
     setIsLoading(true);
+
+    // --- CÓDIGO DE DEBUG ADICIONADO AQUI ---
+    // Isso irá mostrar no console do navegador exatamente o que está sendo enviado.
+    console.log(`[AUTH DEBUG] Tentando autenticar com:`, {
+      email: email,
+      pass: "********" // Não logamos a senha por segurança, mas confirmamos que ela foi recebida.
+    });
+    // ------------------------------------
+
     try {
       const result = await signInWithEmailAndPassword(auth, email, pass);
       const fbUser = result.user;
@@ -144,7 +153,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       localStorage.setItem(SESSION_KEY, newSession);
       router.push('/dashboard');
     } catch (err) {
-      console.error('Login failed', err);
+      console.error('Login failed', err); // O erro original do Firebase será logado aqui.
       alert('Erro ao fazer login. Verifique suas credenciais.');
       setUser(null);
       localStorage.removeItem('psiguard_user');
@@ -153,6 +162,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // ... (resto das funções register, loginWithGoogle, logout) ...
   const register = async (email: string, pass: string, role: UserRole) => {
     setIsLoading(true);
     try {
@@ -252,6 +262,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     signOut(auth).catch(() => {});
     router.push('/login');
   };
+
 
   useSessionValidation(user, logout);
 
