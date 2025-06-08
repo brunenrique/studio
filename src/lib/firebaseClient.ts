@@ -5,14 +5,14 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
-// Configuração do Firebase buscando as variáveis de ambiente
-const firebaseConfig: FirebaseOptions = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY ?? "",
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN ?? "",
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID ?? "",
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET ?? "",
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID ?? "",
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID ?? "",
+// Your web app's Firebase configuration
+const firebaseConfig = {
+ apiKey: "AIzaSyA5IxEXkzpIr--BFOpL0nwJkh6rvQ2I8PA",
+ authDomain: "studio3-bhc.firebaseapp.com",
+ projectId: "studio3-bhc",
+ storageBucket: "studio3-bhc.firebasestorage.app",
+ messagingSenderId: "130897822034",
+ appId: "1:130897822034:web:9322f7e49df20ad1e8ba8b"
 };
 
 // Verifica se todas as chaves de configuração necessárias estão presentes
