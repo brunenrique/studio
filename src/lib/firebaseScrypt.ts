@@ -1,8 +1,8 @@
 // src/lib/firebaseClient.ts
 import { initializeApp, getApps, getApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
-import { getStorage } from "firebase/storage";
+import { getAuth, connectAuthEmulator } from "firebase/auth";
+import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
+import { getStorage, connectStorageEmulator } from "firebase/storage";
 
 // Configuração do Firebase buscando as variáveis de ambiente
 const firebaseConfig = {
@@ -47,3 +47,10 @@ export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
 // export { app }; // Descomente se precisar da instância 'app' diretamente
+
+// Connect to emulators during local development
+if (process.env.NODE_ENV === 'development') {
+  connectAuthEmulator(auth, 'http://127.0.0.1:9100');
+  connectFirestoreEmulator(db, '127.0.0.1', 8081);
+  connectStorageEmulator(storage, '127.0.0.1', 9199);
+}
