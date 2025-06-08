@@ -50,7 +50,7 @@ import {
 } from "date-fns";
 import type { Appointment, Patient } from "@/lib/types";
 import { generateRecurringAppointments } from "@/lib/recurrence";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 const formSchema = z.object({
   patientName: z.string().min(2, { message: "Nome é obrigatório." }),
@@ -150,12 +150,14 @@ export function AppointmentFormDialog({
     }
   }, [appointment, form, isOpen]);
 
-  const timeOptions = Array.from({ length: 24 * 2 }, (_, i) => {
-    const total = i * 30;
-    const h = String(Math.floor(total / 60)).padStart(2, "0");
-    const m = String(total % 60).padStart(2, "0");
-    return `${h}:${m}`;
-  });
+  const timeOptions = useMemo(() => {
+    return Array.from({ length: 48 }, (_, i) => {
+      const total = i * 30;
+      const h = String(Math.floor(total / 60)).padStart(2, "0");
+      const m = String(total % 60).padStart(2, "0");
+      return `${h}:${m}`;
+    });
+  }, []); // useMemo para calcular apenas uma vez
 
   async function onSubmit(values: FormValues) {
     setIsLoading(true);

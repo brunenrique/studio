@@ -6,7 +6,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@
 import { mockAppointments, mockPatients } from '@/lib/mock-data';
 import { getWeeklySessionCounts, getProblemTypeCounts, getScheduleOccupancy } from '@/lib/analytics';
 import { startOfWeek, endOfWeek, startOfMonth, endOfMonth } from 'date-fns';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useSettings } from '@/contexts/SettingsContext';
 
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff8042', '#8dd1e1'];
@@ -15,8 +15,15 @@ export default function AnalyticsPage() {
   const { system } = useSettings();
   const [period, setPeriod] = useState<'week' | 'month'>('week');
 
-  const weekly = getWeeklySessionCounts(mockAppointments);
-  const problems = Object.entries(getProblemTypeCounts(mockPatients)).map(([type, count]) => ({ type, count }));
+  const weekly = useMemo(() => getWeeklySessionCounts(mockAppointments), []);
+  const problems = useMemo(
+    () =>
+      Object.entries(getProblemTypeCounts(mockPatients)).map(([type, count]) => ({
+        type,
+        count,
+      })),
+    []
+  );
 
   const now = new Date();
   const periodStart = period === 'week'
@@ -26,12 +33,16 @@ export default function AnalyticsPage() {
     ? endOfWeek(now, { weekStartsOn: 1 })
     : endOfMonth(now);
 
-  const occupancy = getScheduleOccupancy(
-    mockAppointments,
-    periodStart,
-    periodEnd,
-    system.workHoursStart,
-    system.workHoursEnd
+  const occupancy = useMemo(
+    () =>
+      getScheduleOccupancy(
+        mockAppointments,
+        periodStart,
+        periodEnd,
+        system.workHoursStart,
+        system.workHoursEnd
+      ),
+    [periodStart, periodEnd, system]
   );
 
   const occupancyData = [
