@@ -76,12 +76,12 @@ import { initializeApp } from 'firebase/app';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: 'AIzaSyCkp-Yp3CPOVl5jkmprh7BwP86Es-H9RzI',
-  authDomain: 'plataforma-bpsy.firebaseapp.com',
-  projectId: 'plataforma-bpsy',
-  storageBucket: 'plataforma-bpsy.firebasestorage.app',
-  messagingSenderId: '115174793204',
-  appId: '1:115174793204:web:dd38de43781c2ac5a423a1',
+  apiKey: 'your_firebase_api_key',
+  authDomain: 'your_project.firebaseapp.com',
+  projectId: 'your_project_id',
+  storageBucket: 'your_project.appspot.com',
+  messagingSenderId: 'your_messaging_sender_id',
+  appId: 'your_firebase_app_id',
 };
 
 // Initialize Firebase
