@@ -26,7 +26,6 @@ export function AppHeader() {
 
   const handleLogout = async () => {
     await logout();
-    router.push('/login');
   };
   
   const getInitials = (name: string | undefined) => {

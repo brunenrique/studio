@@ -12,7 +12,7 @@ export default function PendingApprovalPage() {
         Seu cadastro foi recebido e aguarda aprovação de um administrador.
         Você receberá acesso assim que for aprovado.
       </p>
-      <Button onClick={() => router.push('/login')}>Voltar ao Login</Button>
+      <Button onClick={() => router.push('/dashboard')}>Ir para Dashboard</Button>
     </div>
   );
 }
