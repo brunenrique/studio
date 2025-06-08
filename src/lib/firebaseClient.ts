@@ -1,3 +1,5 @@
+export const auth = getAuth(app);
+export const db = getFirestore(app);
 // src/lib/firebaseClient.ts
 import { initializeApp, getApps, getApp } from "firebase/app";
 import type { FirebaseOptions } from "firebase/app";
