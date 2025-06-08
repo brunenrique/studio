@@ -9,8 +9,6 @@ const config = {
     // O plugin principal do Tailwind CSS.
     tailwindcss: {},
 
-    // O plugin que adiciona automaticamente os prefixos de compatibilidade
-    // para navegadores (-webkit-, -moz-, etc.).
     autoprefixer: {},
   },
 };
