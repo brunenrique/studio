@@ -16,12 +16,8 @@ export default function AppLayout({
   const { isAuthenticated, isLoading, user } = useAuth();
   const router = useRouter();
 
-  // Temporariamente não redirecionamos usuários não autenticados
-  // useEffect(() => {
-  //   if (!isLoading && !isAuthenticated) {
-  //     router.push('/login');
-  //   }
-  // }, [isAuthenticated, isLoading, router]);
+  // Usuários podem acessar o sistema sem autenticação
+  // portanto o redirecionamento para "/login" foi removido.
 
   if (isLoading) {
     return (
