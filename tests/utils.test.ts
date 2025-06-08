@@ -54,3 +54,13 @@ describe('CPF utilities', () => {
     expect(isValidCPF('111.111.111-11')).toBe(false);
   });
 });
+
+test('getCryptoKey throws for invalid base64', () => {
+  const original = process.env.CRYPTO_SECRET_KEY;
+  process.env.CRYPTO_SECRET_KEY = 'not_base64';
+  jest.isolateModules(() => {
+    const { getCryptoKey } = require('../src/lib/utils');
+    expect(() => getCryptoKey()).toThrow(/base64/);
+  });
+  process.env.CRYPTO_SECRET_KEY = original;
+});

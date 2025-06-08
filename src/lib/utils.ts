@@ -15,7 +15,12 @@ export function getCryptoKey(): Buffer {
     }
     throw new Error("CRYPTO_SECRET_KEY is not set");
   }
-  cachedKey = Buffer.from(key, "base64");
+  const trimmed = key.trim();
+  const buf = Buffer.from(trimmed, "base64");
+  if (buf.toString("base64") !== trimmed || buf.length !== 32) {
+    throw new Error("CRYPTO_SECRET_KEY must be a valid base64-encoded 32-byte key");
+  }
+  cachedKey = buf;
   return cachedKey;
 }
 
