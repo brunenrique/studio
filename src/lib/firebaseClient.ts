@@ -53,4 +53,3 @@ if (process.env.NODE_ENV === 'development') {
   connectFirestoreEmulator(db, '127.0.0.1', 8081);
 }
 
-// export { app }; // Descomente se precisar da instância 'app' diretamente
