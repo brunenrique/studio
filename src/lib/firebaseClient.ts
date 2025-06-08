@@ -2,7 +2,7 @@ import { initializeApp, getApps, getApp } from "firebase/app";
 import type { FirebaseOptions } from "firebase/app";
 import { getAuth, connectAuthEmulator } from "firebase/auth";
 import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
-import { getStorage } from "firebase/storage";
+import { getStorage, connectStorageEmulator } from "firebase/storage";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -51,5 +51,6 @@ export const storage = getStorage(app);
 if (process.env.NODE_ENV === 'development') {
   connectAuthEmulator(auth, `http://127.0.0.1:9100`);
   connectFirestoreEmulator(db, '127.0.0.1', 8081);
+  connectStorageEmulator(storage, '127.0.0.1', 9199);
 }
 

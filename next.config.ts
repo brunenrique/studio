@@ -2,13 +2,19 @@
 
 import type { NextConfig } from 'next';
 
-const csp = [
-  "default-src 'self'",
-  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-  "font-src 'self' https://fonts.gstatic.com",
-  "script-src 'self' 'unsafe-inline'",
-  "connect-src 'self' https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firebasestorage.googleapis.com",
-].join('; ') + ';';
+const devConnect =
+  process.env.NODE_ENV === 'development'
+    ? 'http://127.0.0.1:9100 http://127.0.0.1:8081 http://127.0.0.1:9199'
+    : '';
+
+const csp =
+  [
+    "default-src 'self'",
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    "font-src 'self' https://fonts.gstatic.com",
+    "script-src 'self' 'unsafe-inline'",
+    `connect-src 'self' https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firebasestorage.googleapis.com ${devConnect}`,
+  ].join('; ') + ';';
 
 const securityHeaders = [
   { key: 'Content-Security-Policy', value: csp },

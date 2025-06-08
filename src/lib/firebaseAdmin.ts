@@ -3,6 +3,13 @@ import { getFirestore } from 'firebase-admin/firestore';
 import { getAuth } from 'firebase-admin/auth';
 import jwt from 'jsonwebtoken';
 
+// In development, point Admin SDK to emulators
+if (process.env.NODE_ENV === 'development') {
+  process.env.FIRESTORE_EMULATOR_HOST ??= '127.0.0.1:8081';
+  process.env.FIREBASE_AUTH_EMULATOR_HOST ??= '127.0.0.1:9100';
+  process.env.FIREBASE_STORAGE_EMULATOR_HOST ??= '127.0.0.1:9199';
+}
+
 let app: App;
 if (!getApps().length) {
   const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT || '{}');
