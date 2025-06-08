@@ -1,6 +1,6 @@
 // Caminho: src/lib/patient-utils.ts
 
-import type { Patient } from "@/lib/types";
+import { Patient } from "@/lib/types";
 import { encrypt, decrypt } from "./patientCrypto";
 
 // ============================================================================
