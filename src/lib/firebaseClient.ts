@@ -1,63 +1,102 @@
-import { FirebaseError, FirebaseApp, initializeApp, getApps } from 'firebase/app';
-import {
-  getFirestore,
-  enableNetwork,
-  disableNetwork,
-} from 'firebase/firestore';
-import { getAuth } from 'firebase/auth';
-import { getStorage } from 'firebase/storage';
+// src/lib/firebaseClient.ts
+import { initializeApp, getApps, getApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
-// Firebase configuration loaded from environment variables
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  // src/lib/firebaseClient.ts
+  import { initializeApp, getApps, getApp } from "firebase/app";
+  import { getAuth } from "firebase/auth";
+  import { getFirestore } from "firebase/firestore";
+  import { getStorage } from "firebase/storage";
+  
+  // Configuração do Firebase buscando as variáveis de ambiente
+  const firebaseConfig = {
+    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  };
+  
+  // Verifica se todas as chaves de configuração necessárias estão presentes
+  const requiredConfigKeys = [
+    "apiKey",
+    "authDomain",
+    "projectId",
+    "storageBucket",
+    "messagingSenderId",
+    "appId",
+  ];
+  const missingKeys = requiredConfigKeys.filter(
+    (key) => !firebaseConfig[key as keyof typeof firebaseConfig]
+  );
+  
+  if (missingKeys.length > 0) {
+    console.error(
+      "ERRO CRÍTICO: Configuração do Firebase faltando ou indefinida para as seguintes chaves. Verifique seu arquivo .env.local e os prefixos NEXT_PUBLIC_FIREBASE_:",
+      missingKeys
+    );
+    console.error("Valores atuais lidos para firebaseConfig:", firebaseConfig);
+    // Você pode optar por lançar um erro aqui para interromper a execução se preferir
+    // throw new Error(`Firebase config missing for: ${missingKeys.join(", ")}`);
+  }
+  
+  let app;
+  // Inicializa o Firebase de forma segura para evitar reinicialização
+  if (!getApps().length) {
+    app = initializeApp(firebaseConfig);
+  } else {
+    app = getApp();
+  }
+  
+  export const auth = getAuth(app);
+  export const db = getFirestore(app);
+  export const storage = getStorage(app);
+  // export { app }; // Descomente se precisar da instância 'app' diretamente
+  NEXT_PUBLIC_FIREBASE_API_KEY=apiKeyAIzaSyCkp-Yp3CPOVl5jkmprh7BwP86Es-H9RzI
+  NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=plataforma-bpsy.firebaseapp.com
+  NEXT_PUBLIC_FIREBASE_PROJECT_ID=plataforma-bpsy
+  NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=plataforma-bpsy.firebasestorage.app
+  NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=115174793204
+  NEXT_PUBLIC_FIREBASE_APP_ID=1:115174793204:web:dd38de43781c2ac5a423a1
+  
 };
 
-Object.entries(firebaseConfig).forEach(([key, value]) => {
-  if (!value) {
-    console.error(
-      `Firebase config missing for ${key}. Check your NEXT_PUBLIC_FIREBASE_* env vars.`
-    );
-  }
-});
+// Verifica se todas as chaves de configuração necessárias estão presentes
+const requiredConfigKeys = [
+  "apiKey",
+  "authDomain",
+  "projectId",
+  "storageBucket",
+  "messagingSenderId",
+  "appId",
+];
+const missingKeys = requiredConfigKeys.filter(
+  (key) => !firebaseConfig[key as keyof typeof firebaseConfig]
+);
 
-let app: FirebaseApp;
-try {
-  app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
-} catch (err) {
-  const error = err as FirebaseError;
-  console.error('Firebase initialization error:', error.code || error.message);
-  throw err;
+if (missingKeys.length > 0) {
+  console.error(
+    "ERRO CRÍTICO: Configuração do Firebase faltando ou indefinida para as seguintes chaves. Verifique seu arquivo .env.local e os prefixos NEXT_PUBLIC_FIREBASE_:",
+    missingKeys
+  );
+  console.error("Valores atuais lidos para firebaseConfig:", firebaseConfig);
+  // Você pode optar por lançar um erro aqui para interromper a execução se preferir
+  // throw new Error(`Firebase config missing for: ${missingKeys.join(", ")}`);
 }
 
-export const db = getFirestore(app);
+let app;
+// Inicializa o Firebase de forma segura para evitar reinicialização
+if (!getApps().length) {
+  app = initializeApp(firebaseConfig);
+} else {
+  app = getApp();
+}
+
 export const auth = getAuth(app);
+export const db = getFirestore(app);
 export const storage = getStorage(app);
-
-if (typeof window !== 'undefined') {
-  const updateNetwork = async () => {
-    if (navigator.onLine) {
-      try {
-        await enableNetwork(db);
-        console.info('Firebase network enabled');
-      } catch (err) {
-        console.error('Failed to enable Firebase network', err);
-      }
-    } else {
-      try {
-        await disableNetwork(db);
-        console.warn('Network unavailable, using offline Firestore');
-      } catch (err) {
-        console.error('Failed to disable Firebase network', err);
-      }
-    }
-  };
-
-  window.addEventListener('online', updateNetwork);
-  window.addEventListener('offline', updateNetwork);
-  updateNetwork();
-}
+// export { app }; // Se precisar da instância 'app' diretamente
