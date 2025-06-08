@@ -1,0 +1,78 @@
+[debug] [2025-06-08T21:04:55.646Z] ----------------------------------------------------------------------
+[debug] [2025-06-08T21:04:55.647Z] Command:       /nix/store/rbdrkcs5kkwpalxcd7c6bnm33lk2955n-nodejs-20.19.0/bin/node /nix/store/nh3zwzkz6wh6qa7bd2ywzr7irjij7j1i-firebase-tools-14.3.1/lib/node_modules/firebase-tools/lib/bin/firebase.js emulators:start
+[debug] [2025-06-08T21:04:55.648Z] CLI Version:   14.3.1
+[debug] [2025-06-08T21:04:55.648Z] Platform:      linux
+[debug] [2025-06-08T21:04:55.648Z] Node Version:  v20.19.0
+[debug] [2025-06-08T21:04:55.648Z] Time:          Sun Jun 08 2025 21:04:55 GMT+0000 (Coordinated Universal Time)
+[debug] [2025-06-08T21:04:55.648Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-06-08T21:04:55.860Z] Object "/emulators" in "firebase.json" has unknown property: {"additionalProperty":"firestore.websocket"}
+[debug] [2025-06-08T21:04:55.863Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-06-08T21:04:55.864Z] > authorizing via signed-in user (contato.brunohcordeiro@gmail.com)
+[debug] [2025-06-08T21:04:55.932Z] openjdk version "21.0.5" 2024-10-15
+OpenJDK Runtime Environment (build 21.0.5+1-nixos)
+
+[debug] [2025-06-08T21:04:55.933Z] OpenJDK 64-Bit Server VM (build 21.0.5+1-nixos, mixed mode, sharing)
+
+[debug] [2025-06-08T21:04:55.941Z] Parsed Java major version: 21
+[info] i  emulators: Starting emulators: apphosting, auth, functions, firestore, hosting, extensions {"metadata":{"emulator":{"name":"hub"},"message":"Starting emulators: apphosting, auth, functions, firestore, hosting, extensions"}}
+[debug] [2025-06-08T21:04:55.945Z] No OAuth tokens found
+[debug] [2025-06-08T21:04:55.945Z] No OAuth tokens found
+[debug] [2025-06-08T21:04:55.946Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-06-08T21:04:55.946Z] > authorizing via signed-in user (contato.brunohcordeiro@gmail.com)
+[debug] [2025-06-08T21:04:55.948Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/studio3-bhc/services/cloudresourcemanager.googleapis.com [none]
+[debug] [2025-06-08T21:04:55.948Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/studio3-bhc/services/cloudresourcemanager.googleapis.com x-goog-quota-user=projects/studio3-bhc
+[debug] [2025-06-08T21:04:57.180Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/studio3-bhc/services/cloudresourcemanager.googleapis.com 200
+[debug] [2025-06-08T21:04:57.181Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/studio3-bhc/services/cloudresourcemanager.googleapis.com [omitted]
+[debug] [2025-06-08T21:04:57.181Z] No OAuth tokens found
+[debug] [2025-06-08T21:04:57.181Z] No OAuth tokens found
+[debug] [2025-06-08T21:04:57.181Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-06-08T21:04:57.181Z] > authorizing via signed-in user (contato.brunohcordeiro@gmail.com)
+[debug] [2025-06-08T21:04:57.182Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/projects/studio3-bhc [none]
+[debug] [2025-06-08T21:04:57.404Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/projects/studio3-bhc 200
+[debug] [2025-06-08T21:04:57.404Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/projects/studio3-bhc {"projectNumber":"130897822034","projectId":"studio3-bhc","lifecycleState":"ACTIVE","name":"Studio3","labels":{"firebase":"enabled","firebase-core":"disabled"},"createTime":"2025-06-08T19:36:51.978590Z"}
+[warn] ⚠  hosting: The hosting emulator is configured but there is no hosting configuration. Have you run firebase init hosting? {"metadata":{"emulator":{"name":"hosting"},"message":"The hosting emulator is configured but there is no hosting configuration. Have you run \u001b[1mfirebase init hosting\u001b[22m?"}}
+[debug] [2025-06-08T21:04:57.410Z] assigned listening specs for emulators {"user":{"hub":[{"address":"127.0.0.1","family":"IPv4","port":4402}],"ui":[{"address":"127.0.0.1","family":"IPv4","port":4001}],"logging":[{"address":"127.0.0.1","family":"IPv4","port":4502}],"apphosting":[{"address":"127.0.0.1","family":"IPv4","port":5003}],"auth":[{"address":"127.0.0.1","family":"IPv4","port":9100}],"firestore":[{"address":"127.0.0.1","family":"IPv4","port":8081}],"firestore.websocket":[{"address":"127.0.0.1","family":"IPv4","port":9151}]},"metadata":{"message":"assigned listening specs for emulators"}}
+[debug] [2025-06-08T21:04:57.414Z] [hub] writing locator at /tmp/hub-studio3-bhc.json
+[debug] [2025-06-08T21:04:57.418Z] [Extensions] Started Extensions emulator, this is a noop.
+[warn] ⚠  functions: Error when trying to check port 5001 on ::1: Error: listen EADDRNOTAVAIL: address not available ::1:5001 {"metadata":{"emulator":{"name":"functions"},"message":"Error when trying to check port 5001 on ::1: Error: listen EADDRNOTAVAIL: address not available ::1:5001"}}
+[warn] ⚠  functions: Port 5001 is available on 127.0.0.1 but not ::1. This may cause issues with some clients. {"metadata":{"emulator":{"name":"functions"},"message":"Port 5001 is available on 127.0.0.1 but not ::1. This may cause issues with some clients."}}
+[warn] ⚠  functions: If you encounter connectivity issues, consider switching to a different port or explicitly specifying "host": "<ip address>" instead of hostname in firebase.json {"metadata":{"emulator":{"name":"functions"},"message":"If you encounter connectivity issues, consider switching to a different port or explicitly specifying \u001b[33m\"host\": \"<ip address>\"\u001b[39m instead of hostname in firebase.json"}}
+[warn] ⚠  eventarc: Error when trying to check port 9299 on ::1: Error: listen EADDRNOTAVAIL: address not available ::1:9299 {"metadata":{"emulator":{"name":"eventarc"},"message":"Error when trying to check port 9299 on ::1: Error: listen EADDRNOTAVAIL: address not available ::1:9299"}}
+[warn] ⚠  eventarc: Port 9299 is available on 127.0.0.1 but not ::1. This may cause issues with some clients. {"metadata":{"emulator":{"name":"eventarc"},"message":"Port 9299 is available on 127.0.0.1 but not ::1. This may cause issues with some clients."}}
+[warn] ⚠  eventarc: If you encounter connectivity issues, consider switching to a different port or explicitly specifying "host": "<ip address>" instead of hostname in firebase.json {"metadata":{"emulator":{"name":"eventarc"},"message":"If you encounter connectivity issues, consider switching to a different port or explicitly specifying \u001b[33m\"host\": \"<ip address>\"\u001b[39m instead of hostname in firebase.json"}}
+[warn] ⚠  tasks: Error when trying to check port 9499 on ::1: Error: listen EADDRNOTAVAIL: address not available ::1:9499 {"metadata":{"emulator":{"name":"tasks"},"message":"Error when trying to check port 9499 on ::1: Error: listen EADDRNOTAVAIL: address not available ::1:9499"}}
+[warn] ⚠  tasks: Port 9499 is available on 127.0.0.1 but not ::1. This may cause issues with some clients. {"metadata":{"emulator":{"name":"tasks"},"message":"Port 9499 is available on 127.0.0.1 but not ::1. This may cause issues with some clients."}}
+[warn] ⚠  tasks: If you encounter connectivity issues, consider switching to a different port or explicitly specifying "host": "<ip address>" instead of hostname in firebase.json {"metadata":{"emulator":{"name":"tasks"},"message":"If you encounter connectivity issues, consider switching to a different port or explicitly specifying \u001b[33m\"host\": \"<ip address>\"\u001b[39m instead of hostname in firebase.json"}}
+[debug] [2025-06-08T21:04:57.422Z] late-assigned ports for functions and eventarc emulators {"user":{"hub":[{"address":"127.0.0.1","family":"IPv4","port":4402}],"ui":[{"address":"127.0.0.1","family":"IPv4","port":4001}],"logging":[{"address":"127.0.0.1","family":"IPv4","port":4502}],"apphosting":[{"address":"127.0.0.1","family":"IPv4","port":5003}],"auth":[{"address":"127.0.0.1","family":"IPv4","port":9100}],"firestore":[{"address":"127.0.0.1","family":"IPv4","port":8081}],"firestore.websocket":[{"address":"127.0.0.1","family":"IPv4","port":9151}],"functions":[{"address":"127.0.0.1","family":"IPv4","port":5001}],"eventarc":[{"address":"127.0.0.1","family":"IPv4","port":9299}],"tasks":[{"address":"127.0.0.1","family":"IPv4","port":9499}]},"metadata":{"message":"late-assigned ports for functions and eventarc emulators"}}
+[warn] ⚠  functions: The following emulators are not running, calls to these services from the Functions emulator will affect production: database, hosting, pubsub, storage, dataconnect {"metadata":{"emulator":{"name":"functions"},"message":"The following emulators are not running, calls to these services from the Functions emulator will affect production: \u001b[1mdatabase, hosting, pubsub, storage, dataconnect\u001b[22m"}}
+[warn] ⚠  functions: Application Default Credentials detected. Non-emulated services will access production using these credentials. Be careful! {"metadata":{"emulator":{"name":"functions"},"message":"Application Default Credentials detected. Non-emulated services will access production using these credentials. Be careful!"}}
+[debug] [2025-06-08T21:04:59.261Z] No OAuth tokens found
+[debug] [2025-06-08T21:04:59.261Z] No OAuth tokens found
+[debug] [2025-06-08T21:04:59.262Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-06-08T21:04:59.262Z] > authorizing via signed-in user (contato.brunohcordeiro@gmail.com)
+[debug] [2025-06-08T21:04:59.262Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/studio3-bhc/adminSdkConfig [none]
+[debug] [2025-06-08T21:04:59.533Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/studio3-bhc/adminSdkConfig 200
+[debug] [2025-06-08T21:04:59.534Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/studio3-bhc/adminSdkConfig {"projectId":"studio3-bhc","storageBucket":"studio3-bhc.firebasestorage.app"}
+[debug] [2025-06-08T21:04:59.552Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"firestore"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2025-06-08T21:04:59.553Z] Ignoring unsupported arg: single_project_mode_error {"metadata":{"emulator":{"name":"firestore"},"message":"Ignoring unsupported arg: single_project_mode_error"}}
+[debug] [2025-06-08T21:04:59.553Z] Starting Firestore Emulator with command {"binary":"java","args":["-Dgoogle.cloud_firestore.debug_log_level=FINE","-Duser.language=en","-jar","/nix/store/ahq6qc1vh6hq6wh77mhsr7lf5x4qljfc-emulators/cloud-firestore-emulator-v1.19.8.jar","--host","127.0.0.1","--port",8081,"--websocket_port",9151,"--project_id","studio3-bhc","--rules","/home/user/studio/docs/firestore.rules","--single_project_mode",true,"--functions_emulator","127.0.0.1:5001"],"optionalArgs":["port","webchannel_port","host","rules","websocket_port","functions_emulator","seed_from_export","project_id","single_project_mode"],"joinArgs":false,"shell":false,"port":8081} {"metadata":{"emulator":{"name":"firestore"},"message":"Starting Firestore Emulator with command {\"binary\":\"java\",\"args\":[\"-Dgoogle.cloud_firestore.debug_log_level=FINE\",\"-Duser.language=en\",\"-jar\",\"/nix/store/ahq6qc1vh6hq6wh77mhsr7lf5x4qljfc-emulators/cloud-firestore-emulator-v1.19.8.jar\",\"--host\",\"127.0.0.1\",\"--port\",8081,\"--websocket_port\",9151,\"--project_id\",\"studio3-bhc\",\"--rules\",\"/home/user/studio/docs/firestore.rules\",\"--single_project_mode\",true,\"--functions_emulator\",\"127.0.0.1:5001\"],\"optionalArgs\":[\"port\",\"webchannel_port\",\"host\",\"rules\",\"websocket_port\",\"functions_emulator\",\"seed_from_export\",\"project_id\",\"single_project_mode\"],\"joinArgs\":false,\"shell\":false,\"port\":8081}"}}
+[info] i  firestore: Firestore Emulator logging to firestore-debug.log {"metadata":{"emulator":{"name":"firestore"},"message":"Firestore Emulator logging to \u001b[1mfirestore-debug.log\u001b[22m"}}
+[debug] [2025-06-08T21:05:00.665Z] Jun 08, 2025 9:05:00 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketServer start
+INFO: Started WebSocket server on ws://127.0.0.1:9151
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jun 08, 2025 9:05:00 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketServer start\nINFO: Started WebSocket server on ws://127.0.0.1:9151\n"}}
+[debug] [2025-06-08T21:05:00.692Z] API endpoint: http://127.0.0.1:8081
+If you are using a library that supports the FIRESTORE_EMULATOR_HOST environment variable, run:
+ {"metadata":{"emulator":{"name":"firestore"},"message":"API endpoint: http://127.0.0.1:8081\nIf you are using a library that supports the FIRESTORE_EMULATOR_HOST environment variable, run:\n"}}
+[debug] [2025-06-08T21:05:00.692Z] 
+   export FIRESTORE_EMULATOR_HOST=127.0.0.1:8081
+
+If you are running a Firestore in Datastore Mode project, run:
+
+   export DATASTORE_EMULATOR_HOST=127.0.0.1:8081
+
+Note: Support for Datastore Mode is in preview. If you encounter any bugs please file at https://github.com/firebase/firebase-tools/issues.
+Dev App Server is now running.
+
+ {"metadata":{"emulator":{"name":"firestore"},"message":"\n   export FIRESTORE_EMULATOR_HOST=127.0.0.1:8081\n\nIf you are running a Firestore in Datastore Mode project, run:\n\n   export DATASTORE_EMULATOR_HOST=127.0.0.1:8081\n\nNote: Support for Datastore Mode is in preview. If you encounter any bugs please file at https://github.com/firebase/firebase-tools/issues.\nDev App Server is now running.\n\n"}}
+[info] ✔  firestore: Firestore Emulator UI websocket is running on 9151. {"metadata":{"emulator":{"name":"firestore"},"message":"Firestore Emulator UI websocket is running on 9151."}}
