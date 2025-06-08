@@ -2,15 +2,20 @@
 
 import type { TimelineEvent } from '@/lib/types';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { useMemo } from 'react';
 
 interface TimelineViewerProps {
   events: TimelineEvent[];
 }
 
 export default function TimelineViewer({ events }: TimelineViewerProps) {
-  const sorted = [...events].sort(
-    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-  );
+  const sorted = useMemo(
+    () =>
+      [...events].sort(
+        (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+      ),
+    [events]
+  ); // useMemo para evitar nova ordenação em cada render
   return (
     <div className="space-y-4">
       {sorted.map((event) => (

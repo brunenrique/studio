@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import {
   Card,
   CardContent,
@@ -113,60 +113,82 @@ export function AppointmentCalendarView({
     return "outline";
   };
 
-  const filtered = appointments
-    .filter((a) =>
-      (!selectedDate || isSameDay(parseISO(a.dateTime), selectedDate)) &&
-      (statusFilter === "all" || a.status === statusFilter) &&
-      (showCanceled || a.status !== "canceled")
-    )
-    .sort((a, b) => parseISO(a.dateTime).getTime() - parseISO(b.dateTime).getTime());
+  const filtered = useMemo(() => {
+    return appointments
+      .filter(
+        (a) =>
+          (!selectedDate || isSameDay(parseISO(a.dateTime), selectedDate)) &&
+          (statusFilter === "all" || a.status === statusFilter) &&
+          (showCanceled || a.status !== "canceled")
+      )
+      .sort(
+        (a, b) => parseISO(a.dateTime).getTime() - parseISO(b.dateTime).getTime()
+      );
+  }, [appointments, selectedDate, statusFilter, showCanceled]);
 
-  const blocks = parseBlockedTimes(system.blockedTimes, system.defaultSessionDuration);
-  const weekly = parseWeeklyBlockedTimes(system.weeklyBlockedTimes);
-  const dailyBlocks: BlockedTime[] = [];
-  blocks.forEach((b) => {
-    if (!selectedDate || isSameDay(parseISO(b.dateTime), selectedDate)) dailyBlocks.push(b);
-  });
-  if (selectedDate) {
-    weekly.forEach((w) => {
-      if (selectedDate.getDay() === w.weekday) {
-        const [sh, sm] = w.start.split(":" ).map(Number);
-        const [eh, em] = w.end.split(":" ).map(Number);
-        const start = new Date(selectedDate);
-        start.setHours(sh, sm, 0, 0);
-        const duration = eh * 60 + em - (sh * 60 + sm);
-        dailyBlocks.push({
-          id: `w-${w.id}-${format(selectedDate, "yyyyMMdd")}`,
-          dateTime: start.toISOString(),
-          durationMinutes: duration,
-          reason: w.reason,
-        });
-      }
+  const { dailyBlocks, combined } = useMemo(() => {
+    const blocks = parseBlockedTimes(
+      system.blockedTimes,
+      system.defaultSessionDuration
+    );
+    const weekly = parseWeeklyBlockedTimes(system.weeklyBlockedTimes);
+    const dailyBlocks: BlockedTime[] = [];
+    blocks.forEach((b) => {
+      if (!selectedDate || isSameDay(parseISO(b.dateTime), selectedDate))
+        dailyBlocks.push(b);
     });
-  }
+    if (selectedDate) {
+      weekly.forEach((w) => {
+        if (selectedDate.getDay() === w.weekday) {
+          const [sh, sm] = w.start.split(":" ).map(Number);
+          const [eh, em] = w.end.split(":" ).map(Number);
+          const start = new Date(selectedDate);
+          start.setHours(sh, sm, 0, 0);
+          const duration = eh * 60 + em - (sh * 60 + sm);
+          dailyBlocks.push({
+            id: `w-${w.id}-${format(selectedDate, "yyyyMMdd")}`,
+            dateTime: start.toISOString(),
+            durationMinutes: duration,
+            reason: w.reason,
+          });
+        }
+      });
+    }
+    type CombinedItem =
+      | { type: "appt"; appt: Appointment }
+      | { type: "block"; block: BlockedTime };
+    const combined: CombinedItem[] = [
+      ...filtered.map((a) => ({ type: "appt", appt: a } as const)),
+      ...dailyBlocks.map((b) => ({ type: "block", block: b } as const)),
+    ].sort((a, b) => {
+      const da =
+        a.type === "appt"
+          ? parseISO(a.appt.dateTime)
+          : parseISO(a.block.dateTime);
+      const db =
+        b.type === "appt"
+          ? parseISO(b.appt.dateTime)
+          : parseISO(b.block.dateTime);
+      return da.getTime() - db.getTime();
+    });
+    return { dailyBlocks, combined };
+  }, [filtered, selectedDate, system]); // useMemo reduz cálculos
 
-  type CombinedItem = { type: "appt"; appt: Appointment } | { type: "block"; block: BlockedTime };
-  const combined: CombinedItem[] = [
-    ...filtered.map((a) => ({ type: "appt", appt: a } as const)),
-    ...dailyBlocks.map((b) => ({ type: "block", block: b } as const)),
-  ].sort((a, b) => {
-    const da = a.type === "appt" ? parseISO(a.appt.dateTime) : parseISO(a.block.dateTime);
-    const db = b.type === "appt" ? parseISO(b.appt.dateTime) : parseISO(b.block.dateTime);
-    return da.getTime() - db.getTime();
-  });
-
-  const handleEdit = (appt: Appointment) => {
+  const handleEdit = useCallback((appt: Appointment) => {
     setEditingAppointment(appt);
     setIsFormOpen(true);
-  };
+  }, []);
 
-  const handleDelete = (id: string) => {
-    onDeleteAppointment(id);
-    toast({
-      title: "Agendamento Excluído",
-      variant: "destructive",
-    });
-  };
+  const handleDelete = useCallback(
+    (id: string) => {
+      onDeleteAppointment(id);
+      toast({
+        title: "Agendamento Excluído",
+        variant: "destructive",
+      });
+    },
+    [onDeleteAppointment, toast]
+  );
 
   const handleStatusChange = (id: string, status: AttendanceStatus) => {
     const appt = appointments.find((a) => a.id === id);

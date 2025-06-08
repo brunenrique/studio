@@ -2,6 +2,7 @@
 
 import type { SymptomHeatmapEntry } from "@/lib/types";
 import { eachDayOfInterval, startOfMonth, endOfMonth, format } from "date-fns";
+import { useMemo } from "react";
 
 interface SymptomHeatmapProps {
   entries: SymptomHeatmapEntry[];
@@ -9,29 +10,33 @@ interface SymptomHeatmapProps {
 
 export default function SymptomHeatmap({ entries }: SymptomHeatmapProps) {
   const now = new Date();
-  const days = eachDayOfInterval({
-    start: startOfMonth(now),
-    end: endOfMonth(now),
-  });
 
-  const severityByDate: Record<string, number> = {};
-  entries.forEach((e) => {
-    severityByDate[e.date.slice(0, 10)] = e.severity;
-  });
+  const { days, severityByDate, weeks } = useMemo(() => {
+    const days = eachDayOfInterval({
+      start: startOfMonth(now),
+      end: endOfMonth(now),
+    });
 
-  const weeks: (Date | null)[][] = [];
-  let current: (Date | null)[] = Array(days[0].getDay()).fill(null);
-  days.forEach((d) => {
-    current.push(d);
-    if (current.length === 7) {
+    const severityByDate: Record<string, number> = {};
+    entries.forEach((e) => {
+      severityByDate[e.date.slice(0, 10)] = e.severity;
+    });
+
+    const weeks: (Date | null)[][] = [];
+    let current: (Date | null)[] = Array(days[0].getDay()).fill(null);
+    days.forEach((d) => {
+      current.push(d);
+      if (current.length === 7) {
+        weeks.push(current);
+        current = [];
+      }
+    });
+    if (current.length) {
+      while (current.length < 7) current.push(null);
       weeks.push(current);
-      current = [];
     }
-  });
-  if (current.length) {
-    while (current.length < 7) current.push(null);
-    weeks.push(current);
-  }
+    return { days, severityByDate, weeks };
+  }, [entries]); // useMemo para evitar recálculos
 
   const colors = [
     "bg-gray-200",

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { MessageCircle } from "lucide-react";
 import { useTransformersPipeline } from "@/hooks/useTransformersPipeline";
 
@@ -18,7 +18,7 @@ export default function AssistantWidget() {
   const loading = modelLoading || sending;
   const containerRef = useRef<HTMLDivElement>(null);
 
-  async function send() {
+  const send = useCallback(async () => {
     const text = input.trim();
     if (!text) return;
     setMessages((m) => [...m, { sender: "user", text }]);
@@ -36,14 +36,17 @@ export default function AssistantWidget() {
       const utter = new SpeechSynthesisUtterance(reply);
       speechSynthesis.speak(utter);
     }
-  }
+  }, [generator, input]);
 
-  function handleKey(e: React.KeyboardEvent<HTMLTextAreaElement>) {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      send();
-    }
-  }
+  const handleKey = useCallback(
+    (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        send();
+      }
+    },
+    [send]
+  );
 
   useEffect(() => {
     const div = containerRef.current;

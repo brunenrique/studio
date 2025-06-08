@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/contexts/AuthContext";
 import { mockAppointments, mockPatients } from "@/lib/mock-data";
 import { startOfMonth, endOfMonth, parseISO, isWithinInterval } from "date-fns";
+import { useMemo } from "react";
 
 export default function PsychologistIndicatorsPage() {
   const { user } = useAuth();
@@ -11,15 +12,20 @@ export default function PsychologistIndicatorsPage() {
   const monthStart = startOfMonth(now);
   const monthEnd = endOfMonth(now);
 
-  const myAppointments = mockAppointments.filter(
-    (a) => a.psychologistId === user?.id,
+  const myAppointments = useMemo(
+    () => mockAppointments.filter((a) => a.psychologistId === user?.id),
+    [user]
   );
-  const monthAppts = myAppointments.filter((a) =>
-    isWithinInterval(parseISO(a.dateTime), {
-      start: monthStart,
-      end: monthEnd,
-    }),
-  );
+  const monthAppts = useMemo(
+    () =>
+      myAppointments.filter((a) =>
+        isWithinInterval(parseISO(a.dateTime), {
+          start: monthStart,
+          end: monthEnd,
+        })
+      ),
+    [myAppointments, monthStart, monthEnd]
+  ); // Filtragens memorizadas
 
   const sessionsCount = monthAppts.length;
   const absences = monthAppts.filter((a) => a.status === "absent").length;

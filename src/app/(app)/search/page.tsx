@@ -3,7 +3,7 @@
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Input } from '@/components/ui/input';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 
 // Reuse sidebar sections for search index
 const sections = [
@@ -46,7 +46,10 @@ export default function SearchPage() {
     if (q !== query) setQuery(q);
   }, [params, query]);
 
-  const results = index.filter(i => i.label.toLowerCase().includes(query.toLowerCase()));
+  const results = useMemo(
+    () => index.filter(i => i.label.toLowerCase().includes(query.toLowerCase())),
+    [query]
+  ); // useMemo para filtrar somente quando 'query' mudar
 
   return (
     <div className="max-w-lg mx-auto space-y-4">

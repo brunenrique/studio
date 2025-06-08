@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { FilePenLine, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { SmartModal } from "@/components/SmartModal";
 import { useToast } from "@/hooks/use-toast";
 import { TemplateFormDialog } from "./TemplateFormDialog";
@@ -28,20 +28,23 @@ export function TemplateTable({ templates, onSave, onDelete }: TemplateTableProp
   const [toDelete, setToDelete] = useState<Template | null>(null);
   const { toast } = useToast();
 
-  const handleEdit = (template: Template) => {
+  const handleEdit = useCallback((template: Template) => {
     setEditing(template);
     setIsFormOpen(true);
-  };
+  }, []);
 
-  const handleSave = (tpl: Template) => {
-    onSave(tpl);
-    toast({
-      title: editing ? "Modelo Atualizado" : "Modelo Criado",
-      description: `O modelo ${tpl.name} foi salvo com sucesso.`,
-    });
-    setEditing(null);
-    setIsFormOpen(false);
-  };
+  const handleSave = useCallback(
+    (tpl: Template) => {
+      onSave(tpl);
+      toast({
+        title: editing ? "Modelo Atualizado" : "Modelo Criado",
+        description: `O modelo ${tpl.name} foi salvo com sucesso.`,
+      });
+      setEditing(null);
+      setIsFormOpen(false);
+    },
+    [editing, onSave, toast]
+  );
 
   const handleDelete = (id: string, name: string) => {
     onDelete(id);
