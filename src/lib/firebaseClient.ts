@@ -1,3 +1,8 @@
+// ... outras importações e código ...
+const auth = getAuth(app); // Declaração de auth
+const db = getFirestore(app); // Declaração de db
+// ... código adicional ...
+export { auth, db }; // Exportação de auth e db
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 // src/lib/firebaseClient.ts
