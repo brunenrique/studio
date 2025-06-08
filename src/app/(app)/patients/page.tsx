@@ -9,7 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 
 // --- 1. IMPORTAÇÕES ATUALIZADAS ---
 import { db } from '@/lib/firebaseClient';
-import { collection, onSnapshot, addDoc, updateDoc, doc, setDoc } from 'firebase/firestore';
+import { collection, onSnapshot, deleteDoc, doc, setDoc } from 'firebase/firestore';
 import { encryptPatientObject } from '@/lib/patient-utils'; // <-- Usando nosso novo utilitário!
 
 // Componentes da UI (sem alteração)
