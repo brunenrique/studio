@@ -20,18 +20,27 @@ import {
   PiggyBank,
   Gift,
 } from "lucide-react";
+
+// --- IMPORTAÇÃO CORRIGIDA ---
+// Importa apenas o que ainda existe no mock-data.ts
 import {
-  mockAppointments,
-  mockPatients,
-  mockWaitingList,
-  mockFinanceRecords,
+  getMockPatientsList,
 } from "@/lib/mock-data";
+// ----------------------------
+
 import { startOfWeek, endOfWeek, isSameDay, differenceInCalendarDays } from "date-fns";
 import Image from "next/image";
 
 export default function DashboardPage() {
   const { user, isLoading } = useAuth();
   const { dashboard } = useSettings();
+
+  // [REMOVIDO TEMPORARIAMENTE] - Os dados mocados não existem mais
+  // Para fazer o app funcionar, vamos usar valores padrão ou 0
+  const mockAppointments: any[] = [];
+  const mockWaitingList: any[] = [];
+  const mockFinanceRecords: any[] = [];
+  const mockPatients = getMockPatientsList(); // Esta função ainda existe e funciona!
 
   if (isLoading || !user) {
     return (
@@ -65,13 +74,16 @@ export default function DashboardPage() {
 
   const upcomingBirthdays = mockPatients
     .map((p) => {
-      const dob = new Date(p.dateOfBirth);
-      let bday = new Date(now.getFullYear(), dob.getMonth(), dob.getDate());
-      if (bday < now) bday = new Date(now.getFullYear() + 1, dob.getMonth(), dob.getDate());
-      return { name: p.name, date: bday };
+      // Como os dados estão criptografados, precisamos descriptografá-los antes.
+      // Por enquanto, vamos desativar esta funcionalidade.
+      return null;
+      // const dob = new Date(p.dateOfBirth);
+      // let bday = new Date(now.getFullYear(), dob.getMonth(), dob.getDate());
+      // if (bday < now) bday = new Date(now.getFullYear() + 1, dob.getMonth(), dob.getDate());
+      // return { name: p.name, date: bday };
     })
-    .filter((b) => differenceInCalendarDays(b.date, now) <= 30)
-    .sort((a, b) => a.date.getTime() - b.date.getTime());
+    .filter(b => b !== null) // Filtra os nulos
+    .sort((a, b) => a!.date.getTime() - b!.date.getTime());
 
   return (
     <div className="space-y-8">
@@ -144,7 +156,7 @@ export default function DashboardPage() {
               <PiggyBank className="h-5 w-5 text-primary" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">R$ {monthlyRevenue}</div>
+              <div className="text-2xl font-bold">R$ {monthlyRevenue.toFixed(2)}</div>
               <p className="text-xs text-muted-foreground">total recebido</p>
             </CardContent>
           </Card>
@@ -161,8 +173,8 @@ export default function DashboardPage() {
               ) : (
                 <ul className="text-sm space-y-1">
                   {upcomingBirthdays.map((b) => (
-                    <li key={b.name}>
-                      {b.name} - {b.date.toLocaleDateString()}
+                    <li key={b!.name}>
+                      {b!.name} - {b!.date.toLocaleDateString()}
                     </li>
                   ))}
                 </ul>
@@ -181,8 +193,8 @@ export default function DashboardPage() {
         </CardHeader>
         <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Button asChild variant="outline" className="justify-start h-12 text-left">
-            <Link href="/patients/new" className="flex items-center gap-2">
-              <Users className="h-4 w-4" /> Novo Paciente
+            <Link href="/patients" className="flex items-center gap-2">
+              <Users className="h-4 w-4" /> Gerenciar Pacientes
             </Link>
           </Button>
           <Button asChild variant="outline" className="justify-start h-12 text-left">
@@ -212,9 +224,7 @@ export default function DashboardPage() {
           <p className="text-sm text-foreground">
             Lembre-se de que todos os dados sensíveis dos pacientes são tratados com o máximo
             cuidado. Este sistema visa auxiliar sua prática profissional, mantendo a
-            confidencialidade e segurança das informações. (Nota: Criptografia client-side e
-            notificações por email são funcionalidades planejadas e não totalmente implementadas
-            neste protótipo).
+            confidencialidade e segurança das informações.
           </p>
         </CardContent>
       </Card>
