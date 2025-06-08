@@ -17,11 +17,11 @@ firebase functions:config:set secrets.crypto_key="<SUA_CHAVE>"
 Adicione também as chaves do Firebase usadas no projeto:
 
 ```dotenv
-NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSyCkp-Yp3CPOVl5jkmprh7BwP86Es-H9RzI
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=plataforma-bpsy.firebaseapp.com
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=plataforma-bpsy
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=plataforma-bpsy.firebasestorage.app
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=115174793204
-NEXT_PUBLIC_FIREBASE_APP_ID=1:115174793204:web:dd38de43781c2ac5a423a1
+NEXT_PUBLIC_FIREBASE_API_KEY=your_firebase_api_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
+NEXT_PUBLIC_FIREBASE_APP_ID=your_firebase_app_id
 ```
 - `SESSION_VALIDATION_MS`: intervalo em milissegundos para validar a sessão do usuário (padrão 60000).
