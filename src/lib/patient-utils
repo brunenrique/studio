@@ -1,0 +1,75 @@
+// Caminho: src/lib/patient-utils.ts
+
+import type { Patient } from "@/lib/types";
+import { encrypt, decrypt } from "./patientCrypto";
+
+// ============================================================================
+// ÁREA DE CONFIGURAÇÃO DA CRIPTOGRAFIA
+// ============================================================================
+
+// 1. DEFINA AQUI A LISTA DE CAMPOS SENSÍVEIS DO TIPO 'Patient'
+// Este é o único lugar que você precisará editar no futuro se quiser
+// adicionar ou remover campos da criptografia.
+const SENSITIVE_PATIENT_FIELDS: (keyof Patient)[] = [
+  'contact',
+  'cpf',
+  'dateOfBirth',
+  'sessionNotes',
+  'treatmentPlan'
+];
+
+// ============================================================================
+// FUNÇÕES DE UTILIDADE (EXPORTADAS PARA USO EM TODO O APP)
+// ============================================================================
+
+/**
+ * Recebe um objeto de paciente com dados limpos e retorna um novo objeto
+ * com todos os campos sensíveis (definidos em SENSITIVE_PATIENT_FIELDS) criptografados.
+ */
+export const encryptPatientObject = (patient: Patient): Patient => {
+  const securePatient = { ...patient };
+
+  for (const field of SENSITIVE_PATIENT_FIELDS) {
+    // @ts-ignore - Ignoramos o erro de tipo aqui porque estamos manipulando chaves dinâmicas
+    const value = securePatient[field];
+
+    if (value !== null && value !== undefined) {
+      // Transforma objetos/arrays em string JSON antes de criptografar
+      const valueToEncrypt = typeof value === 'string' ? value : JSON.stringify(value);
+      // @ts-ignore
+      securePatient[field] = encrypt(valueToEncrypt);
+    }
+  }
+  return securePatient;
+};
+
+/**
+ * Recebe um objeto de paciente com dados criptografados e retorna um novo objeto
+ * com todos os campos sensíveis descriptografados e prontos para exibição.
+ */
+export const decryptPatientObject = (patient: Patient): Patient => {
+  const plainPatient = { ...patient };
+
+  for (const field of SENSITIVE_PATIENT_FIELDS) {
+    // @ts-ignore
+    const value = plainPatient[field] as string | undefined;
+
+    if (value) {
+      try {
+        const decryptedValue = decrypt(value);
+        // Tenta converter de volta para objeto/array. Se falhar, usa como string.
+        try {
+          // @ts-ignore
+          plainPatient[field] = JSON.parse(decryptedValue);
+        } catch {
+          // @ts-ignore
+          plainPatient[field] = decryptedValue;
+        }
+      } catch (e) {
+        console.error(`Falha ao descriptografar o campo '${String(field)}' do paciente ${patient.id}.`);
+        // Mantém o valor criptografado para não quebrar a aplicação.
+      }
+    }
+  }
+  return plainPatient;
+};
