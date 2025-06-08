@@ -8,7 +8,7 @@ import { redirect } from 'next/navigation'
 export default async function LibraryPage() {
   const user = await getCurrentUser()
   if (!user) {
-    redirect('/login')
+    redirect('/dashboard')
   }
 
   const snap = await adminDb.collection('testsLibrary').get()
