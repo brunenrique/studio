@@ -1,11 +1,18 @@
-import { adminDb } from '@/lib/firebaseAdmin';
-import { TestMeta } from '@/lib/types';
-import ApplyTestModal from '@/components/assessments/ApplyTestModal';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { adminDb } from '@/lib/firebaseAdmin'
+import { TestMeta } from '@/lib/types'
+import ApplyTestModal from '@/components/assessments/ApplyTestModal'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { getCurrentUser } from '@/lib/session'
+import { redirect } from 'next/navigation'
 
 export default async function LibraryPage() {
-  const snap = await adminDb.collection('testsLibrary').get();
-  const tests: TestMeta[] = snap.docs.map(d => ({ id: d.id, ...(d.data() as Omit<TestMeta, 'id'>) }));
+  const user = await getCurrentUser()
+  if (!user) {
+    redirect('/login')
+  }
+
+  const snap = await adminDb.collection('testsLibrary').get()
+  const tests: TestMeta[] = snap.docs.map(d => ({ id: d.id, ...(d.data() as Omit<TestMeta, 'id'>) }))
 
   return (
     <div className="space-y-4">
