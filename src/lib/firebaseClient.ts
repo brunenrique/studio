@@ -1,14 +1,6 @@
-// ... outras importações e código ...
-const auth = getAuth(app); // Declaração de auth
-const db = getFirestore(app); // Declaração de db
-// ... código adicional ...
-export { auth, db }; // Exportação de auth e db
-export const auth = getAuth(app);
-export const db = getFirestore(app);
-// src/lib/firebaseClient.ts
 import { initializeApp, getApps, getApp } from "firebase/app";
 import type { FirebaseOptions } from "firebase/app";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, connectAuthEmulator } from "firebase/auth";
 import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
@@ -51,25 +43,14 @@ if (!getApps().length) {
   app = getApp();
 }
 
-import { collection, getDocs } from 'firebase/firestore/lite';
-
-const auth = getAuth(app);
-const db = getFirestore(app);
-const storage = getStorage(app);
+export const auth = getAuth(app);
+export const db = getFirestore(app);
+export const storage = getStorage(app);
 
 // Connect to Firebase emulators in development mode
 if (process.env.NODE_ENV === 'development') {
-  connectAuthEmulator(auth, `http://127.0.0.1:9100`); // Use the port you configured in firebase.json
-  connectFirestoreEmulator(db, '127.0.0.1', 8081); // Use the host and port you configured in firebase.json
+  connectAuthEmulator(auth, `http://127.0.0.1:9100`);
+  connectFirestoreEmulator(db, '127.0.0.1', 8081);
 }
 
-const dbLite = getFirestore(app);
-
-// Get a list of cities from your database
-async function getCities(db) {
-  const citiesCol = collection(db, 'cities');
-  const citySnapshot = await getDocs(citiesCol);
-  const cityList = citySnapshot.docs.map(doc => doc.data());
-  return cityList;
-}
 // export { app }; // Descomente se precisar da instância 'app' diretamente
