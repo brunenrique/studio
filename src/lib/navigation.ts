@@ -96,6 +96,12 @@ export const navigation: NavItem[] = [
     category: 'Ferramentas',
   },
   {
+    label: 'Trilha de Auditoria',
+    description: 'Registros completos de todas as ações no sistema.',
+    href: '/tools/audit-trail',
+    category: 'Sistema',
+  },
+  {
     label: 'Configura\u00e7\u00f5es',
     description: 'Personalize prefer\u00eancias e integra\u00e7\u00f5es do sistema.',
     href: '/settings',
