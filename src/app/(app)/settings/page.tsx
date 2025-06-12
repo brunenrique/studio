@@ -19,6 +19,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { SettingsForm } from "@/components/forms/settings-form";
+import { useState } from "react";
 
 export default function SettingsPage() {
   const { dashboard, updateDashboard, system, updateSystem } = useSettings();
@@ -31,6 +33,10 @@ export default function SettingsPage() {
     (key: keyof typeof system) => (value: string | boolean) => {
       updateSystem({ [key]: value } as any);
     };
+
+  const [emailNotifications, setEmailNotifications] = useState(false);
+  const [taskNotifications, setTaskNotifications] = useState(false);
+  const [agendaNotifications, setAgendaNotifications] = useState(false);
 
   return (
     <div className="space-y-6">
@@ -165,6 +171,33 @@ export default function SettingsPage() {
           </div>
         </CardContent>
       </Card>
+
+      <SettingsForm
+        title="Notificações"
+        description="Gerencie suas preferências de notificação."
+      >
+        <label className="flex items-center gap-2">
+          <Switch
+            checked={emailNotifications}
+            onCheckedChange={setEmailNotifications}
+          />
+          Receber notificações por e-mail
+        </label>
+        <label className="flex items-center gap-2">
+          <Switch
+            checked={taskNotifications}
+            onCheckedChange={setTaskNotifications}
+          />
+          Notificar sobre novas tarefas
+        </label>
+        <label className="flex items-center gap-2">
+          <Switch
+            checked={agendaNotifications}
+            onCheckedChange={setAgendaNotifications}
+          />
+          Avisar sobre alterações na agenda
+        </label>
+      </SettingsForm>
     </div>
   );
 }
