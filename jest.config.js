@@ -10,8 +10,12 @@ module.exports = {
     },
     nextJest({
       displayName: 'ui',
-      testMatch: ['<rootDir>/__tests__/**/*.test.tsx'],
-      transformIgnorePatterns: ['/node_modules/(?!lucide-react)']
+      testMatch: [
+        '<rootDir>/__tests__/**/*.test.ts?(x)',
+        '<rootDir>/tests/**/*.test.ts?(x)'
+      ],
+      transformIgnorePatterns: ['/node_modules/(?!lucide-react)'],
+      setupFilesAfterEnv: ['<rootDir>/tests/jest.setup.ts']
     })
   ]
 };
