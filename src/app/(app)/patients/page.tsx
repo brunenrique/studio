@@ -18,11 +18,13 @@ import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
 import { PatientFormDialog } from '@/components/patients/PatientFormDialog';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { PatientListSkeleton } from '@/components/patients/patient-list-skeleton';
 
 export default function PatientsPage() {
   const { user } = useAuth();
   const [patients, setPatients] = useState<Patient[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
   // Busca os dados do Firestore (sem alteração aqui)
@@ -39,6 +41,11 @@ export default function PatientsPage() {
       return () => unsubscribe();
     }
   }, [user]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 2000);
+    return () => clearTimeout(timer);
+  }, []);
 
   // --- 2. FUNÇÃO DE SALVAR ATUALIZADA E SIMPLIFICADA ---
   const handleAddOrUpdatePatient = async (patientFormData: Omit<Patient, 'id'>, patientId?: string) => {
@@ -119,11 +126,15 @@ export default function PatientsPage() {
           <CardDescription>Total de {patients.length} pacientes cadastrados.</CardDescription>
         </CardHeader>
         <CardContent>
-          <PatientTable
-            patients={patients}
-            onUpdatePatient={(patient) => handleAddOrUpdatePatient(patient, patient.id)}
-            onDeletePatient={handleDeletePatient}
-          />
+          {isLoading ? (
+            <PatientListSkeleton />
+          ) : (
+            <PatientTable
+              patients={patients}
+              onUpdatePatient={(patient) => handleAddOrUpdatePatient(patient, patient.id)}
+              onDeletePatient={handleDeletePatient}
+            />
+          )}
         </CardContent>
       </Card>
     </div>
