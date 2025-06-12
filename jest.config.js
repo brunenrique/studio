@@ -1,3 +1,4 @@
+isso-vai-quebrar-o-arquivo;
 const nextJest = require('next/jest');
 
 const createJestConfig = nextJest({
