@@ -25,6 +25,10 @@
     --accent: 177 70% 45%; /* Turquoise */
     --accent-foreground: 210 40% 15%;
 
+    --risk-low: 147 60% 40%;
+    --risk-medium: 30 100% 45%;
+    --risk-high: 0 70% 50%;
+
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
@@ -72,6 +76,10 @@
 
     --accent: 177 70% 55%;
     --accent-foreground: 177 100% 15%;
+
+    --risk-low: 147 40% 55%;
+    --risk-medium: 30 90% 60%;
+    --risk-high: 0 80% 60%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;

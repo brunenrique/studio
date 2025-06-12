@@ -44,6 +44,9 @@ export default {
           foreground: 'hsl(var(--accent-foreground))',
         },
         warning: colors.amber,
+        'risk-low': 'hsl(var(--risk-low))',
+        'risk-medium': 'hsl(var(--risk-medium))',
+        'risk-high': 'hsl(var(--risk-high))',
         destructive: {
           DEFAULT: 'hsl(var(--destructive))',
           foreground: 'hsl(var(--destructive-foreground))',
