@@ -4,7 +4,10 @@ module.exports = {
   projects: [
     {
       displayName: 'rules',
-      testMatch: ['<rootDir>/__tests__/**/*rules.test.ts'],
+      testMatch: [
+        '<rootDir>/__tests__/**/*rules.test.ts',
+        '<rootDir>/__tests__/rules/**/*.spec.ts'
+      ],
       testEnvironment: 'node',
       setupFilesAfterEnv: ['<rootDir>/jest.setup.rules.ts']
     },

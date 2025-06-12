@@ -5,10 +5,20 @@ service cloud.firestore {
       return request.auth != null && request.auth.token.role == 'PSYCHOLOGIST';
     }
 
+    function isAdmin() {
+      return request.auth != null && request.auth.token.role == 'ADMIN';
+    }
+
+    function indexedQuery() {
+      return request.query == null || request.query.orderBy.size() > 0;
+    }
+
     // Users can only manage their own document
     match /users/{userId} {
-      allow create, read, update, delete:
-          if request.auth != null && request.auth.uid == userId;
+      allow get, create, update, delete:
+          if request.auth != null &&
+             (request.auth.uid == userId || isAdmin());
+      allow list: if isAdmin() && indexedQuery();
     }
 
     // Posts: creation requires matching authorId. Update and delete allowed
@@ -24,6 +34,18 @@ service cloud.firestore {
 
     match /testsLibrary/{testId} {
       allow read: if isPsychologist();
+    }
+
+    match /patients/{patientId} {
+      allow get, update, delete:
+          if request.auth != null &&
+             (isAdmin() ||
+              (isPsychologist() && resource.data.psychologistId == request.auth.uid));
+      allow create:
+          if request.auth != null &&
+             (isAdmin() ||
+              (isPsychologist() && request.resource.data.psychologistId == request.auth.uid));
+      allow list: if isAdmin() && indexedQuery();
     }
 
     match /patients/{patientId}/assessments/{assessmentId} {
