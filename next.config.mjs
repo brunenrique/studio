@@ -1,6 +1,6 @@
 // Caminho: next.config.mjs
 
-import type { NextConfig } from 'next';
+
 
 const devConnect =
   process.env.NODE_ENV === 'development'
@@ -26,7 +26,7 @@ const securityHeaders = [
 ];
 
 /** @type {import('next').NextConfig} */
-const nextConfig: NextConfig = {
+const nextConfig = {
   reactStrictMode: true,
   typescript: {
     ignoreBuildErrors: false,
