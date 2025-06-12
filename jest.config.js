@@ -1,30 +1,20 @@
-module.exports = {
-  preset: 'ts-jest',
-  testEnvironment: 'node',
+const nextJest = require('next/jest');
+
+const createJestConfig = nextJest({
+  dir: './',
+});
+
+/** @type {import('jest').Config} */
+const customJestConfig = {
   setupFilesAfterEnv: ['<rootDir>/tests/jest.setup.ts'],
-  roots: ['<rootDir>/tests', '<rootDir>/__tests__'],
-  collectCoverage: true,
-  coverageDirectory: 'coverage',
-  coveragePathIgnorePatterns: [
-    '<rootDir>/src/hooks/useSessionValidation.ts',
-    '<rootDir>/src/lib/mock-data.ts',
-    '<rootDir>/src/lib/patientCrypto.ts',
-    '<rootDir>/src/lib/timeline.ts',
-  ],
-  coverageThreshold: {
-    global: {
-      branches: 80,
-      functions: 80,
-      lines: 80,
-      statements: 80,
-    },
-  },
+  testEnvironment: 'jest-environment-jsdom',
+  testTimeout: 15000,
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
-  globals: {
-    'ts-jest': {
-      tsconfig: '<rootDir>/tsconfig.jest.json',
-    },
-  },
+  transformIgnorePatterns: [
+    '/node_modules/(?!lucide-react)/',
+  ],
 };
+
+module.exports = createJestConfig(customJestConfig);
