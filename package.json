@@ -10,7 +10,9 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "test": "npx firebase emulators:exec --project demo-project jest --only firestore"
+    "test": "npm run build:rules && ./node_modules/.bin/firebase emulators:exec --project demo-project \"npm run jest\" --only firestore",
+    "jest": "jest",
+    "build:rules": "echo 'building rules if you need' >/dev/null"
   },
   "dependencies": {
     "@auth/firebase-adapter": "^1.0.15",
