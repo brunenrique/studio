@@ -20,6 +20,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { WeeklySchedule } from '@/components/appointments/WeeklySchedule';
 import { useSettings } from '@/contexts/SettingsContext';
 import { generateICS } from '@/lib/ics';
+import { syncAppointment } from '@/lib/googleCalendar';
 
 export default function AppointmentsPage() {
   const { appointments } = useAppointments();
@@ -175,6 +176,12 @@ export default function AppointmentsPage() {
     }
   };
 
+  const handleSync = async () => {
+    for (const appt of myAppointments) {
+      await syncAppointment(appt);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -185,6 +192,9 @@ export default function AppointmentsPage() {
           </p>
         </div>
         <div className="flex gap-2">
+          <Button onClick={handleSync} variant="outline" className="shadow-md">
+            Sincronizar
+          </Button>
           <Button onClick={handleExport} variant="outline" className="shadow-md">
             Exportar Agenda
           </Button>

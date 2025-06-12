@@ -5,7 +5,7 @@ import { NotificationBell } from './NotificationBell';
 import { Logo } from '@/components/Logo';
 import { useAuth } from '@/contexts/AuthContext';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ThemeToggle } from '@/components/ui/theme-toggle';
+import ThemeToggle from '@/components/ThemeToggle';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,10 +19,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useRef, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
+import { useFeatureFlag } from '@/lib/flags';
 
 export function AppHeader() {
   const { user, logout } = useAuth();
   const router = useRouter();
+  const storybook = useFeatureFlag('enableStorybookLink');
 
   const handleLogout = async () => {
     await logout();
@@ -131,6 +133,17 @@ export function AppHeader() {
         >
           Base de Conhecimento
         </button>
+        {storybook && (
+          <button
+            onClick={() => {
+              router.push('/storybook');
+              menu.setOpen(false);
+            }}
+            className="relative flex w-full cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent focus:bg-accent focus:text-accent-foreground"
+          >
+            Storybook
+          </button>
+        )}
         <button
           onClick={() => {
             router.push('/settings');

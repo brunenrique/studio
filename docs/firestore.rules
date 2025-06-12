@@ -33,6 +33,12 @@ service cloud.firestore {
                     request.resource.data.linkToken == resource.data.linkToken;
     }
 
+    match /patients/{patientId}/logs/{logId} {
+      allow create: if isPsychologist();
+      allow update, delete: if false;
+      allow read: if isPsychologist();
+    }
+
     match /tasks/{taskId} {
       allow read, write: if isPsychologist();
     }

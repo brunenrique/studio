@@ -3,9 +3,10 @@ import './globals.css';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { NotificationProvider } from '@/contexts/NotificationContext';
 import { SettingsProvider } from '@/contexts/SettingsContext';
-import { ThemeProvider } from '@/contexts/ThemeContext';
+import { ThemeProvider } from 'next-themes';
 import { Toaster } from "@/components/ui/toaster";
 import AssistantWidget from "@/components/AssistantWidget";
+import CommandPalette from "@/components/CommandPalette";
 import { TooltipProvider } from '@radix-ui/react-tooltip';
 
 export const metadata: Metadata = {
@@ -36,13 +37,14 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased min-h-screen bg-background">
         <TooltipProvider>
-          <ThemeProvider>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <AuthProvider>
               <SettingsProvider>
                 <NotificationProvider>
                   {children}
                   <Toaster />
                   <AssistantWidget />
+                  <CommandPalette />
                 </NotificationProvider>
               </SettingsProvider>
             </AuthProvider>

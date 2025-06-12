@@ -18,6 +18,7 @@ import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
 import { PatientFormDialog } from '@/components/patients/PatientFormDialog';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import Papa from 'papaparse';
 import { PatientListSkeleton } from '@/components/patients/patient-list-skeleton';
 
 export default function PatientsPage() {
@@ -95,6 +96,23 @@ export default function PatientsPage() {
     }
   };
 
+  const handleExportCSV = () => {
+    const data = patients.map(p => ({
+      id: p.id,
+      nome: p.name,
+      email: p.email,
+      psicologo: user?.name || ''
+    }));
+    const csv = Papa.unparse(data);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'pacientes.csv';
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
   if (!user || user.role !== 'PSYCHOLOGIST') {
     return <p className="p-4">Acesso restrito aos psicólogos.</p>;
   }
@@ -107,17 +125,22 @@ export default function PatientsPage() {
           <h1 className="text-3xl font-bold font-headline">Gerenciamento de Pacientes</h1>
           <p className="text-muted-foreground">Visualize, adicione, edite ou remova pacientes.</p>
         </div>
-        <PatientFormDialog
-          patient={null}
-          onSave={(data) => handleAddOrUpdatePatient(data)}
-          isOpen={isFormOpen}
-          onOpenChange={setIsFormOpen}
-        >
-          <Button onClick={() => setIsFormOpen(true)} className="shadow-md">
-            <PlusCircle className="mr-2 h-5 w-5" />
-            Adicionar Paciente
+        <div className="flex gap-2">
+          <Button onClick={handleExportCSV} variant="outline" className="shadow-md">
+            Exportar CSV
           </Button>
-        </PatientFormDialog>
+          <PatientFormDialog
+            patient={null}
+            onSave={(data) => handleAddOrUpdatePatient(data)}
+            isOpen={isFormOpen}
+            onOpenChange={setIsFormOpen}
+          >
+            <Button onClick={() => setIsFormOpen(true)} className="shadow-md">
+              <PlusCircle className="mr-2 h-5 w-5" />
+              Adicionar Paciente
+            </Button>
+          </PatientFormDialog>
+        </div>
       </div>
 
       <Card className="shadow-lg rounded-lg">
