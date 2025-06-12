@@ -1,4 +1,6 @@
 import '@testing-library/jest-dom';
+import { toHaveNoViolations } from 'jest-axe';
+expect.extend(toHaveNoViolations);
 
 // Adiciona o polyfill para setImmediate para o ambiente de teste do Jest (jsdom)
 // Isso é necessário para o gRPC, uma dependência do Firestore
