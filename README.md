@@ -24,6 +24,7 @@ NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
 NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
 NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
+NEXT_PUBLIC_SENTRY_DSN=
 
 # 🔐 Chave de criptografia AES-256-GCM (32 bytes codificada em base64).
 # NÃO use esta chave em produção!
@@ -40,6 +41,7 @@ CRYPTO_SECRET_KEY=REPLACE_ME_BASE64_32BYTES
 | `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET` | Bucket do Storage | não |
 | `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID` | ID do Cloud Messaging | não |
 | `NEXT_PUBLIC_FIREBASE_APP_ID` | ID do aplicativo Firebase | não |
+| `NEXT_PUBLIC_SENTRY_DSN` | DSN do Sentry para monitoramento de erros | sim |
 | `CRYPTO_SECRET_KEY` | Chave AES em base64 para criptografar dados sensíveis | não |
 | `FIREBASE_SERVICE_ACCOUNT` | JSON da conta de serviço para o Admin SDK | não |
 | `ASSESSMENT_TOKEN_SECRET` | Segredo para assinar links de inventários | não |
