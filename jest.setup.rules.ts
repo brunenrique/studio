@@ -1,6 +1,6 @@
-// 1) aumentar timeout global p/ evitar falhas de bootstrap
+import { jest } from '@jest/globals';
 jest.setTimeout(20000);
 
-// 2) polyfill setImmediate caso rode em algum runner que não tenha
+// polyfill setImmediate p/ gRPC
 (global as any).setImmediate =
   (global as any).setImmediate || ((fn: any, ...args: any[]) => setTimeout(fn, 0, ...args));
