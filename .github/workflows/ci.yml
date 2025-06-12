@@ -1,8 +1,6 @@
 name: CI
 
 on:
-  push:
-    branches: [main]
   pull_request:
 
 jobs:
@@ -10,43 +8,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - id: node-version
-        run: echo "version=$(node -e \"console.log(require('./package.json').engines?.node || '20')\")" >> "$GITHUB_OUTPUT"
-
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
       - uses: actions/setup-node@v4
         with:
-          node-version: ${{ steps.node-version.outputs.version }}
-
-      - name: Cache npm
-        uses: actions/cache@v3
+          node-version: 20
+          cache: 'pnpm'
+      - run: pnpm install
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test -- --coverage
+      - uses: codecov/codecov-action@v4
         with:
-          path: ~/.npm
-          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-npm-
-
-      - name: Cache Next.js build cache
-        uses: actions/cache@v3
-        with:
-          path: .next/cache
-          key: ${{ runner.os }}-next-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-next-
-
-      - run: npm ci
-
-      - run: npm run lint
-      - run: npm run typecheck
-      - run: npm test
-
-      - run: npm run build
-
-      - name: Deploy to Firebase
-        if: success()
-        env:
-          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-        run: |
-          echo "$FIREBASE_SERVICE_ACCOUNT" > $HOME/firebase.json
-          echo "GOOGLE_APPLICATION_CREDENTIALS=$HOME/firebase.json" >> $GITHUB_ENV
-          npx firebase-tools deploy --non-interactive
+          files: ./coverage/lcov.info
+      - run: pnpm build
