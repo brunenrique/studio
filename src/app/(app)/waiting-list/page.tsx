@@ -1,67 +1,118 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import type { WaitingListItem } from '@/lib/types';
-import { mockWaitingList } from '@/lib/mock-data';
-import { WaitlistTable } from '@/components/waitlist/WaitlistTable';
-import { Button } from '@/components/ui/button';
-import { PlusCircle } from 'lucide-react';
-import { AddToWaitlistDialog } from '@/components/waitlist/AddToWaitlistDialog';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useToast } from "@/hooks/use-toast";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+
+export type WaitingListEntry = {
+  id: string;
+  patientName: string;
+  submittedAt: Date;
+  contact: string;
+  status: "Aguardando" | "Contatado" | "Agendado";
+};
+
+const data: WaitingListEntry[] = [
+  {
+    id: "1",
+    patientName: "Ana Silva",
+    submittedAt: new Date("2024-04-10"),
+    contact: "ana@example.com",
+    status: "Aguardando",
+  },
+  {
+    id: "2",
+    patientName: "Bruno Costa",
+    submittedAt: new Date("2024-04-09"),
+    contact: "(11) 98765-4321",
+    status: "Contatado",
+  },
+  {
+    id: "3",
+    patientName: "Carla Souza",
+    submittedAt: new Date("2024-04-08"),
+    contact: "carla@example.com",
+    status: "Agendado",
+  },
+  {
+    id: "4",
+    patientName: "Daniel Rocha",
+    submittedAt: new Date("2024-04-07"),
+    contact: "(21) 91234-5678",
+    status: "Aguardando",
+  },
+  {
+    id: "5",
+    patientName: "Eduarda Lima",
+    submittedAt: new Date("2024-04-06"),
+    contact: "eduarda@example.com",
+    status: "Contatado",
+  },
+];
+
+const statusClasses: Record<WaitingListEntry["status"], string> = {
+  Aguardando: "bg-warning-100 text-warning-800",
+  Contatado: "bg-blue-100 text-blue-800",
+  Agendado: "bg-accent-100 text-accent-800",
+};
 
 export default function WaitingListPage() {
-  const [waitlistItems, setWaitlistItems] = useState<WaitingListItem[]>([]);
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const { toast } = useToast();
-
-  useEffect(() => {
-    // Simulate fetching data
-    setWaitlistItems(mockWaitingList);
-  }, []);
-
-  const handleAddItem = (itemData: WaitingListItem) => {
-    setWaitlistItems(prevItems => [...prevItems, itemData]);
-    toast({
-      title: "Paciente Adicionado à Lista",
-      description: `${itemData.patientName} foi adicionado(a) à lista de espera.`,
-    });
-    setIsFormOpen(false);
-  };
-
-  const handleDeleteItem = (itemId: string) => {
-    setWaitlistItems(prevItems => prevItems.filter(item => item.id !== itemId));
-    // Toast handled in WaitlistTable
-  };
-
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <div>
-            <h1 className="text-3xl font-bold font-headline">Lista de Espera</h1>
-            <p className="text-muted-foreground">Gerencie pacientes aguardando por um horário.</p>
-        </div>
-        <AddToWaitlistDialog 
-            onSave={handleAddItem}
-            isOpen={isFormOpen}
-            onOpenChange={setIsFormOpen}
-        >
-          <Button onClick={() => setIsFormOpen(true)} className="shadow-md">
-            <PlusCircle className="mr-2 h-5 w-5" />
-            Adicionar à Lista
-          </Button>
-        </AddToWaitlistDialog>
+        <h1 className="text-3xl font-bold font-headline">Lista de Espera</h1>
+        <Button>Adicionar à Lista</Button>
       </div>
-
-      <Card className="shadow-lg rounded-lg">
-        <CardHeader>
-          <CardTitle>Pacientes em Espera</CardTitle>
-          <CardDescription>Total de {waitlistItems.length} pacientes na lista.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <WaitlistTable items={waitlistItems} onDeleteItem={handleDeleteItem} />
-        </CardContent>
-      </Card>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Paciente</TableHead>
+            <TableHead>Data de Submissão</TableHead>
+            <TableHead>Contato</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Ações</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {data.map((item) => (
+            <TableRow key={item.id}>
+              <TableCell>{item.patientName}</TableCell>
+              <TableCell>{item.submittedAt.toLocaleDateString()}</TableCell>
+              <TableCell>{item.contact}</TableCell>
+              <TableCell>
+                <Badge className={statusClasses[item.status]}>{item.status}</Badge>
+              </TableCell>
+              <TableCell>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm">
+                      Ações
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem>Ver Detalhes</DropdownMenuItem>
+                    <DropdownMenuItem>Marcar como Contatado</DropdownMenuItem>
+                    <DropdownMenuItem>Remover da Lista</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
     </div>
   );
 }
