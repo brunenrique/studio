@@ -6,14 +6,11 @@ import { mockTemplates } from '@/lib/mock-data';
 import { TemplateTable } from '@/components/templates/TemplateTable';
 import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
-import { TemplateFormDialog } from '@/components/templates/TemplateFormDialog';
+import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useToast } from '@/hooks/use-toast';
 
 export default function TemplatesPage() {
   const [templates, setTemplates] = useState<Template[]>([]);
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const { toast } = useToast();
 
   useEffect(() => {
     setTemplates(mockTemplates);
@@ -40,11 +37,11 @@ export default function TemplatesPage() {
           <h1 className="text-3xl font-bold font-headline">Modelos</h1>
           <p className="text-muted-foreground">Gerencie modelos reutilizáveis.</p>
         </div>
-        <TemplateFormDialog onSave={handleSave} isOpen={isFormOpen} onOpenChange={setIsFormOpen}>
-          <Button onClick={() => setIsFormOpen(true)} className="shadow-md">
-            <PlusCircle className="mr-2 h-5 w-5" /> Novo Modelo
-          </Button>
-        </TemplateFormDialog>
+        <Button asChild className="shadow-md">
+          <Link href="/templates/new" className="flex items-center gap-2">
+            <PlusCircle className="h-5 w-5" /> Novo Modelo
+          </Link>
+        </Button>
       </div>
 
       <Card className="shadow-lg rounded-lg">
