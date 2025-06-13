@@ -51,7 +51,6 @@ interface PatientFormDialogProps {
 
 export function PatientFormDialog({ patient, onSave, children, isOpen: controlledIsOpen, onOpenChange: controlledOnOpenChange }: PatientFormDialogProps) {
   const [internalOpen, setInternalOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
   const isOpen = controlledIsOpen !== undefined ? controlledIsOpen : internalOpen;
   const onOpenChange = controlledOnOpenChange !== undefined ? controlledOnOpenChange : setInternalOpen;
@@ -88,7 +87,6 @@ export function PatientFormDialog({ patient, onSave, children, isOpen: controlle
 
 
   async function onSubmit(values: PatientFormValues) {
-    setIsLoading(true);
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
     
@@ -100,7 +98,6 @@ export function PatientFormDialog({ patient, onSave, children, isOpen: controlle
       treatmentPlan: values.treatmentPlan || "",
     };
     onSave(patientData);
-    setIsLoading(false);
     onOpenChange(false);
     form.reset();
   }
@@ -218,11 +215,22 @@ export function PatientFormDialog({ patient, onSave, children, isOpen: controlle
               )}
             />
             <DialogFooter className="pt-4">
-              <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+                disabled={form.formState.isSubmitting}
+              >
                 Cancelar
               </Button>
-              <Button type="submit" disabled={isLoading}>
-                {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : (patient ? "Salvar Alterações" : "Adicionar Paciente")}
+              <Button type="submit" disabled={form.formState.isSubmitting}>
+                {form.formState.isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Salvando...
+                  </>
+                ) : (
+                  patient ? "Salvar Alterações" : "Adicionar Paciente"
+                )}
               </Button>
             </DialogFooter>
           </form>
