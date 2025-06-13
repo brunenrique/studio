@@ -9,6 +9,7 @@ import { db } from '@/lib/firebaseClient';
 
 // --- 1. IMPORTAÇÃO ATUALIZADA ---
 import { decryptPatientObject } from '@/lib/patient-utils'; // <-- Usando nosso novo utilitário!
+import CopyToClipboardButton from '@/components/CopyToClipboardButton';
 
 // Componente para exibir um esqueleto de carregamento (opcional, mas recomendado)
 const PatientDetailsSkeleton = () => (
@@ -87,7 +88,10 @@ export function PatientDetailsClient({ patientId }: { patientId: string }) {
     <div className="p-4 border rounded-lg shadow-sm bg-white">
       <h2 className="text-2xl font-bold font-headline text-gray-800 mb-4">{patient.name}</h2>
       <div className="space-y-2 text-gray-600">
-        <p><strong>Email:</strong> {patient.email || 'Não informado'}</p>
+        <div className="flex items-center gap-2">
+          <p className="m-0"><strong>Email:</strong> {patient.email || 'Não informado'}</p>
+          {patient.email && <CopyToClipboardButton text={patient.email} />}
+        </div>
         <p><strong>CPF:</strong> {patient.cpf}</p> {/* <-- EXIBINDO O CPF REAL E DESCRIPTOGRAFADO */}
         <p><strong>Contato:</strong> {patient.contact}</p>
         <p><strong>Data de Nascimento:</strong> {patient.dateOfBirth}</p>
