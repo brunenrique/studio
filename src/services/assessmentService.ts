@@ -11,8 +11,9 @@ import {
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Assessment } from '@/lib/types';
+import { FIRESTORE_COLLECTIONS } from '@/lib/firestore-collections';
 
-const assessmentsCollection = collection(db, 'assessments');
+const assessmentsCollection = collection(db, FIRESTORE_COLLECTIONS.ASSESSMENTS);
 
 /**
  * @description Busca todas as avaliações associadas a um paciente específico.
@@ -31,7 +32,7 @@ export const getAssessmentsByPatientId = async (patientId: string): Promise<Asse
  * @returns {Promise<Assessment | null>} Uma promessa que resolve para o objeto da avaliação ou nulo se não for encontrado.
  */
 export const getAssessmentById = async (assessmentId: string): Promise<Assessment | null> => {
-  const docRef = doc(db, 'assessments', assessmentId);
+  const docRef = doc(db, FIRESTORE_COLLECTIONS.ASSESSMENTS, assessmentId);
   const docSnap = await getDoc(docRef);
   if (docSnap.exists()) {
     return { id: docSnap.id, ...docSnap.data() } as Assessment;
@@ -60,7 +61,7 @@ export const createAssessment = async (assessmentData: Omit<Assessment, 'id' | '
  * @returns {Promise<void>} Uma promessa que é resolvida quando a atualização é concluída.
  */
 export const updateAssessment = async (assessmentId: string, updates: Partial<Omit<Assessment, 'id' | 'createdAt'>>): Promise<void> => {
-  const docRef = doc(db, 'assessments', assessmentId);
+  const docRef = doc(db, FIRESTORE_COLLECTIONS.ASSESSMENTS, assessmentId);
   await updateDoc(docRef, {
     ...updates,
     updatedAt: serverTimestamp(),
